@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { churchInfo } from "@/lib/data";
+import { SocialBrandIcon } from "./social-icons";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -20,18 +21,21 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/90 backdrop-blur-md">
-      <div className="section flex h-16 items-center justify-between gap-4 py-2">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5" onClick={() => setOpen(false)}>
+      <div className="section flex h-16 items-center justify-between gap-4 py-2 sm:h-[68px]">
+        <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
           <Image
             src={churchInfo.logoColor}
             alt={churchInfo.name}
             width={40}
             height={40}
             priority
-            className="h-8 w-8"
+            className="h-10 w-10 sm:h-11 sm:w-11"
           />
-          <span className="hidden max-w-44 truncate font-display text-sm font-bold uppercase tracking-normal sm:inline xl:max-w-none">
-            {churchInfo.shortName}
+          <span className="block min-w-0 font-display uppercase leading-none tracking-normal text-white">
+            <span className="block truncate text-base font-black sm:text-lg">Manantial</span>
+            <span className="block truncate text-[10px] font-bold tracking-[0.18em] text-white/55 sm:text-[11px]">
+              de Avivamiento
+            </span>
           </span>
         </Link>
 
@@ -69,39 +73,71 @@ export default function Header() {
         </div>
 
         <button
-          className="flex h-10 w-10 shrink-0 items-center justify-center border border-white/15 lg:hidden"
+          className="relative flex h-11 w-11 shrink-0 items-center justify-center border border-white/15 bg-white/[0.03] transition hover:border-white/30 lg:hidden"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Abrir menú"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={open}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
-            {open ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+          <span className="sr-only">{open ? "Cerrar menú" : "Abrir menú"}</span>
+          <span
+            className={`absolute h-px w-5 bg-white transition duration-300 ${
+              open ? "translate-y-0 rotate-45" : "-translate-y-2"
+            }`}
+          />
+          <span
+            className={`absolute h-px w-5 bg-white transition duration-300 ${
+              open ? "opacity-0" : "opacity-100"
+            }`}
+          />
+          <span
+            className={`absolute h-px w-5 bg-white transition duration-300 ${
+              open ? "translate-y-0 -rotate-45" : "translate-y-2"
+            }`}
+          />
         </button>
       </div>
 
       {open && (
-        <nav className="border-t border-white/10 bg-ink lg:hidden">
-          <div className="section flex flex-col gap-1 py-4">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setOpen(false)}
-                className={`border-b border-white/10 px-1 py-3 text-sm font-semibold uppercase tracking-wide transition ${
-                  pathname === link.href
-                    ? "text-brand-light"
-                    : "text-white/80 hover:text-white"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <div className="mt-3 flex flex-col gap-2 border-t border-white/10 pt-4">
+        <nav className="fixed inset-x-0 top-16 z-40 max-h-[calc(100svh-4rem)] overflow-y-auto border-t border-white/10 bg-ink/98 backdrop-blur-xl animate-[menuIn_220ms_ease-out] sm:top-[68px] lg:hidden">
+          <div className="section flex min-h-[calc(100svh-4rem)] flex-col py-6 sm:min-h-[calc(100svh-68px)]">
+            <div className="border-b border-white/10 pb-6">
+              <p className="font-display text-2xl font-black uppercase tracking-normal">
+                Manantial de Avivamiento
+              </p>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/45">
+                Villa Lugano · CABA
+              </p>
+            </div>
+
+            <div className="py-4">
+              {links.map((link, index) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={`group flex items-center justify-between border-b border-white/10 py-4 transition ${
+                    pathname === link.href
+                      ? "text-brand-light"
+                      : "text-white hover:text-brand-light"
+                  }`}
+                >
+                  <span className="flex items-center gap-4">
+                    <span className="w-6 text-xs font-semibold text-white/30">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-display text-2xl font-bold uppercase tracking-normal">
+                      {link.label}
+                    </span>
+                  </span>
+                  <span className="text-white/25 transition group-hover:translate-x-1 group-hover:text-brand-light">
+                    →
+                  </span>
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-auto border-t border-white/10 pt-5">
+              <div className="grid grid-cols-2 gap-2">
               <Link
                 href="/en-vivo"
                 onClick={() => setOpen(false)}
@@ -116,10 +152,33 @@ export default function Header() {
               <Link
                 href="/ofrendas"
                 onClick={() => setOpen(false)}
-                className="flex w-full items-center justify-center bg-brand px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
+                className="flex items-center justify-center bg-brand px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
               >
                 Ofrendar
               </Link>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between gap-4">
+                <a
+                  href={churchInfo.prayerRequest.whatsappLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-semibold uppercase tracking-wide text-white/55 hover:text-white"
+                >
+                  Pedí oración
+                </a>
+                <div className="flex items-center gap-3 text-white/55">
+                  <a href={churchInfo.whatsappChannelUrl} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="hover:text-brand-light">
+                    <SocialBrandIcon platform="whatsapp" />
+                  </a>
+                  <a href={churchInfo.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-brand-light">
+                    <SocialBrandIcon platform="instagram" />
+                  </a>
+                  <a href={churchInfo.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-brand-light">
+                    <SocialBrandIcon platform="youtube" />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </nav>
