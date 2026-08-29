@@ -13,7 +13,6 @@ export default function NosotrosPage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-white/10 bg-surface py-20 sm:py-24">
-        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-brand/25 blur-[120px]" />
         <div className="section relative">
           <p className="eyebrow">Nuestra historia</p>
           <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
@@ -63,7 +62,7 @@ export default function NosotrosPage() {
                 key={member.displayName}
                 className="group flex items-center gap-4 border-t border-ink/10 bg-white py-4 transition hover:border-brand/40 sm:px-4"
               >
-                <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-ink sm:h-28 sm:w-28">
+                <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden bg-ink sm:h-28 sm:w-28">
                   {member.image ? (
                     <Image
                       src={member.image}

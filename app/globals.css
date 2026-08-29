@@ -36,15 +36,11 @@ body {
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow-[0_14px_35px_rgba(33,91,214,0.22)] transition hover:bg-brand-light active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 bg-brand px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-brand-light active:scale-95;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white backdrop-blur transition hover:border-white/40 hover:bg-white/10 active:scale-95;
-  }
-
-  .card {
-    @apply rounded-lg border border-white/10 bg-surface/85;
+    @apply inline-flex items-center justify-center gap-2 border border-white/20 bg-transparent px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white/40 hover:bg-white/10 active:scale-95;
   }
 }
 

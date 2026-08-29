@@ -47,7 +47,7 @@ export default function RadioPage() {
       </div>
 
       {/* APPS */}
-      <div id="apps" className="mt-16 scroll-mt-24 card border-l-4 border-l-brand p-6 sm:p-8">
+      <div id="apps" className="mt-16 scroll-mt-24 border-y border-white/10 py-6 sm:py-8">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
           <div>
             <p className="eyebrow">Llevala a todos lados</p>
@@ -79,8 +79,8 @@ export default function RadioPage() {
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="relative flex h-64 w-36 items-center justify-center rounded-xl border border-white/15 bg-gradient-to-b from-surface2 to-ink shadow-[0_20px_50px_rgba(33,91,214,0.18)] sm:h-72 sm:w-44">
-              <div className="absolute top-3 h-1 w-10 rounded-full bg-white/20" />
+            <div className="relative flex h-64 w-36 items-center justify-center border border-white/15 bg-gradient-to-b from-surface2 to-ink sm:h-72 sm:w-44">
+              <div className="absolute top-3 h-1 w-10 bg-white/20" />
               <span className="font-display text-4xl font-black text-brand-light">M</span>
             </div>
           </div>

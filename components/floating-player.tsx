@@ -8,13 +8,13 @@ export default function FloatingPlayer() {
   const { isPlaying, isLoading, hasError, toggle } = useRadio();
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-ink/95 backdrop-blur">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-ink">
       <div className="section flex items-center justify-between gap-3 py-2">
         <div className="flex min-w-0 items-center gap-2.5">
           <button
             onClick={toggle}
             aria-label={isPlaying ? "Pausar radio" : "Escuchar radio en vivo"}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-[0_10px_25px_rgba(33,91,214,0.22)] transition hover:bg-brand-light active:scale-95"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white transition hover:bg-brand-light active:scale-95"
           >
             {isLoading ? (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

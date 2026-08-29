@@ -51,7 +51,7 @@ export default function ReunionesPage() {
                       {s.streamed && (
                         <Link
                           href="/en-vivo"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-light"
+                          className="inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-light"
                         >
                           <span className="h-1.5 w-1.5 rounded-full bg-gold" />
                           Se transmite por YouTube
@@ -78,9 +78,9 @@ export default function ReunionesPage() {
           Además de nuestras reuniones semanales, cada mes tenemos espacios
           especiales de oración, consagración y comunión como iglesia.
         </p>
-        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {specialServices.map((service) => (
-            <div key={service.name} className="card border-l-4 border-l-gold p-6 sm:p-8">
+            <div key={service.name} className="border-t border-white/10 pt-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 className="font-display text-2xl font-bold uppercase tracking-normal">
                   {service.name}
@@ -88,7 +88,7 @@ export default function ReunionesPage() {
                 {service.streamed && (
                   <Link
                     href="/en-vivo"
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-light"
+                    className="inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-light"
                   >
                     <span className="h-1.5 w-1.5 rounded-full bg-gold" />
                     Se transmite por YouTube
@@ -106,7 +106,7 @@ export default function ReunionesPage() {
         </div>
       </div>
 
-      <div className="mt-10 card border-l-4 border-l-brand p-6 sm:p-8">
+      <div className="mt-12 border-y border-white/10 py-6">
         <p className="eyebrow">Encuentros especiales</p>
         <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
           Algunas reuniones surgen durante el año
@@ -144,7 +144,7 @@ export default function ReunionesPage() {
 
 function InfoCard({ title, text }: { title: string; text: string }) {
   return (
-    <div className="card p-6">
+    <div className="border-t border-white/15 pt-5">
       <h3 className="font-display text-xl font-bold uppercase tracking-normal">
         {title}
       </h3>

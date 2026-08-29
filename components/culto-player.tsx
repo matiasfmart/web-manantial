@@ -20,7 +20,7 @@ export default async function CultoPlayer({
 
   if (transmissionStatus.kind === "live") {
     return (
-      <div className="aspect-video w-full overflow-hidden rounded-xl bg-surface2">
+      <div className="aspect-video w-full overflow-hidden bg-surface2">
         <iframe
           className="h-full w-full"
           src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?autoplay=1`}
@@ -44,7 +44,7 @@ export default async function CultoPlayer({
 
     return (
       <div className={`w-full ${compact ? "space-y-1" : "space-y-2"}`}>
-        <div className="aspect-video w-full overflow-hidden rounded-xl bg-surface2">
+        <div className="aspect-video w-full overflow-hidden bg-surface2">
           <iframe
             className="h-full w-full"
             src={`https://www.youtube.com/embed/${transmissionStatus.videoId}`}
@@ -66,7 +66,7 @@ export default async function CultoPlayer({
       href={`${churchInfo.social.youtube}/live`}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex aspect-video w-full flex-col items-center justify-center gap-3 rounded-xl border border-white/10 bg-surface2 text-center transition hover:bg-surface2/70 ${
+      className={`group flex aspect-video w-full flex-col items-center justify-center gap-3 border border-white/10 bg-surface2 text-center transition hover:bg-surface2/70 ${
         compact ? "gap-2" : ""
       }`}
     >

@@ -78,7 +78,7 @@ export default async function EnVivoPage() {
         <CultoBadge status={transmissionStatus} />
       </div>
 
-      <div className="card overflow-hidden">
+      <div className="overflow-hidden border-y border-white/10">
         <CultoPlayer status={transmissionStatus} />
         <div className="flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8">
           <p className="max-w-lg text-sm text-white/60">
@@ -132,8 +132,8 @@ export default async function EnVivoPage() {
           {transmissionInfo.description} Cuando el canal esté en vivo, esta
           página prioriza automáticamente la transmisión actual.
         </p>
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="card p-6">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="border-t border-white/10 pt-5">
             <p className="font-display text-lg font-bold uppercase tracking-normal">
               Reunión general
             </p>
@@ -145,7 +145,7 @@ export default async function EnVivoPage() {
             </p>
           </div>
           {specialServices.map((service) => (
-            <div key={service.name} className="card p-6">
+            <div key={service.name} className="border-t border-white/10 pt-5">
               <p className="font-display text-lg font-bold uppercase tracking-normal">
                 {service.name}
               </p>
@@ -159,7 +159,7 @@ export default async function EnVivoPage() {
       </div>
 
       {/* REDES */}
-      <div className="mt-16 card border-l-4 border-l-brand p-6 sm:p-8">
+      <div className="mt-16 border-y border-white/10 py-6">
         <p className="eyebrow">Seguinos</p>
         <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
           No te pierdas nada

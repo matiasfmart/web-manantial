@@ -13,9 +13,8 @@ export default async function HomePage() {
     : ({ kind: "unavailable" } as const);
 
   const youtubeCard = (
-    <div className="card relative overflow-hidden border-l-4 border-l-gold p-5 sm:p-6 lg:p-8">
-      <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
-      <div className="relative grid grid-cols-1 gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+    <div className="border-y border-white/10 py-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-xs font-bold uppercase tracking-widest text-white/60">
@@ -92,7 +91,7 @@ export default async function HomePage() {
       {/* BIENVENIDA */}
       <section className="bg-white py-16 sm:py-20 text-ink">
         <div className="section grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          <div className="relative order-2 h-80 w-full overflow-hidden shadow-xl sm:h-[420px] lg:order-1">
+          <div className="relative order-2 h-80 w-full overflow-hidden sm:h-[420px] lg:order-1">
             <Image
               src="/images/hero/home-2.jpg"
               alt={`Encuentro de ${churchInfo.shortName}`}
@@ -192,7 +191,7 @@ export default async function HomePage() {
 
       {/* UBICACION */}
       <section className="section pb-24">
-        <div className="card grid grid-cols-1 gap-0 overflow-hidden lg:grid-cols-2">
+        <div className="grid grid-cols-1 overflow-hidden border-y border-white/10 lg:grid-cols-2">
           <div className="p-6 sm:p-8 lg:p-10">
             <p className="eyebrow">Te esperamos</p>
             <h2 className="mt-4 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">

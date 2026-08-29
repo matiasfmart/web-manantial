@@ -44,9 +44,6 @@ export default async function MinistryPage({
           className="object-cover opacity-30"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/85 to-surface/40" />
-        <div
-          className={`absolute -right-24 -top-24 h-96 w-96 rounded-full bg-gradient-to-br ${ministry.color} opacity-25 blur-[100px]`}
-        />
         <div className="section relative">
           <Link href="/ministerios" className="text-sm text-white/50 hover:text-white">
             ← Todos los ministerios
@@ -64,10 +61,10 @@ export default async function MinistryPage({
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4 text-sm">
-            <span className="rounded-full border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide">
+            <span className="border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide">
               {ministry.schedule}
             </span>
-            <span className="rounded-full border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide text-white/70">
+            <span className="border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide text-white/70">
               {ministry.audience}
             </span>
           </div>
@@ -100,9 +97,9 @@ export default async function MinistryPage({
           )}
 
           {ministry.subMinistry && (
-            <div className="card mt-10 overflow-hidden">
+            <div className="mt-10 border-y border-white/10 py-6">
               {ministry.subMinistry.image && (
-                <div className="relative h-56 w-full">
+                <div className="relative mb-6 h-56 w-full overflow-hidden">
                   <Image
                     src={ministry.subMinistry.image}
                     alt={ministry.subMinistry.name}
@@ -112,7 +109,7 @@ export default async function MinistryPage({
                   />
                 </div>
               )}
-              <div className="p-8">
+              <div>
                 <p className="eyebrow">Dentro de este ministerio</p>
                 <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
                   {ministry.subMinistry.name}
@@ -128,7 +125,7 @@ export default async function MinistryPage({
           )}
         </div>
 
-        <aside className="card h-fit border-l-4 border-l-brand p-6 sm:p-8">
+        <aside className="h-fit border-y border-white/10 py-6 lg:border-l lg:border-y-0 lg:py-0 lg:pl-8">
           <p className="eyebrow">
             {ministry.isOutreach ? "Sumate a colaborar" : "¿Querés sumarte?"}
           </p>

@@ -32,9 +32,6 @@ const config: Config = {
         "hero-grid":
           "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
       },
-      boxShadow: {
-        glow: "0 0 40px rgba(33,91,214,0.4)",
-      },
       animation: {
         pulseSlow: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         marquee: "marquee 22s linear infinite",

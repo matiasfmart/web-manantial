@@ -20,7 +20,7 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-ink">
       <div className="section flex h-16 items-center justify-between gap-4 py-2 sm:h-[68px]">
         <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
           <Image
@@ -56,7 +56,7 @@ export default function Header() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/en-vivo"
-            className="inline-flex items-center gap-2 border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-white/40 hover:bg-white/10 active:scale-95"
+            className="inline-flex items-center gap-2 border border-white/20 bg-transparent px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-white/40 hover:bg-white/10 active:scale-95"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
@@ -98,7 +98,7 @@ export default function Header() {
       </div>
 
       {open && (
-        <nav className="fixed inset-x-0 top-16 z-40 max-h-[calc(100svh-4rem)] overflow-y-auto border-t border-white/10 bg-ink/98 backdrop-blur-xl animate-[menuIn_220ms_ease-out] sm:top-[68px] lg:hidden">
+        <nav className="fixed inset-x-0 top-16 z-40 max-h-[calc(100svh-4rem)] overflow-y-auto border-t border-white/10 bg-ink animate-[menuIn_220ms_ease-out] sm:top-[68px] lg:hidden">
           <div className="section flex min-h-[calc(100svh-4rem)] flex-col py-6 sm:min-h-[calc(100svh-68px)]">
             <div className="border-b border-white/10 pb-6">
               <p className="font-display text-2xl font-black uppercase tracking-normal">
@@ -141,7 +141,7 @@ export default function Header() {
               <Link
                 href="/en-vivo"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
+                className="flex items-center justify-center gap-2 border border-white/20 bg-transparent px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />

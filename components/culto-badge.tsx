@@ -12,7 +12,7 @@ export default function CultoBadge({ status }: { status: TransmissionStatus }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wide ${
+      className={`inline-flex items-center gap-2 border px-3 py-1 text-xs font-bold uppercase tracking-wide ${
         isLive
           ? "border-gold/50 bg-gold/10 text-gold-light"
           : "border-white/15 text-white/50"

@@ -17,7 +17,7 @@ export default function RadioStrip({ className = "" }: { className?: string }) {
           <button
             onClick={toggle}
             aria-label={isPlaying ? "Pausar Radio Maranata" : "Escuchar Radio Maranata"}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-[0_14px_35px_rgba(33,91,214,0.24)] transition hover:bg-brand-light active:scale-95"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-white transition hover:bg-brand-light active:scale-95"
           >
             {isLoading ? (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />

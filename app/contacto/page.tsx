@@ -24,8 +24,8 @@ export default function ContactoPage() {
       <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <ContactForm />
 
-        <div className="space-y-6">
-          <div className="card border-l-4 border-l-brand p-6 sm:p-8">
+        <div className="space-y-8">
+          <div className="border-y border-white/10 py-6">
             <p className="eyebrow">Auditorio</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
               {churchInfo.auditoriumName}
@@ -40,7 +40,7 @@ export default function ContactoPage() {
             </div>
           </div>
 
-          <div className="card border-l-4 border-l-gold p-6 sm:p-8">
+          <div className="border-y border-white/10 py-6">
             <p className="eyebrow">Pedí oración</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
               Estamos para orar por vos

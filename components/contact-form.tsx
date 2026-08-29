@@ -7,7 +7,7 @@ export default function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="card p-8 text-center">
+      <div className="border-y border-white/10 py-8 text-center">
         <p className="font-display text-2xl font-bold uppercase text-brand-light">
           ¡Gracias por escribirnos!
         </p>
@@ -25,7 +25,7 @@ export default function ContactForm() {
         // TODO: conectar a un servicio de email o endpoint propio antes de producción
         setSubmitted(true);
       }}
-      className="card space-y-5 p-8"
+      className="space-y-5 border-y border-white/10 py-8"
     >
       <div>
         <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-white/60">
@@ -35,7 +35,7 @@ export default function ContactForm() {
           required
           type="text"
           name="name"
-          className="w-full rounded-xl border border-white/15 bg-surface2 px-4 py-3 text-sm outline-none transition focus:border-brand"
+          className="w-full border border-white/15 bg-surface2 px-4 py-3 text-sm outline-none transition focus:border-brand"
           placeholder="Tu nombre"
         />
       </div>
@@ -47,7 +47,7 @@ export default function ContactForm() {
           required
           type="email"
           name="email"
-          className="w-full rounded-xl border border-white/15 bg-surface2 px-4 py-3 text-sm outline-none transition focus:border-brand"
+          className="w-full border border-white/15 bg-surface2 px-4 py-3 text-sm outline-none transition focus:border-brand"
           placeholder="tu@email.com"
         />
       </div>
@@ -59,7 +59,7 @@ export default function ContactForm() {
           required
           name="message"
           rows={5}
-          className="w-full resize-none rounded-xl border border-white/15 bg-surface2 px-4 py-3 text-sm outline-none transition focus:border-brand"
+          className="w-full resize-none border border-white/15 bg-surface2 px-4 py-3 text-sm outline-none transition focus:border-brand"
           placeholder="¿En qué te podemos ayudar?"
         />
       </div>
