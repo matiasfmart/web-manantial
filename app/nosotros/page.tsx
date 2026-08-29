@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function NosotrosPage() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-28">
+      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-20 sm:py-24">
         <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-brand/25 blur-[120px]" />
         <div className="section relative">
           <p className="eyebrow">Nuestra historia</p>
@@ -28,7 +28,7 @@ export default function NosotrosPage() {
         </div>
       </section>
 
-      <section className="section grid grid-cols-1 gap-10 py-24 lg:grid-cols-3">
+      <section className="section grid grid-cols-1 gap-6 py-16 sm:py-20 lg:grid-cols-3">
         <ValueCard
           title="Visión"
           text="Ser una iglesia que alcanza cada generación, dentro y fuera de sus paredes, con el amor y la Palabra de Dios."
@@ -61,7 +61,7 @@ export default function NosotrosPage() {
             {pastoralTeam.map((member) => (
               <div
                 key={member.displayName}
-                className="group flex items-center gap-4 rounded-2xl border border-ink/10 bg-white p-3 shadow-[0_18px_55px_rgba(5,7,12,0.06)] transition hover:border-brand/25"
+                className="group flex items-center gap-4 border-t border-ink/10 bg-white py-4 transition hover:border-brand/40 sm:px-4"
               >
                 <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-ink sm:h-28 sm:w-28">
                   {member.image ? (
@@ -100,7 +100,7 @@ export default function NosotrosPage() {
         </div>
       </section>
 
-      <section className="section py-24 text-center">
+      <section className="section py-16 text-center">
         <Link href="/contacto" className="btn-primary">
           Quiero saber más
         </Link>
@@ -111,7 +111,7 @@ export default function NosotrosPage() {
 
 function ValueCard({ title, text }: { title: string; text: string }) {
   return (
-    <div className="card p-8">
+    <div className="border-t border-white/15 pt-6">
       <h3 className="font-display text-2xl font-bold uppercase tracking-normal text-brand-light">
         {title}
       </h3>

@@ -7,15 +7,14 @@ export default function BigPlayer() {
   const { isPlaying, isLoading, hasError, toggle, volume, setVolume } = useRadio();
 
   return (
-    <div className="card relative overflow-hidden p-8 sm:p-12">
-      <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/30 blur-[100px]" />
-      <div className="absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-gold/20 blur-[100px]" />
+    <div className="card relative overflow-hidden border-l-4 border-l-brand p-6 sm:p-8">
+      <div className="absolute -right-24 -top-24 h-60 w-60 rounded-full bg-brand/20 blur-[100px]" />
 
-      <div className="relative flex flex-col items-center gap-8 text-center sm:flex-row sm:text-left">
+      <div className="relative flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
         <button
           onClick={toggle}
           aria-label={isPlaying ? "Pausar" : "Reproducir"}
-          className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-glow transition hover:scale-105 active:scale-95"
+          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white shadow-[0_14px_35px_rgba(33,91,214,0.25)] transition hover:scale-105 active:scale-95 sm:h-24 sm:w-24"
         >
           {isLoading ? (
             <span className="h-7 w-7 animate-spin rounded-full border-4 border-white/30 border-t-white" />

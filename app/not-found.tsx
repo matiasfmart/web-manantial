@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <section className="section flex min-h-[70vh] flex-col items-center justify-center py-28 text-center">
+    <section className="section flex min-h-[70vh] flex-col items-center justify-center py-20 text-center">
       <p className="eyebrow">Error 404</p>
       <h1 className="mt-4 font-display text-6xl font-black uppercase tracking-normal">
         Página no encontrada

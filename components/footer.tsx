@@ -47,7 +47,7 @@ export default function Footer() {
             <li><Link href="/primera-vez" className="hover:text-brand-light">¿Es tu primera vez?</Link></li>
             <li><Link href="/nosotros" className="hover:text-brand-light">Nosotros</Link></li>
             <li><Link href="/reuniones" className="hover:text-brand-light">Horarios de reunión</Link></li>
-            <li><Link href="/en-vivo" className="hover:text-brand-light">En vivo (radio y culto)</Link></li>
+            <li><Link href="/en-vivo" className="hover:text-brand-light">En vivo</Link></li>
             <li><Link href="/radio" className="hover:text-brand-light">Programación de radio</Link></li>
             <li><Link href="/contacto" className="hover:text-brand-light">Contacto</Link></li>
             <li><Link href="/ofrendas" className="hover:text-brand-light">Ofrendar</Link></li>

@@ -9,12 +9,12 @@ export default function FloatingPlayer() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-ink/95 backdrop-blur">
-      <div className="section flex items-center justify-between gap-3 py-3">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="section flex items-center justify-between gap-3 py-2">
+        <div className="flex min-w-0 items-center gap-2.5">
           <button
             onClick={toggle}
             aria-label={isPlaying ? "Pausar radio" : "Escuchar radio en vivo"}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-glow transition hover:bg-brand-light active:scale-95"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-[0_10px_25px_rgba(33,91,214,0.22)] transition hover:bg-brand-light active:scale-95"
           >
             {isLoading ? (
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
@@ -25,7 +25,7 @@ export default function FloatingPlayer() {
             )}
           </button>
           <div className="min-w-0">
-            <p className="flex items-center gap-2 truncate text-sm font-semibold">
+            <p className="flex items-center gap-2 truncate text-sm font-semibold leading-tight">
               {churchInfo.radioName}
               {isPlaying && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-brand-light">
@@ -34,7 +34,7 @@ export default function FloatingPlayer() {
                 </span>
               )}
             </p>
-            <p className="truncate text-xs text-white/50">
+            <p className="hidden truncate text-xs text-white/50 sm:block">
               {hasError
                 ? "No se pudo conectar. Probá de nuevo."
                 : "Escuchá la radio de la iglesia online"}
@@ -43,7 +43,7 @@ export default function FloatingPlayer() {
         </div>
         <Link
           href="/radio"
-          className="hidden shrink-0 text-xs font-semibold uppercase tracking-wide text-white/70 hover:text-white sm:block"
+          className="hidden shrink-0 border-l border-white/10 pl-4 text-xs font-semibold uppercase tracking-wide text-white/70 hover:text-white sm:block"
         >
           Abrir radio →
         </Link>

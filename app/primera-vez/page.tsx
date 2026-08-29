@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function PrimeraVezPage() {
   return (
-    <section className="section py-28">
+    <section className="section py-20 sm:py-24">
       <p className="eyebrow">Bienvenido a casa</p>
       <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
         ¿Es tu primera vez?
@@ -66,7 +66,7 @@ export default function PrimeraVezPage() {
       </div>
 
       {/* EN VIVO PRIMERO */}
-      <div className="mt-16 card flex flex-col items-start gap-4 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+      <div className="mt-14 card flex flex-col items-start gap-4 border-l-4 border-l-brand p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <div>
           <p className="eyebrow">¿Preferís mirar antes de venir?</p>
           <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
@@ -83,7 +83,7 @@ export default function PrimeraVezPage() {
       </div>
 
       {/* CONTACTO DIRECTO */}
-      <div className="mt-10 card p-8 sm:p-10">
+      <div className="mt-10 card border-l-4 border-l-gold p-6 sm:p-8">
         <p className="eyebrow">¿Tenés dudas?</p>
         <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
           Escribinos, con gusto te ayudamos
@@ -113,7 +113,7 @@ export default function PrimeraVezPage() {
 
 function InfoCard({ title, text }: { title: string; text: string }) {
   return (
-    <div className="card p-6">
+    <div className="border-t border-white/15 pt-5">
       <h3 className="font-display text-lg font-bold uppercase tracking-normal text-brand-light">
         {title}
       </h3>

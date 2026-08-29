@@ -19,8 +19,8 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-lg">
-      <div className="section flex h-18 items-center justify-between gap-4 py-3">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-ink/90 backdrop-blur-md">
+      <div className="section flex h-16 items-center justify-between gap-4 py-2">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" onClick={() => setOpen(false)}>
           <Image
             src={churchInfo.logoColor}
@@ -28,14 +28,14 @@ export default function Header() {
             width={40}
             height={40}
             priority
-            className="h-9 w-9"
+            className="h-8 w-8"
           />
-          <span className="hidden font-display text-base font-bold uppercase tracking-normal sm:inline">
+          <span className="hidden max-w-44 truncate font-display text-sm font-bold uppercase tracking-normal sm:inline xl:max-w-none">
             {churchInfo.shortName}
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
+        <nav className="hidden items-center gap-6 lg:flex">
           {links.map((link) => (
             <Link
               key={link.href}
@@ -52,7 +52,7 @@ export default function Header() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/en-vivo"
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-white backdrop-blur transition hover:border-white/40 hover:bg-white/10 active:scale-95"
+            className="inline-flex items-center gap-2 border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-white/40 hover:bg-white/10 active:scale-95"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
@@ -60,13 +60,16 @@ export default function Header() {
             </span>
             En vivo
           </Link>
-          <Link href="/ofrendas" className="btn-primary !py-2.5 !px-5 text-xs">
+          <Link
+            href="/ofrendas"
+            className="inline-flex items-center justify-center bg-brand px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-brand-light active:scale-95"
+          >
             Ofrendar
           </Link>
         </div>
 
         <button
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center border border-white/15 lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Abrir menú"
           aria-expanded={open}
@@ -89,10 +92,10 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className={`rounded-lg px-3 py-3 text-sm font-semibold uppercase tracking-wide transition ${
+                className={`border-b border-white/10 px-1 py-3 text-sm font-semibold uppercase tracking-wide transition ${
                   pathname === link.href
-                    ? "bg-white/10 text-brand-light"
-                    : "text-white/80 hover:bg-white/5"
+                    ? "text-brand-light"
+                    : "text-white/80 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -102,7 +105,7 @@ export default function Header() {
               <Link
                 href="/en-vivo"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
+                className="flex items-center justify-center gap-2 border border-white/20 bg-white/5 px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
@@ -113,7 +116,7 @@ export default function Header() {
               <Link
                 href="/ofrendas"
                 onClick={() => setOpen(false)}
-                className="btn-primary w-full text-sm"
+                className="flex w-full items-center justify-center bg-brand px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
               >
                 Ofrendar
               </Link>

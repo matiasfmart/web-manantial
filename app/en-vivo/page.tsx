@@ -20,16 +20,52 @@ export default async function EnVivoPage() {
 
   const radioBlock = (
     <div className="mt-16">
-      <div className="mb-6 flex items-center gap-3">
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand" />
-        </span>
-        <h2 className="font-display text-2xl font-bold uppercase tracking-normal">
-          {churchInfo.radioName} · en vivo las 24 h
-        </h2>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand" />
+            </span>
+            <p className="eyebrow">Audio 24 horas</p>
+          </div>
+          <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal sm:text-3xl">
+            {churchInfo.radioName}
+          </h2>
+        </div>
+        <Link href="/radio" className="text-sm font-semibold text-brand-light underline underline-offset-4">
+          Ver programación completa
+        </Link>
       </div>
+
       <BigPlayer />
+
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="border-t border-white/10 pt-4">
+          <p className="font-display text-lg font-bold uppercase tracking-normal">
+            Siempre encendida
+          </p>
+          <p className="mt-2 text-sm text-white/55">
+            Alabanza, palabra y compañía durante todo el día.
+          </p>
+        </div>
+        <div className="border-t border-white/10 pt-4">
+          <p className="font-display text-lg font-bold uppercase tracking-normal">
+            Desde el auditorio
+          </p>
+          <p className="mt-2 text-sm text-white/55">
+            Una señal pensada para acompañar a la iglesia y a cada familia.
+          </p>
+        </div>
+        <div className="border-t border-white/10 pt-4">
+          <p className="font-display text-lg font-bold uppercase tracking-normal">
+            En la app
+          </p>
+          <p className="mt-2 text-sm text-white/55">
+            Preparada para escucharse también desde iOS y Android.
+          </p>
+        </div>
+      </div>
     </div>
   );
 
@@ -64,7 +100,7 @@ export default async function EnVivoPage() {
   );
 
   return (
-    <section className="section py-28">
+    <section className="section py-20 sm:py-24">
       <p className="eyebrow">Ahora mismo</p>
       <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
         Todo lo que transmitimos en vivo
@@ -123,7 +159,7 @@ export default async function EnVivoPage() {
       </div>
 
       {/* REDES */}
-      <div className="mt-20 card p-8 sm:p-10">
+      <div className="mt-16 card border-l-4 border-l-brand p-6 sm:p-8">
         <p className="eyebrow">Seguinos</p>
         <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
           No te pierdas nada

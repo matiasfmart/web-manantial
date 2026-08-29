@@ -5,65 +5,40 @@ import { getTransmissionStatus } from "@/lib/youtube";
 import MinistryCard from "@/components/ministry-card";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
+import RadioStrip from "@/components/radio-strip";
 
 export default async function HomePage() {
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
 
-  const radioCard = (
-    <div className="card relative overflow-hidden p-8 sm:p-10">
-      <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
-      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-light">
-        <span className="h-2 w-2 animate-pulseSlow rounded-full bg-brand-light" />
-        On air · 24 h
-      </div>
-      <p className="mt-6 font-display text-2xl font-bold uppercase tracking-normal">
-        {churchInfo.radioName}
-      </p>
-      <p className="mt-1 text-sm text-white/50">
-        Alabanza, prédicas y contenido para toda la familia, sin parar.
-      </p>
-      <div className="mt-8 flex h-16 items-end gap-1">
-        {Array.from({ length: 24 }).map((_, i) => (
-          <span
-            key={i}
-            className="w-2 flex-1 rounded-full bg-gradient-to-t from-brand to-gold"
-            style={{ height: `${20 + ((i * 37) % 80)}%` }}
-          />
-        ))}
-      </div>
-      <Link href="/en-vivo" className="btn-primary mt-8 w-full sm:w-auto">
-        Escuchar ahora
-      </Link>
-    </div>
-  );
-
   const youtubeCard = (
-    <div className="card relative overflow-hidden p-8 sm:p-10">
+    <div className="card relative overflow-hidden border-l-4 border-l-gold p-5 sm:p-6 lg:p-8">
       <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-white/60">
-          YouTube
-        </span>
-        <CultoBadge status={transmissionStatus} />
-      </div>
-      <p className="mt-6 font-display text-2xl font-bold uppercase tracking-normal">
-        {transmissionStatus.kind === "live"
-          ? transmissionInfo.liveLabel
-          : transmissionStatus.kind === "latest"
-            ? transmissionInfo.latestLabel
-            : transmissionInfo.title}
-      </p>
-      <p className="mt-1 text-sm text-white/50">
-        Reuniones generales, Noche de Unción, Santa Cena y encuentros especiales.
-      </p>
-      <div className="mt-8">
+      <div className="relative grid grid-cols-1 gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+        <div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-white/60">
+              YouTube
+            </span>
+            <CultoBadge status={transmissionStatus} />
+          </div>
+          <p className="mt-5 font-display text-2xl font-bold uppercase tracking-normal sm:text-3xl">
+            {transmissionStatus.kind === "live"
+              ? transmissionInfo.liveLabel
+              : transmissionStatus.kind === "latest"
+                ? transmissionInfo.latestLabel
+                : transmissionInfo.title}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-white/55">
+            Reuniones generales, Noche de Unción, Santa Cena y encuentros especiales.
+          </p>
+          <Link href="/en-vivo" className="btn-secondary mt-7 w-full sm:w-auto">
+            Ver transmisión
+          </Link>
+        </div>
         <CultoPlayer compact status={transmissionStatus} />
       </div>
-      <Link href="/en-vivo" className="btn-secondary mt-8 w-full sm:w-auto">
-        Ver transmisión
-      </Link>
     </div>
   );
 
@@ -115,9 +90,9 @@ export default async function HomePage() {
       </section>
 
       {/* BIENVENIDA */}
-      <section className="bg-white py-24 text-ink">
+      <section className="bg-white py-16 sm:py-20 text-ink">
         <div className="section grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          <div className="relative order-2 h-80 w-full overflow-hidden rounded-2xl shadow-xl sm:h-[420px] lg:order-1">
+          <div className="relative order-2 h-80 w-full overflow-hidden shadow-xl sm:h-[420px] lg:order-1">
             <Image
               src="/images/hero/home-2.jpg"
               alt={`Encuentro de ${churchInfo.shortName}`}
@@ -168,7 +143,7 @@ export default async function HomePage() {
       </section>
 
       {/* EN VIVO */}
-      <section className="section py-24">
+      <section className="section py-16 sm:py-20">
         <p className="eyebrow">Transmisiones en vivo</p>
         <h2 className="mt-4 font-display text-4xl font-bold uppercase tracking-normal sm:text-5xl">
           Acompañanos estés donde estés
@@ -179,15 +154,15 @@ export default async function HomePage() {
           especiales.
         </p>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="mt-10 space-y-5">
           {transmissionStatus.kind === "live" ? (
             <>
               {youtubeCard}
-              {radioCard}
+              <RadioStrip />
             </>
           ) : (
             <>
-              {radioCard}
+              <RadioStrip />
               {youtubeCard}
             </>
           )}
@@ -195,7 +170,7 @@ export default async function HomePage() {
       </section>
 
       {/* MINISTERIOS */}
-      <section className="section py-24">
+      <section className="section py-16 sm:py-20">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <p className="eyebrow">Vida en comunidad</p>
@@ -218,7 +193,7 @@ export default async function HomePage() {
       {/* UBICACION */}
       <section className="section pb-24">
         <div className="card grid grid-cols-1 gap-0 overflow-hidden lg:grid-cols-2">
-          <div className="p-10 lg:p-14">
+          <div className="p-6 sm:p-8 lg:p-10">
             <p className="eyebrow">Te esperamos</p>
             <h2 className="mt-4 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
               {churchInfo.auditoriumName}

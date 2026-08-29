@@ -12,7 +12,7 @@ const days = ["Martes", "Miércoles", "Sábados", "Domingos"];
 
 export default function ReunionesPage() {
   return (
-    <section className="section py-28">
+    <section className="section py-20 sm:py-24">
       <p className="eyebrow">Reuniones públicas</p>
       <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
         Sumate a nuestras reuniones
@@ -29,7 +29,7 @@ export default function ReunionesPage() {
         .
       </p>
 
-      <div className="mt-14 overflow-hidden rounded-2xl border border-white/10">
+      <div className="mt-12 overflow-hidden border border-white/10">
         {days.map((day) => {
           const items = generalServices.filter((s) => s.day === day);
           return (
@@ -80,7 +80,7 @@ export default function ReunionesPage() {
         </p>
         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {specialServices.map((service) => (
-            <div key={service.name} className="card p-8">
+            <div key={service.name} className="card border-l-4 border-l-gold p-6 sm:p-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <h3 className="font-display text-2xl font-bold uppercase tracking-normal">
                   {service.name}
@@ -106,7 +106,7 @@ export default function ReunionesPage() {
         </div>
       </div>
 
-      <div className="mt-10 card p-8">
+      <div className="mt-10 card border-l-4 border-l-brand p-6 sm:p-8">
         <p className="eyebrow">Encuentros especiales</p>
         <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
           Algunas reuniones surgen durante el año

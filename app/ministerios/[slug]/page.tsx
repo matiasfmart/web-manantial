@@ -34,7 +34,7 @@ export default async function MinistryPage({
 
   return (
     <article>
-      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-24">
+      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-20 sm:py-24">
         <Image
           src={ministry.image}
           alt={ministry.name}
@@ -52,7 +52,7 @@ export default async function MinistryPage({
             ← Todos los ministerios
           </Link>
           <div
-            className={`mt-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${ministry.color} text-white shadow-glow`}
+            className={`mt-6 flex h-14 w-14 items-center justify-center bg-gradient-to-br ${ministry.color} text-white`}
           >
             <MinistryIcon icon={ministry.icon} className="h-8 w-8" />
           </div>
@@ -79,7 +79,7 @@ export default async function MinistryPage({
         </div>
       </section>
 
-      <section className="section grid grid-cols-1 gap-14 py-24 lg:grid-cols-3">
+      <section className="section grid grid-cols-1 gap-10 py-16 sm:py-20 lg:grid-cols-3">
         <div className="lg:col-span-2">
           {ministry.longDescription.map((p, i) => (
             <p key={i} className="mb-6 leading-relaxed text-white/70">
@@ -88,7 +88,7 @@ export default async function MinistryPage({
           ))}
 
           {ministry.image2 && (
-            <div className="relative mt-2 mb-8 h-72 w-full overflow-hidden rounded-2xl border border-white/10 sm:h-96">
+            <div className="relative mb-8 mt-2 h-72 w-full overflow-hidden border border-white/10 sm:h-96">
               <Image
                 src={ministry.image2}
                 alt={`${ministry.name} — foto 2`}
@@ -128,7 +128,7 @@ export default async function MinistryPage({
           )}
         </div>
 
-        <aside className="card h-fit p-8">
+        <aside className="card h-fit border-l-4 border-l-brand p-6 sm:p-8">
           <p className="eyebrow">
             {ministry.isOutreach ? "Sumate a colaborar" : "¿Querés sumarte?"}
           </p>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function ContactoPage() {
   return (
-    <section className="section py-28">
+    <section className="section py-20 sm:py-24">
       <p className="eyebrow">Estamos para vos</p>
       <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
         Hablemos
@@ -21,11 +21,11 @@ export default function ContactoPage() {
         conocernos: escribinos y te vamos a responder a la brevedad.
       </p>
 
-      <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2">
+      <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
         <ContactForm />
 
         <div className="space-y-6">
-          <div className="card p-8">
+          <div className="card border-l-4 border-l-brand p-6 sm:p-8">
             <p className="eyebrow">Auditorio</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
               {churchInfo.auditoriumName}
@@ -40,7 +40,7 @@ export default function ContactoPage() {
             </div>
           </div>
 
-          <div className="card p-8">
+          <div className="card border-l-4 border-l-gold p-6 sm:p-8">
             <p className="eyebrow">Pedí oración</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
               Estamos para orar por vos
@@ -63,7 +63,7 @@ export default function ContactoPage() {
             </a>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-white/10">
+          <div className="overflow-hidden border border-white/10">
             <iframe
               title="Mapa del auditorio"
               className="h-72 w-full grayscale"

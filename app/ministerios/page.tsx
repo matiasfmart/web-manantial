@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function MinisteriosPage() {
   return (
-    <section className="section py-28">
+    <section className="section py-20 sm:py-24">
       <p className="eyebrow">Vida en comunidad</p>
       <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
         Un lugar para cada etapa de tu vida
