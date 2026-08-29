@@ -80,7 +80,7 @@ export default function HomePage() {
               {[
                 ["7", "Áreas ministeriales"],
                 ["24/7", "Radio en vivo"],
-                ["+30", "Años de historia"],
+                ["+25", "Años haciendo Iglesia"],
                 ["1", "Familia"],
               ].map(([n, l]) => (
                 <div key={l}>
