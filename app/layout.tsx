@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: churchInfo.name,
       description:
-        "Una iglesia moderna en el corazón de Villa Lugano. Escuchá nuestra radio en vivo y sumate a nuestras reuniones.",
+        "En el corazón de Villa Lugano. Escuchá nuestra radio en vivo, y sumate a nuestras reuniones, también de forma online.",
       locale: "es_AR",
       type: "website",
     },
