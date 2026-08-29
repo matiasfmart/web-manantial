@@ -31,11 +31,9 @@ export default function Header() {
             priority
             className="h-10 w-10 sm:h-11 sm:w-11"
           />
-          <span className="block min-w-0 font-display uppercase leading-none tracking-normal text-white">
-            <span className="block truncate text-base font-black sm:text-lg">Manantial</span>
-            <span className="block truncate text-[10px] font-bold tracking-[0.18em] text-white/55 sm:text-[11px]">
-              de Avivamiento
-            </span>
+          <span className="block min-w-0 font-display text-sm font-extrabold uppercase leading-tight tracking-normal text-white sm:text-base">
+            <span className="block truncate lg:hidden">{churchInfo.shortName}</span>
+            <span className="hidden truncate lg:block">{churchInfo.name}</span>
           </span>
         </Link>
 
