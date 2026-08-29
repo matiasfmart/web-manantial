@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRadio } from "./radio-context";
-import { churchInfo } from "@/lib/data";
+import type { ChurchInfo } from "@/lib/data";
 
-export default function FloatingPlayer() {
+export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
   const { isPlaying, isLoading, hasError, toggle } = useRadio();
 
   return (

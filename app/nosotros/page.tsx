@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { churchInfo, pastoralTeam } from "@/lib/data";
+import { getChurchInfo, getPastoralTeam } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Nosotros",
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "Conocé la historia, visión y misión de Ministerio Manantial de Avivamiento, en el ex Cine Progreso de Villa Lugano.",
 };
 
-export default function NosotrosPage() {
+export default async function NosotrosPage() {
+  const [churchInfo, pastoralTeam] = await Promise.all([getChurchInfo(), getPastoralTeam()]);
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-white/10 bg-surface py-20 sm:py-24">

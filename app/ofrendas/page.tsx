@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { churchInfo, givingInfo } from "@/lib/data";
+import { getChurchInfo, getGivingInfo } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Ofrendas",
@@ -7,7 +7,8 @@ export const metadata: Metadata = {
     "Ofrendá o diezmá online a Ministerio Manantial de Avivamiento por Mercado Pago, transferencia bancaria o QR.",
 };
 
-export default function OfrendasPage() {
+export default async function OfrendasPage() {
+  const [churchInfo, givingInfo] = await Promise.all([getChurchInfo(), getGivingInfo()]);
   const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=10&color=05070c&bgcolor=ffffff&data=${encodeURIComponent(
     givingInfo.mercadoPago.link
   )}`;

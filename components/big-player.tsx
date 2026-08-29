@@ -1,9 +1,9 @@
 "use client";
 
-import { churchInfo } from "@/lib/data";
+import type { ChurchInfo } from "@/lib/data";
 import { useRadio } from "./radio-context";
 
-export default function BigPlayer() {
+export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
   const { isPlaying, isLoading, hasError, toggle, volume, setVolume } = useRadio();
 
   return (

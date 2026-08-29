@@ -8,4 +8,8 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.11.1
+      # ID del Google Sheet que alimenta los textos del sitio (ver README).
+      # Sin este valor, el sitio usa el contenido por defecto embebido en el código.
+      - key: GOOGLE_SHEET_ID
+        sync: false
     autoDeploy: true

@@ -8,7 +8,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { churchInfo } from "@/lib/data";
 
 type RadioContextValue = {
   isPlaying: boolean;
@@ -21,7 +20,13 @@ type RadioContextValue = {
 
 const RadioContext = createContext<RadioContextValue | null>(null);
 
-export function RadioProvider({ children }: { children: React.ReactNode }) {
+export function RadioProvider({
+  streamUrl,
+  children,
+}: {
+  streamUrl: string;
+  children: React.ReactNode;
+}) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +74,7 @@ export function RadioProvider({ children }: { children: React.ReactNode }) {
       <audio
         ref={audioRef}
         preload="none"
-        src={churchInfo.radioStreamUrl}
+        src={streamUrl}
         onWaiting={() => setIsLoading(true)}
         onPlaying={() => setIsLoading(false)}
         onError={() => {

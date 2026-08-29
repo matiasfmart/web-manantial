@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { churchInfo, generalServices, ministries, transmissionInfo } from "@/lib/data";
+import { getChurchInfo, getGeneralServices, getMinistries, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
 import MinistryCard from "@/components/ministry-card";
 import CultoBadge from "@/components/culto-badge";
@@ -8,6 +8,11 @@ import CultoPlayer from "@/components/culto-player";
 import RadioStrip from "@/components/radio-strip";
 
 export default async function HomePage() {
+  const [churchInfo, generalServices, ministries] = await Promise.all([
+    getChurchInfo(),
+    getGeneralServices(),
+    getMinistries(),
+  ]);
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
@@ -157,11 +162,11 @@ export default async function HomePage() {
           {transmissionStatus.kind === "live" ? (
             <>
               {youtubeCard}
-              <RadioStrip />
+              <RadioStrip churchInfo={churchInfo} />
             </>
           ) : (
             <>
-              <RadioStrip />
+              <RadioStrip churchInfo={churchInfo} />
               {youtubeCard}
             </>
           )}

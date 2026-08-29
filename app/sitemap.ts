@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { ministries } from "@/lib/data";
+import { ministrySlugs } from "@/lib/data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://iglesiamanantial.org";
@@ -18,8 +18,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  const ministryRoutes = ministries.map((m) => ({
-    url: `${base}/ministerios/${m.slug}`,
+  const ministryRoutes = ministrySlugs.map((slug) => ({
+    url: `${base}/ministerios/${slug}`,
     lastModified: new Date(),
   }));
 

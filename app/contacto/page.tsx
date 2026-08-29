@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { churchInfo } from "@/lib/data";
+import { getChurchInfo } from "@/lib/data";
 import ContactForm from "@/components/contact-form";
 import { SocialBrandIcon } from "@/components/social-icons";
 
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "Contactate con Ministerio Manantial de Avivamiento en Villa Lugano, CABA. Escribinos o visitanos en nuestro auditorio.",
 };
 
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const churchInfo = await getChurchInfo();
+
   return (
     <>
       <section className="section py-20 sm:py-24">

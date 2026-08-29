@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { churchInfo, ministries } from "@/lib/data";
+import type { ChurchInfo, Ministry } from "@/lib/data";
 import { SocialBrandIcon, SocialCircleLink } from "./social-icons";
 
-export default function Footer() {
+export default function Footer({
+  churchInfo,
+  ministries,
+}: {
+  churchInfo: ChurchInfo;
+  ministries: Ministry[];
+}) {
   return (
     <footer className="border-t border-white/10 bg-surface pb-28 pt-16">
       <div className="section grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">

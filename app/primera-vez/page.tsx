@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { churchInfo } from "@/lib/data";
+import { getChurchInfo } from "@/lib/data";
 import { SocialBrandIcon } from "@/components/social-icons";
 
 export const metadata: Metadata = {
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "¿Es tu primera vez en Ministerio Manantial de Avivamiento? Conocé qué esperar, cómo llegar y todo lo que necesitás saber antes de tu visita.",
 };
 
-export default function PrimeraVezPage() {
+export default async function PrimeraVezPage() {
+  const churchInfo = await getChurchInfo();
+
   return (
     <>
       <section className="section py-20 sm:py-24">

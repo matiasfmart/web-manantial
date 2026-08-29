@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { churchInfo, generalServices, specialServices } from "@/lib/data";
+import { getChurchInfo, getGeneralServices, getSpecialServices } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Reuniones y horarios",
@@ -10,7 +10,13 @@ export const metadata: Metadata = {
 
 const days = ["Martes", "Miércoles", "Sábados", "Domingos"];
 
-export default function ReunionesPage() {
+export default async function ReunionesPage() {
+  const [churchInfo, generalServices, specialServices] = await Promise.all([
+    getChurchInfo(),
+    getGeneralServices(),
+    getSpecialServices(),
+  ]);
+
   return (
     <>
       <section className="section py-20 sm:py-24">

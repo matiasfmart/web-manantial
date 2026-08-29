@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ministries } from "@/lib/data";
+import { getMinistries } from "@/lib/data";
 import MinistryCard from "@/components/ministry-card";
 
 export const metadata: Metadata = {
@@ -8,7 +8,9 @@ export const metadata: Metadata = {
     "Conocé las áreas ministeriales de la iglesia: jóvenes, adolescentes, años dorados, IBE, escuela de vida, escuela bíblica, evangelismo y GDI.",
 };
 
-export default function MinisteriosPage() {
+export default async function MinisteriosPage() {
+  const ministries = await getMinistries();
+
   return (
     <section className="section py-20 sm:py-24">
       <p className="eyebrow">Vida en comunidad</p>

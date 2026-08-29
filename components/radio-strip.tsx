@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { churchInfo } from "@/lib/data";
+import type { ChurchInfo } from "@/lib/data";
 import { useRadio } from "./radio-context";
 
-export default function RadioStrip({ className = "" }: { className?: string }) {
+export default function RadioStrip({
+  churchInfo,
+  className = "",
+}: {
+  churchInfo: ChurchInfo;
+  className?: string;
+}) {
   const { isPlaying, isLoading, hasError, toggle } = useRadio();
 
   return (

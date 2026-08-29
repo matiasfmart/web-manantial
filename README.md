@@ -13,14 +13,96 @@ Sitio web institucional para la iglesia, construido con **Next.js 14 (App Router
 
 ## Datos a personalizar antes de producción
 
-Todos los datos de contenido están centralizados en [`lib/data.ts`](lib/data.ts):
+Todos los textos del sitio (ministerios, horarios, datos de contacto, ofrendas, equipo
+pastoral, programación de radio) se pueden editar **sin tocar código**, desde un
+Google Sheet — ver la sección [Backoffice sin código (Google Sheets)](#backoffice-sin-código-google-sheets)
+más abajo. Si no se configura ningún Sheet, el sitio funciona igual, usando el
+contenido por defecto que está en [`lib/data.ts`](lib/data.ts).
+
+Lo que sí sigue siendo parte del código (no editable desde la hoja):
 
 - `churchInfo.radioStreamUrl`: reemplazar por la URL real del stream de audio (icecast/shoutcast/HLS).
-- `churchInfo.appStore` / `churchInfo.playStore`: enlaces reales a las tiendas cuando la app esté publicada.
-- `churchInfo.social` / `churchInfo.whatsappChannelUrl` / `churchInfo.prayerRequest`: redes, canal de WhatsApp y teléfonos reales.
 - `churchInfo.youtubeChannelId`: completar con el ID del canal (YouTube Studio → Configuración → Canal → Configuración avanzada) para activar el embed en vivo automático en `/en-vivo`. Mientras esté vacío, se usa el link `.../live`, que YouTube redirige solo a la transmisión en curso.
-- `pastoralTeam`: reemplazar los placeholders con logo por fotos reales de cada unidad pastoral (ver sección de imágenes abajo).
+- `churchInfo.appStore` / `churchInfo.playStore`: enlaces reales a las tiendas cuando la app esté publicada.
+- Imágenes de ministerios, logos y fotos del equipo pastoral (ver sección de imágenes abajo): se administran en el código, no desde la hoja.
 - `components/contact-form.tsx`: el formulario actualmente no envía el mensaje a ningún backend. Conectar a un servicio de email (Resend, Formspree, etc.) o a un endpoint propio antes de producción.
+
+## Backoffice sin código (Google Sheets)
+
+El sitio puede leer sus textos desde un Google Sheet público (solo lectura), sin
+necesidad de API keys ni de tocar código. Mientras no se configure, se usan los
+valores por defecto embebidos en `lib/data.ts`.
+
+### 1. Crear el Google Sheet
+
+Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
+(tab) por cada uno de estos nombres exactos** (respetando mayúsculas):
+
+| Hoja | Columnas | Para qué es |
+|---|---|---|
+| `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, WhatsApp, datos de oración |
+| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription` | Texto de cada uno de los 7 ministerios |
+| `Reuniones` | `day`, `time`, `label`, `streamed` | Horario semanal general |
+| `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed` | Noche de Unción, Santa Cena, etc. |
+| `EquipoPastoral` | `displayName`, `role` | Pastora principal, matrimonios, evangelista |
+| `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
+| `OfrendasCategorias` | `name`, `description` | "Ofrenda general", "Diezmo", etc. |
+| `ProgramacionRadio` | `time`, `program`, `host` | Grilla horaria de Radio Maranata |
+
+**Importante sobre `Ministerios`**: el valor de `slug` tiene que ser exactamente
+uno de estos (son los que ya usan las fotos y colores del sitio):
+`avivamiento-jovenes`, `anos-dorados`, `ibe`, `escuela-de-vida`, `escuela-biblica`,
+`avivamiento-en-las-calles`, `gdi`. Si falta una fila para un slug, esa página
+simplemente no se genera.
+
+En las columnas `streamed` / `isOutreach` usá el texto `TRUE` o `FALSE`.
+
+En `DatosIglesia`, cada fila es un dato suelto, por ejemplo:
+
+```
+key              | value
+name             | Ministerio Manantial de Avivamiento
+shortName        | Manantial de Avivamiento
+phone            | +54 11 2799-4682
+email            | hola@iglesiamanantial.org
+instagram        | https://www.instagram.com/manantialavivamiento/
+prayerMobile     | +54 9 11 2799-4682
+prayerWhatsappLink | https://wa.me/5491127994682
+```
+
+(Las claves disponibles son las mismas que ves en `defaultChurchText` dentro de
+`lib/data.ts`; cualquiera que no completes usa el valor por defecto.)
+
+### 2. Compartir el Sheet
+
+En el Sheet: **Compartir → Cambiar a "Cualquier persona con el enlace" → Rol: Lector**.
+No hace falta hacerlo público en buscadores, solo que cualquiera con el link pueda verlo
+(esto es lo que le permite al sitio leerlo sin necesidad de login ni API key).
+
+### 3. Configurar la variable de entorno
+
+De la URL del Sheet, copiá el ID (la parte entre `/d/` y `/edit`):
+
+```
+https://docs.google.com/spreadsheets/d/ESTE_ES_EL_ID/edit
+```
+
+En Render: **Dashboard → tu servicio → Environment → Add Environment Variable**:
+
+```
+GOOGLE_SHEET_ID = ESTE_ES_EL_ID
+```
+
+Guardá y Render va a redeployar. Localmente, para probarlo, creá un archivo
+`.env.local` en la raíz del proyecto con la misma variable.
+
+### 4. Uso diario
+
+A partir de acá, cualquier persona con acceso de edición al Sheet puede cambiar
+horarios, descripciones, teléfonos, etc. Los cambios tardan hasta 5 minutos en
+reflejarse en la web (el sitio cachea cada hoja por 300 segundos). Si una hoja
+está vacía o mal escrita, esa sección vuelve a mostrar el contenido por defecto
+en vez de romperse.
 
 ## Estructura de imágenes (`public/`)
 

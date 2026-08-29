@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { churchInfo, radioSchedule } from "@/lib/data";
+import { getChurchInfo, getRadioSchedule } from "@/lib/data";
 import BigPlayer from "@/components/big-player";
 
 export const metadata: Metadata = {
@@ -8,7 +8,9 @@ export const metadata: Metadata = {
     "Escuchá Radio Maranata en vivo, las 24 horas. Descargá también nuestra aplicación móvil para iOS y Android.",
 };
 
-export default function RadioPage() {
+export default async function RadioPage() {
+  const [churchInfo, radioSchedule] = await Promise.all([getChurchInfo(), getRadioSchedule()]);
+
   return (
     <>
       <section className="section py-20 sm:py-24">
@@ -22,7 +24,7 @@ export default function RadioPage() {
         </p>
 
         <div className="mt-14">
-          <BigPlayer />
+          <BigPlayer churchInfo={churchInfo} />
         </div>
       </section>
 
