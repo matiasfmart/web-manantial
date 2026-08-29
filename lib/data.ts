@@ -193,7 +193,7 @@ export const churchInfo = {
   radioStreamUrl: "https://stream.example.com/radio-manantial.mp3",
   // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
   // Canal → Configuración avanzada, para activar el embed en vivo automático.
-  youtubeChannelId: "",
+  youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
   liveServiceSchedule: "Domingos 19:30 h",
   social: {
     instagram: "https://www.instagram.com/manantialavivamiento/",
