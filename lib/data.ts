@@ -189,7 +189,7 @@ export const churchInfo = {
   logoLight: "/logo/logo-blanco.png",
   logoDark: "/logo/logo-negro.png",
   logoColor: "/logo/logo-color.png",
-  radioName: "Radio Manantial",
+  radioName: "Radio Maranata",
   radioStreamUrl: "https://stream.example.com/radio-manantial.mp3",
   // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
   // Canal → Configuración avanzada, para activar el embed en vivo automático.
