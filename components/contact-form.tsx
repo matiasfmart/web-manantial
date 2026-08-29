@@ -10,8 +10,8 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
 
   if (submitted) {
     return (
-      <div className={`border-y py-8 text-center ${isLight ? "border-ink/10" : "border-white/10"}`}>
-        <p className="font-display text-2xl font-bold uppercase text-brand">
+      <div className={`border-y py-8 text-center animate-[revealUp_520ms_cubic-bezier(0.22,1,0.36,1)_forwards] ${isLight ? "border-ink/10" : "border-white/10"}`}>
+        <p className="font-display text-2xl font-bold uppercase text-ink">
           ¡Gracias por escribirnos!
         </p>
         <p className={`mt-3 text-sm ${isLight ? "text-ink/60" : "text-white/60"}`}>
@@ -24,8 +24,8 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
   const labelClass = `mb-2 block text-xs font-semibold uppercase tracking-wide ${
     isLight ? "text-ink/60" : "text-white/60"
   }`;
-  const inputClass = `w-full border px-4 py-3 text-sm outline-none transition focus:border-brand ${
-    isLight ? "border-ink/15 bg-white text-ink" : "border-white/15 bg-surface2"
+  const inputClass = `w-full border px-4 py-3 text-sm outline-none transition duration-200 focus:-translate-y-0.5 focus:border-brand focus:bg-white/95 ${
+    isLight ? "border-ink/15 bg-white text-ink" : "border-white/15 bg-ink text-white focus:bg-white/5"
   }`;
 
   return (
@@ -81,9 +81,18 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
           placeholder="¿En qué te podemos ayudar?"
         />
       </div>
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="animate-[revealUp_240ms_ease-out_forwards] text-sm text-red-400">{error}</p>}
       <button type="submit" disabled={isSending} className="btn-primary w-full disabled:opacity-60">
-        {isSending ? "Enviando..." : "Enviar mensaje"}
+        {isSending ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white [animation-delay:120ms]" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white [animation-delay:240ms]" />
+            Enviando
+          </span>
+        ) : (
+          "Enviar mensaje"
+        )}
       </button>
     </form>
   );

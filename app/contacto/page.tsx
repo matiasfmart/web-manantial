@@ -19,7 +19,7 @@ export default async function ContactoPage() {
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
           Hablemos
         </h1>
-        <p className="mt-6 max-w-2xl text-white/60">
+        <p className="mt-6 max-w-2xl text-ink/65">
           Ya sea que quieras sumarte a un ministerio, a un GDI, o simplemente
           conocernos: escribinos y te vamos a responder a la brevedad.
         </p>
@@ -32,7 +32,7 @@ export default async function ContactoPage() {
 
           <div className="space-y-8">
             <div className="border-y border-ink/10 py-6">
-              <p className="eyebrow !text-brand">Auditorio</p>
+              <p className="eyebrow">Auditorio</p>
               <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
                 {churchInfo.auditoriumName}
               </h2>
@@ -47,7 +47,7 @@ export default async function ContactoPage() {
             </div>
 
             <div className="border-y border-ink/10 py-6">
-              <p className="eyebrow !text-brand">Pedí oración</p>
+              <p className="eyebrow">Pedí oración</p>
               <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
                 Estamos para orar por vos
               </h2>

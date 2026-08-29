@@ -17,7 +17,7 @@ export default async function MinisteriosPage() {
       <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
         Un lugar para cada etapa de tu vida
       </h1>
-      <p className="mt-6 max-w-2xl text-white/60">
+      <p className="mt-6 max-w-2xl text-ink/65">
         Creemos que la iglesia es familia. Por eso tenemos un espacio pensado
         para cada edad y cada momento: desde los más chicos hasta nuestros
         hermanos mayores.
@@ -25,7 +25,7 @@ export default async function MinisteriosPage() {
 
       <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {ministries.map((m) => (
-          <MinistryCard key={m.slug} ministry={m} />
+          <MinistryCard key={m.slug} ministry={m} variant="light" />
         ))}
       </div>
     </section>

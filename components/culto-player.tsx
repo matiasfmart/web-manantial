@@ -21,7 +21,7 @@ export default async function CultoPlayer({
 
   if (transmissionStatus.kind === "live") {
     return (
-      <div className="aspect-video w-full overflow-hidden bg-surface2">
+      <div className="motion-scale-in aspect-video w-full overflow-hidden bg-surface2">
         <iframe
           className="h-full w-full"
           src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?autoplay=1`}
@@ -45,7 +45,7 @@ export default async function CultoPlayer({
 
     return (
       <div className={`w-full ${compact ? "space-y-1" : "space-y-2"}`}>
-        <div className="aspect-video w-full overflow-hidden bg-surface2">
+        <div className="motion-scale-in aspect-video w-full overflow-hidden bg-surface2">
           <iframe
             className="h-full w-full"
             src={`https://www.youtube.com/embed/${transmissionStatus.videoId}`}
@@ -55,7 +55,7 @@ export default async function CultoPlayer({
             allowFullScreen
           />
         </div>
-        <p className="px-1 text-sm text-white/60">
+        <p className="px-1 text-sm text-ink/60">
           Última reunión en vivo{fecha ? ` — ${fecha}` : ""}
         </p>
       </div>
@@ -67,19 +67,19 @@ export default async function CultoPlayer({
       href={`${churchInfo.social.youtube}/live`}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex aspect-video w-full flex-col items-center justify-center gap-3 border border-white/10 bg-surface2 text-center transition hover:bg-surface2/70 ${
+      className={`motion-scale-in group flex aspect-video w-full flex-col items-center justify-center gap-3 border border-ink/10 bg-surface2 text-center transition hover:bg-surface2/70 ${
         compact ? "gap-2" : ""
       }`}
     >
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/15 text-gold-light transition group-hover:scale-110">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink/10 text-ink transition group-hover:scale-110">
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
           <path d="M8 5v14l11-7z" />
         </svg>
       </span>
-      <span className="max-w-xs px-4 text-sm font-semibold text-white/70">
+      <span className="max-w-xs px-4 text-sm font-semibold text-ink/75">
         Ver el canal de YouTube
       </span>
-      <span className="max-w-sm px-4 text-xs text-white/40">
+      <span className="max-w-sm px-4 text-xs text-ink/45">
         No pudimos confirmar una transmisión disponible en este momento.
       </span>
     </a>

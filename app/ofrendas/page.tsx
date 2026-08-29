@@ -20,8 +20,8 @@ export default async function OfrendasPage() {
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
           Ofrendá online
         </h1>
-        <p className="mt-6 max-w-2xl text-white/60">{givingInfo.intro}</p>
-        <p className="mt-4 max-w-2xl text-sm italic text-brand-light">
+        <p className="mt-6 max-w-2xl text-ink/65">{givingInfo.intro}</p>
+        <p className="mt-4 max-w-2xl text-sm italic text-ink/50">
           {givingInfo.verse}
         </p>
       </section>
@@ -29,12 +29,12 @@ export default async function OfrendasPage() {
       {/* METODOS DE PAGO (fondo claro: más confianza y legibilidad) */}
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section grid grid-cols-1 gap-10 lg:grid-cols-[340px_1fr]">
-          <aside className="border-y border-ink/10 py-6 lg:sticky lg:top-24 lg:h-fit">
-            <p className="eyebrow !text-brand">QR</p>
+          <aside className="border-y border-ink/10 py-6 lg:sticky lg:top-24 lg:h-fit" data-reveal>
+            <p className="eyebrow">QR</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
               Escaneá y ofrendá
             </h2>
-            <div className="mt-6 w-fit border border-ink/10 p-3">
+            <div className="mt-6 w-fit border border-ink/10 p-3 transition hover:-translate-y-1 hover:border-brand/35">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={qrSrc}
@@ -49,10 +49,10 @@ export default async function OfrendasPage() {
             </p>
           </aside>
 
-          <div className="space-y-10">
+          <div className="space-y-10" data-stagger>
             <section className="border-t border-ink/10 pt-6">
               <div className="grid grid-cols-[44px_1fr] gap-4">
-                <div className="flex h-11 w-11 items-center justify-center bg-gradient-to-br from-gold to-gold-dark text-white">
+                <div className="flex h-11 w-11 items-center justify-center bg-ink text-white">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
                     <rect x="2" y="5" width="20" height="14" rx="2.5" />
                     <path d="M2 10h20M6 15h4" />
@@ -73,7 +73,7 @@ export default async function OfrendasPage() {
                     href={givingInfo.mercadoPago.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-6 inline-flex items-center justify-center bg-brand px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-brand-light active:scale-95"
+                    className="btn-primary mt-6"
                   >
                     Ofrendar con Mercado Pago
                   </a>
@@ -83,7 +83,7 @@ export default async function OfrendasPage() {
 
             <section className="border-t border-ink/10 pt-6">
               <div className="grid grid-cols-[44px_1fr] gap-4">
-                <div className="flex h-11 w-11 items-center justify-center bg-gradient-to-br from-brand to-brand-dark text-white">
+                <div className="flex h-11 w-11 items-center justify-center bg-carbon text-white">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
                     <path d="M3 10l9-6 9 6M5 10v9m14-9v9M9 19v-6h6v6M3 19h18" />
                   </svg>
@@ -115,19 +115,19 @@ export default async function OfrendasPage() {
           <p className="eyebrow">¿A dónde va tu ofrenda?</p>
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
             {givingInfo.categories.map((c) => (
-              <div key={c.name} className="border-t border-white/10 pt-5">
-                <h3 className="font-display text-lg font-bold uppercase tracking-normal text-brand-light">
+              <div key={c.name} className="border-t border-ink/10 pt-5">
+                <h3 className="font-display text-lg font-semibold tracking-normal text-ink">
                   {c.name}
                 </h3>
-                <p className="mt-2 text-sm text-white/60">{c.description}</p>
+                <p className="mt-2 text-sm text-ink/65">{c.description}</p>
               </div>
             ))}
           </div>
         </div>
 
-        <p className="mt-14 text-sm text-white/40">
+        <p className="mt-14 text-sm text-ink/50">
           ¿Tenés dudas sobre tu ofrenda o necesitás un comprobante? Escribinos a{" "}
-          <a href={`mailto:${churchInfo.email}`} className="text-brand-light underline underline-offset-4">
+          <a href={`mailto:${churchInfo.email}`} className="text-brand underline underline-offset-4">
             {churchInfo.email}
           </a>
           .
@@ -139,7 +139,7 @@ export default async function OfrendasPage() {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-1 py-3 transition-colors hover:bg-mist/60 sm:flex-row sm:items-center sm:justify-between">
       <span className="text-ink/40">{label}</span>
       <span className="break-all font-semibold text-ink/85 sm:text-right">{value}</span>
     </div>

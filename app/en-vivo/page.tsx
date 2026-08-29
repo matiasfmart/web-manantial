@@ -34,7 +34,7 @@ export default async function EnVivoPage() {
             {churchInfo.radioName}
           </h2>
         </div>
-        <Link href="/radio" className="text-sm font-semibold text-brand-light underline underline-offset-4">
+        <Link href="/radio" className="text-sm font-semibold text-brand underline underline-offset-4">
           Ver programación completa
         </Link>
       </div>
@@ -42,27 +42,27 @@ export default async function EnVivoPage() {
       <BigPlayer churchInfo={churchInfo} />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="border-t border-white/10 pt-4">
+        <div className="border-t border-ink/10 pt-4">
           <p className="font-display text-lg font-bold uppercase tracking-normal">
             Siempre encendida
           </p>
-          <p className="mt-2 text-sm text-white/55">
+          <p className="mt-2 text-sm text-ink/60">
             Alabanza, palabra y compañía durante todo el día.
           </p>
         </div>
-        <div className="border-t border-white/10 pt-4">
+        <div className="border-t border-ink/10 pt-4">
           <p className="font-display text-lg font-bold uppercase tracking-normal">
             Desde el auditorio
           </p>
-          <p className="mt-2 text-sm text-white/55">
+          <p className="mt-2 text-sm text-ink/60">
             Una señal pensada para acompañar a la iglesia y a cada familia.
           </p>
         </div>
-        <div className="border-t border-white/10 pt-4">
+        <div className="border-t border-ink/10 pt-4">
           <p className="font-display text-lg font-bold uppercase tracking-normal">
             En la app
           </p>
-          <p className="mt-2 text-sm text-white/55">
+          <p className="mt-2 text-sm text-ink/60">
             Preparada para escucharse también desde iOS y Android.
           </p>
         </div>
@@ -79,10 +79,10 @@ export default async function EnVivoPage() {
         <CultoBadge status={transmissionStatus} />
       </div>
 
-      <div className="overflow-hidden border-y border-white/10">
+      <div className="overflow-hidden border-y border-ink/10">
         <CultoPlayer status={transmissionStatus} />
         <div className="flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8">
-          <p className="max-w-lg text-sm text-white/60">
+          <p className="max-w-lg text-sm text-ink/65">
             {transmissionStatus.kind === "live"
               ? "Esta transmisión viene directamente desde nuestro canal de YouTube."
               : "Cuando no estamos transmitiendo, este espacio muestra la última reunión disponible del canal. Si YouTube no devuelve un video válido, evitamos mostrar un reproductor roto."}
@@ -107,7 +107,7 @@ export default async function EnVivoPage() {
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
           Todo lo que transmitimos en vivo
         </h1>
-        <p className="mt-6 max-w-2xl text-white/60">
+        <p className="mt-6 max-w-2xl text-ink/65">
           Nuestra radio suena las 24 horas del día y, además, transmitimos por
           YouTube nuestras reuniones generales, noches especiales y encuentros
           que pueden surgir durante la semana.
@@ -129,7 +129,7 @@ export default async function EnVivoPage() {
       {/* TAMBIEN TRANSMITIMOS (fondo claro: info complementaria de fácil lectura) */}
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section">
-          <p className="eyebrow !text-brand">También transmitimos</p>
+          <p className="eyebrow">También transmitimos</p>
           <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
             Reuniones fijas y encuentros especiales
           </h2>
@@ -142,7 +142,7 @@ export default async function EnVivoPage() {
               <p className="font-display text-lg font-bold uppercase tracking-normal">
                 Reunión general
               </p>
-              <p className="mt-2 text-sm font-semibold text-brand">
+              <p className="mt-2 text-sm font-semibold text-ink/70">
                 {churchInfo.liveServiceSchedule}
               </p>
               <p className="mt-3 text-sm text-ink/60">
@@ -154,7 +154,7 @@ export default async function EnVivoPage() {
                 <p className="font-display text-lg font-bold uppercase tracking-normal">
                   {service.name}
                 </p>
-                <p className="mt-2 text-sm font-semibold text-brand">
+                <p className="mt-2 text-sm font-semibold text-ink/70">
                   {service.schedule}
                 </p>
                 <p className="mt-3 text-sm text-ink/60">{service.description}</p>
@@ -164,7 +164,7 @@ export default async function EnVivoPage() {
 
           {/* REDES */}
           <div className="mt-16 border-y border-ink/10 py-6">
-            <p className="eyebrow !text-brand">Seguinos</p>
+            <p className="eyebrow">Seguinos</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
               No te pierdas nada
             </h2>

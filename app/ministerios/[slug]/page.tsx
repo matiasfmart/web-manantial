@@ -34,7 +34,7 @@ export default async function MinistryPage({
 
   return (
     <article>
-      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-20 sm:py-24">
+      <section className="relative overflow-hidden border-b border-ink/10 bg-surface py-20 sm:py-24">
         <Image
           src={ministry.image}
           alt={ministry.name}
@@ -45,7 +45,7 @@ export default async function MinistryPage({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/85 to-surface/40" />
         <div className="section relative">
-          <Link href="/ministerios" className="text-sm text-white/50 hover:text-white">
+          <Link href="/ministerios" className="text-sm text-ink/60 hover:text-brand">
             ← Todos los ministerios
           </Link>
           <div
@@ -56,20 +56,20 @@ export default async function MinistryPage({
           <h1 className="mt-6 max-w-3xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
             {ministry.name}
           </h1>
-          <p className="mt-4 text-lg font-medium text-brand-light">
+          <p className="mt-4 text-lg font-medium text-ink/65">
             {ministry.tagline}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4 text-sm">
-            <span className="border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide">
+            <span className="border border-ink/15 px-4 py-2 font-semibold uppercase tracking-wide">
               {ministry.schedule}
             </span>
-            <span className="border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide text-white/70">
+            <span className="border border-ink/15 px-4 py-2 font-semibold uppercase tracking-wide text-ink/70">
               {ministry.audience}
             </span>
           </div>
           {ministry.scheduleNote && (
-            <p className="mt-4 max-w-xl text-sm italic text-white/50">
+            <p className="mt-4 max-w-xl text-sm italic text-ink/50">
               {ministry.scheduleNote}
             </p>
           )}
@@ -111,11 +111,11 @@ export default async function MinistryPage({
                   </div>
                 )}
                 <div>
-                  <p className="eyebrow !text-brand">Dentro de este ministerio</p>
+                  <p className="eyebrow">Dentro de este ministerio</p>
                   <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
                     {ministry.subMinistry.name}
                   </h2>
-                  <p className="mt-2 text-sm font-semibold text-brand">
+                  <p className="mt-2 text-sm font-semibold text-ink/70">
                     {ministry.subMinistry.schedule}
                   </p>
                   <p className="mt-4 text-sm leading-relaxed text-ink/60">
@@ -127,7 +127,7 @@ export default async function MinistryPage({
           </div>
 
           <aside className="h-fit border-y border-ink/10 py-6 lg:border-l lg:border-y-0 lg:py-0 lg:pl-8">
-            <p className="eyebrow !text-brand">
+            <p className="eyebrow">
               {ministry.isOutreach ? "Sumate a colaborar" : "¿Querés sumarte?"}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-ink/60">
@@ -140,7 +140,7 @@ export default async function MinistryPage({
             </Link>
             <Link
               href="/reuniones"
-              className="mt-3 inline-flex w-full items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-ink transition hover:border-ink/40 hover:bg-ink/5"
+              className="btn-secondary mt-3 w-full"
             >
               Ver todos los horarios
             </Link>

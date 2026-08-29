@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
@@ -11,8 +11,8 @@ html {
 }
 
 body {
-  background-color: #05070c;
-  color: #f4f4f7;
+  background-color: #f4f4f0;
+  color: #101314;
 }
 
 @keyframes menuIn {
@@ -26,21 +26,218 @@ body {
   }
 }
 
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes revealScale {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes panelIn {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes liveWave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes heroDrift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.055);
+  }
+}
+
+@keyframes softBreathe {
+  0%,
+  100% {
+    opacity: 0.86;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+[data-reveal].motion-pending {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+[data-reveal].is-visible {
+  animation: revealUp 680ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--motion-delay, 0ms);
+}
+
+.motion-pending[data-stagger] > *,
+[data-reveal].motion-pending [data-stagger] > * {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+[data-reveal].is-visible [data-stagger] > *,
+[data-stagger].is-visible > * {
+  animation: revealUp 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--motion-delay, 0ms);
+}
+
+.motion-float {
+  animation: floatSlow 7s ease-in-out infinite;
+}
+
+.audio-bars span {
+  animation: liveWave 1.35s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.audio-bars span:nth-child(2n) {
+  animation-delay: 160ms;
+}
+
+.audio-bars span:nth-child(3n) {
+  animation-delay: 320ms;
+}
+
+.hero-image-slow {
+  animation: heroDrift 18s ease-out forwards;
+}
+
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, black 7%, black 93%, transparent);
+}
+
+.marquee-track:hover,
+.marquee-track:active {
+  animation-play-state: paused;
+}
+
+.motion-scale-in {
+  animation: revealScale 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  transition: background-size 180ms ease, color 180ms ease;
+}
+
+.link-underline:hover {
+  background-size: 100% 1px;
+}
+
+.fallback-breathe {
+  animation: softBreathe 4.8s ease-in-out infinite;
+}
+
+details::details-content {
+  block-size: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    block-size 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease;
+  transition-behavior: allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
 @layer components {
   .section {
     @apply mx-auto w-full max-w-7xl px-5 sm:px-7 lg:px-10;
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-xs sm:text-sm font-semibold tracking-[0.25em] uppercase text-brand-light;
+    @apply inline-flex items-center gap-2 text-xs sm:text-sm font-medium tracking-[0.18em] uppercase text-ink/55;
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-brand px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-brand-light active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-carbon active:scale-95;
+  }
+
+  .btn-primary-dark {
+    @apply inline-flex items-center justify-center gap-2 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-white/85 active:scale-95;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 border border-white/20 bg-transparent px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white/40 hover:bg-white/10 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-sm font-medium tracking-wide text-ink transition hover:border-ink hover:bg-ink hover:text-white active:scale-95;
+  }
+
+  .btn-secondary-dark {
+    @apply inline-flex items-center justify-center gap-2 border border-white/30 bg-transparent px-5 py-2.5 text-sm font-medium text-white transition hover:border-white hover:bg-white hover:text-ink active:scale-95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  [data-reveal],
+  [data-stagger] > *,
+  details::details-content {
+    opacity: 1 !important;
+    transform: none !important;
+    block-size: auto !important;
+  }
+
+  .hero-image-slow,
+  .motion-float,
+  .fallback-breathe,
+  .motion-scale-in {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .marquee-track {
+    animation-duration: 34s;
   }
 }
 
@@ -48,9 +245,25 @@ body {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #05070c;
+  background: #e7e8e3;
 }
 ::-webkit-scrollbar-thumb {
-  background: #215bd6;
+  background: #4f6f78;
   border-radius: 999px;
 }
+
+.font-display.uppercase,
+.btn-primary,
+.btn-primary-dark,
+.btn-secondary,
+.btn-secondary-dark {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.font-display.font-black,
+.font-display.font-extrabold,
+.font-display.font-bold {
+  font-weight: 600;
+}
+

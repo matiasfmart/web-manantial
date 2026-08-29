@@ -24,13 +24,13 @@ export default async function ReunionesPage() {
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
           Sumate a nuestras reuniones
         </h1>
-        <p className="mt-6 max-w-2xl text-white/60">
+        <p className="mt-6 max-w-2xl text-ink/65">
           Todas nuestras reuniones generales se realizan en el{" "}
           {churchInfo.auditoriumName}, {churchInfo.address}. Los Grupos de
           Integración (GDI) también forman parte de nuestras reuniones
           generales, pero se organizan en distintos hogares — conocé más en la
           sección de{" "}
-          <Link href="/ministerios/gdi" className="text-brand-light underline underline-offset-4">
+          <Link href="/ministerios/gdi" className="text-brand underline underline-offset-4">
             GDI
           </Link>
           .
@@ -40,7 +40,7 @@ export default async function ReunionesPage() {
       {/* HORARIOS (fondo claro para mejor lectura) */}
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section">
-          <div className="overflow-hidden border border-ink/10">
+          <div className="overflow-hidden border border-ink/10" data-stagger>
             {days.map((day) => {
               const items = generalServices.filter((s) => s.day === day);
               return (
@@ -62,14 +62,14 @@ export default async function ReunionesPage() {
                           {s.streamed && (
                             <Link
                               href="/en-vivo"
-                              className="inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-dark"
+                              className="inline-flex items-center gap-1.5 border border-ink/20 bg-ink/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-ink/70"
                             >
-                              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+                              <span className="h-1.5 w-1.5 animate-pulseSlow rounded-full bg-brand" />
                               Se transmite por YouTube
                             </Link>
                           )}
                         </span>
-                        <span className="font-display text-xl text-brand">
+                        <span className="font-display text-xl text-ink">
                           {s.time}
                         </span>
                       </div>
@@ -81,7 +81,7 @@ export default async function ReunionesPage() {
           </div>
 
           <div className="mt-16">
-            <p className="eyebrow !text-brand">Reuniones especiales fijas</p>
+            <p className="eyebrow">Reuniones especiales fijas</p>
             <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
               Momentos importantes del mes
             </h2>
@@ -89,7 +89,7 @@ export default async function ReunionesPage() {
               Además de nuestras reuniones semanales, cada mes tenemos espacios
               especiales de oración, consagración y comunión como iglesia.
             </p>
-            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2" data-stagger>
               {specialServices.map((service) => (
                 <div key={service.name} className="border-t border-ink/10 pt-6">
                   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -99,14 +99,14 @@ export default async function ReunionesPage() {
                     {service.streamed && (
                       <Link
                         href="/en-vivo"
-                        className="inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-dark"
+                        className="inline-flex items-center gap-1.5 border border-ink/20 bg-ink/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-ink/70"
                       >
-                        <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+                        <span className="h-1.5 w-1.5 animate-pulseSlow rounded-full bg-brand" />
                         Se transmite por YouTube
                       </Link>
                     )}
                   </div>
-                  <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-brand">
+                  <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-ink/65">
                     {service.schedule}
                   </p>
                   <p className="mt-4 text-sm leading-relaxed text-ink/60">
@@ -120,12 +120,12 @@ export default async function ReunionesPage() {
       </section>
 
       <section className="section py-16 sm:py-20">
-        <div className="border-y border-white/10 py-6">
+        <div className="border-y border-ink/10 py-6">
           <p className="eyebrow">Encuentros especiales</p>
           <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
             Algunas reuniones surgen durante el año
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/65">
             También realizamos semanas de oración, invitados especiales, fines de
             semana ministeriales y otros encuentros fuera del calendario fijo. Si
             se transmiten, aparecen automáticamente en la sección En vivo desde
@@ -136,7 +136,7 @@ export default async function ReunionesPage() {
           </Link>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-stagger>
           <Link href="/primera-vez" className="group">
             <InfoCard
               title="¿Es tu primera vez? →"
@@ -159,11 +159,11 @@ export default async function ReunionesPage() {
 
 function InfoCard({ title, text }: { title: string; text: string }) {
   return (
-    <div className="border-t border-white/15 pt-5">
+    <div className="border-t border-ink/15 pt-5">
       <h3 className="font-display text-xl font-bold uppercase tracking-normal">
         {title}
       </h3>
-      <p className="mt-3 text-sm leading-relaxed text-white/60">{text}</p>
+      <p className="mt-3 text-sm leading-relaxed text-ink/65">{text}</p>
     </div>
   );
 }

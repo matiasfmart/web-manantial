@@ -11,18 +11,18 @@ export default function Footer({
   ministries: Ministry[];
 }) {
   return (
-    <footer className="border-t border-white/10 bg-surface pb-28 pt-16">
+    <footer className="border-t border-white/10 bg-ink pb-28 pt-16 text-white">
       <div className="section grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
             <Image src={churchInfo.logoColor} alt="" width={36} height={36} className="h-9 w-9" />
-            <p className="font-display text-xl font-bold uppercase">{churchInfo.shortName}</p>
+            <p className="font-display text-xl font-semibold">{churchInfo.shortName}</p>
           </div>
-          <p className="mt-3 text-sm text-white/50">{churchInfo.auditoriumName}</p>
-          <p className="mt-4 text-sm leading-relaxed text-white/60">
+          <p className="mt-3 text-sm text-white/60">{churchInfo.auditoriumName}</p>
+          <p className="mt-4 text-sm leading-relaxed text-white/70">
             {churchInfo.address}
           </p>
-          <p className="mt-2 text-xs italic text-white/40">
+          <p className="mt-2 text-xs italic text-white/45">
             {churchInfo.historicNote}
           </p>
           <div className="mt-5 flex gap-3">
@@ -39,7 +39,7 @@ export default function Footer({
           <ul className="mt-4 space-y-2 text-sm text-white/70">
             {ministries.slice(0, 5).map((m) => (
               <li key={m.slug}>
-                <Link href={`/ministerios/${m.slug}`} className="hover:text-brand-light">
+                <Link href={`/ministerios/${m.slug}`} className="link-underline hover:text-white">
                   {m.name}
                 </Link>
               </li>
@@ -50,13 +50,13 @@ export default function Footer({
         <div>
           <p className="eyebrow">Institución</p>
           <ul className="mt-4 space-y-2 text-sm text-white/70">
-            <li><Link href="/primera-vez" className="hover:text-brand-light">¿Es tu primera vez?</Link></li>
-            <li><Link href="/nosotros" className="hover:text-brand-light">Nosotros</Link></li>
-            <li><Link href="/reuniones" className="hover:text-brand-light">Horarios de reunión</Link></li>
-            <li><Link href="/en-vivo" className="hover:text-brand-light">En vivo</Link></li>
-            <li><Link href="/radio" className="hover:text-brand-light">Programación de radio</Link></li>
-            <li><Link href="/contacto" className="hover:text-brand-light">Contacto</Link></li>
-            <li><Link href="/ofrendas" className="hover:text-brand-light">Ofrendar</Link></li>
+            <li><Link href="/primera-vez" className="link-underline hover:text-white">¿Es tu primera vez?</Link></li>
+            <li><Link href="/nosotros" className="link-underline hover:text-white">Nosotros</Link></li>
+            <li><Link href="/reuniones" className="link-underline hover:text-white">Horarios de reunión</Link></li>
+            <li><Link href="/en-vivo" className="link-underline hover:text-white">En vivo</Link></li>
+            <li><Link href="/radio" className="link-underline hover:text-white">Programación de radio</Link></li>
+            <li><Link href="/contacto" className="link-underline hover:text-white">Contacto</Link></li>
+            <li><Link href="/ofrendas" className="link-underline hover:text-white">Ofrendar</Link></li>
           </ul>
         </div>
 
@@ -71,12 +71,12 @@ export default function Footer({
             href={churchInfo.prayerRequest.whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-secondary mt-4 !py-2 !px-4 text-xs"
+            className="btn-secondary-dark mt-4 !py-2 !px-4 text-xs"
           >
             <SocialBrandIcon platform="whatsapp" />
             Escribir por WhatsApp
           </a>
-          <p className="mt-6 text-xs text-white/40">
+          <p className="mt-6 text-xs text-white/45">
             © {new Date().getFullYear()} {churchInfo.name}. Todos los derechos reservados.
           </p>
         </div>

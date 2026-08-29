@@ -14,13 +14,13 @@ export default async function NosotrosPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-20 sm:py-24">
+      <section className="relative overflow-hidden border-b border-ink/10 bg-surface py-20 sm:py-24">
         <div className="section relative">
           <p className="eyebrow">Nuestra historia</p>
           <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
             Del cine de barrio a casa de fe
           </h1>
-          <p className="mt-6 max-w-2xl text-white/60">
+          <p className="mt-6 max-w-2xl text-ink/65">
             {churchInfo.name} funciona en el histórico edificio conocido por
             todo Villa Lugano como el {churchInfo.historicNote.replace(/^Conocido en el barrio de Lugano como el /, "")}.
             Un espacio que antes reunía vecinos para ver películas, hoy los
@@ -29,7 +29,7 @@ export default async function NosotrosPage() {
         </div>
       </section>
 
-      <section className="section grid grid-cols-1 gap-6 py-16 sm:py-20 lg:grid-cols-3">
+      <section className="section grid grid-cols-1 gap-6 py-16 sm:py-20 lg:grid-cols-3" data-stagger>
         <ValueCard
           title="Visión"
           text="Ser una iglesia que alcanza cada generación, dentro y fuera de sus paredes, con el amor y la Palabra de Dios."
@@ -48,7 +48,7 @@ export default async function NosotrosPage() {
       <section className="bg-white py-20 text-ink">
         <div className="section">
           <div className="max-w-2xl">
-            <p className="eyebrow !text-brand">Acompañamiento pastoral</p>
+            <p className="eyebrow">Acompañamiento pastoral</p>
             <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
               Personas que sirven y acompañan
             </h2>
@@ -58,11 +58,11 @@ export default async function NosotrosPage() {
             </p>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2" data-stagger>
             {pastoralTeam.map((member) => (
               <div
                 key={member.displayName}
-                className="group flex items-center gap-4 border-t border-ink/10 bg-white py-4 transition hover:border-brand/40 sm:px-4"
+                className="group flex items-center gap-4 border-t border-ink/10 bg-white py-4 transition hover:border-ink/35 sm:px-4"
               >
                 <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden bg-ink sm:h-28 sm:w-28">
                   {member.image ? (
@@ -75,7 +75,7 @@ export default async function NosotrosPage() {
                     />
                   ) : (
                     <>
-                      <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-brand to-ink" />
+                      <div className="fallback-breathe absolute inset-0 bg-gradient-to-br from-carbon via-ink to-black" />
                       <Image
                         src={churchInfo.logoColor}
                         alt=""
@@ -86,7 +86,7 @@ export default async function NosotrosPage() {
                     </>
                   )}
                 </div>
-                <div className="h-16 w-px shrink-0 bg-gradient-to-b from-brand via-gold to-transparent" />
+                <div className="h-16 w-px shrink-0 bg-gradient-to-b from-ink via-line to-transparent" />
                 <div className="min-w-0 pr-2">
                   <p className="font-display text-lg font-bold uppercase leading-tight tracking-normal text-ink">
                     {member.displayName}
@@ -112,11 +112,11 @@ export default async function NosotrosPage() {
 
 function ValueCard({ title, text }: { title: string; text: string }) {
   return (
-    <div className="border-t border-white/15 pt-6">
-      <h3 className="font-display text-2xl font-bold uppercase tracking-normal text-brand-light">
+    <div className="border-t border-ink/15 pt-6">
+      <h3 className="font-display text-2xl font-semibold tracking-normal text-ink">
         {title}
       </h3>
-      <p className="mt-4 leading-relaxed text-white/60">{text}</p>
+      <p className="mt-4 leading-relaxed text-ink/65">{text}</p>
     </div>
   );
 }

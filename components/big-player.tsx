@@ -7,12 +7,12 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
   const { isPlaying, isLoading, hasError, toggle, volume, setVolume } = useRadio();
 
   return (
-    <div className="relative overflow-hidden border-y border-white/10 py-6 sm:py-8">
+    <div className="relative overflow-hidden border-y border-ink/10 py-6 sm:py-8">
       <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
         <button
           onClick={toggle}
           aria-label={isPlaying ? "Pausar" : "Reproducir"}
-          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-brand-dark text-white transition hover:scale-105 active:scale-95 sm:h-24 sm:w-24"
+          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-ink text-white transition hover:scale-105 hover:bg-carbon active:scale-95 sm:h-24 sm:w-24"
         >
           {isLoading ? (
             <span className="h-7 w-7 animate-spin rounded-full border-4 border-white/30 border-t-white" />
@@ -27,17 +27,24 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
           <div className="flex items-center justify-center gap-2 sm:justify-start">
             <span
               className={`h-2 w-2 rounded-full ${
-                isPlaying ? "animate-pulseSlow bg-brand-light" : "bg-white/30"
+                isPlaying ? "animate-pulseSlow bg-brand" : "bg-ink/25"
               }`}
             />
-            <span className="text-xs font-bold uppercase tracking-widest text-brand-light">
+            <span className="text-xs font-semibold uppercase tracking-widest text-ink/60">
               {isPlaying ? "En vivo ahora" : "Presioná play para escuchar"}
             </span>
+            {isPlaying && (
+              <span className="audio-bars ml-1 hidden h-4 items-end gap-0.5 sm:flex" aria-hidden="true">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <span key={index} className="h-full w-1 bg-brand" />
+                ))}
+              </span>
+            )}
           </div>
           <p className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
             {churchInfo.radioName}
           </p>
-          <p className="mt-2 text-sm text-white/50">
+          <p className="mt-2 text-sm text-ink/60">
             Transmisión oficial online las 24 horas, los 7 días de la semana.
           </p>
           {hasError && (
@@ -56,7 +63,7 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
               step={0.01}
               value={volume}
               onChange={(e) => setVolume(Number(e.target.value))}
-              className="h-1.5 w-40 cursor-pointer appearance-none rounded-full bg-white/15 accent-brand"
+              className="h-1.5 w-40 cursor-pointer appearance-none rounded-full bg-ink/15 accent-brand"
               aria-label="Volumen"
             />
           </div>
@@ -84,7 +91,7 @@ function PauseIcon() {
 
 function VolumeIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 text-white/50">
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 text-ink/50">
       <path d="M3 10v4h4l5 5V5L7 10H3z" />
     </svg>
   );

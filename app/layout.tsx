@@ -1,22 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Montserrat } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import FloatingPlayer from "@/components/floating-player";
+import MotionProvider from "@/components/motion-provider";
 import { RadioProvider } from "@/components/radio-context";
 import { getChurchInfo, getMinistries } from "@/lib/data";
 
-const bodyFont = Inter({
+const sansFont = Manrope({
   subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const displayFont = Montserrat({
-  subsets: ["latin"],
-  weight: ["700", "800", "900"],
-  variable: "--font-display",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
   display: "swap",
 });
 
@@ -41,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#05070c",
+  themeColor: "#101314",
   width: "device-width",
   initialScale: 1,
 };
@@ -54,9 +49,10 @@ export default async function RootLayout({
   const [churchInfo, ministries] = await Promise.all([getChurchInfo(), getMinistries()]);
 
   return (
-    <html lang="es-AR" className={`${bodyFont.variable} ${displayFont.variable}`}>
+    <html lang="es-AR" data-scroll-behavior="smooth" className={sansFont.variable}>
       <body className="font-body antialiased">
         <RadioProvider streamUrl={churchInfo.radioStreamUrl}>
+          <MotionProvider />
           <Header churchInfo={churchInfo} />
           <main className="min-h-screen">{children}</main>
           <Footer churchInfo={churchInfo} ministries={ministries} />
