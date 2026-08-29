@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ministries } from "@/lib/data";
+import { ministrySlugs, getMinistryBySlug } from "@/lib/data";
 import MinistryIcon from "@/components/ministry-icon";
 
 export function generateStaticParams() {
-  return ministries.map((m) => ({ slug: m.slug }));
+  return ministrySlugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -15,7 +15,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const ministry = ministries.find((m) => m.slug === slug);
+  const ministry = await getMinistryBySlug(slug);
   if (!ministry) return {};
   return {
     title: ministry.name,
@@ -29,7 +29,7 @@ export default async function MinistryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const ministry = ministries.find((m) => m.slug === slug);
+  const ministry = await getMinistryBySlug(slug);
   if (!ministry) notFound();
 
   return (

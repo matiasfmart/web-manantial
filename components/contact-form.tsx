@@ -4,6 +4,8 @@ import { useState } from "react";
 
 export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [submitted, setSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const isLight = variant === "light";
 
   if (submitted) {
@@ -28,10 +30,36 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
 
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={async (e) => {
         e.preventDefault();
-        // TODO: conectar a un servicio de email o endpoint propio antes de producción
-        setSubmitted(true);
+        setError(null);
+        setIsSending(true);
+
+        const form = e.currentTarget;
+        const data = new FormData(form);
+
+        try {
+          const res = await fetch("/api/contacto", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: data.get("name"),
+              email: data.get("email"),
+              message: data.get("message"),
+            }),
+          });
+
+          if (!res.ok) {
+            const body = await res.json().catch(() => null);
+            throw new Error(body?.error || "No pudimos enviar tu mensaje.");
+          }
+
+          setSubmitted(true);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "No pudimos enviar tu mensaje.");
+        } finally {
+          setIsSending(false);
+        }
       }}
       className={`space-y-5 border-y py-8 ${isLight ? "border-ink/10" : "border-white/10"}`}
     >
@@ -53,8 +81,9 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
           placeholder="¿En qué te podemos ayudar?"
         />
       </div>
-      <button type="submit" className="btn-primary w-full">
-        Enviar mensaje
+      {error && <p className="text-sm text-red-400">{error}</p>}
+      <button type="submit" disabled={isSending} className="btn-primary w-full disabled:opacity-60">
+        {isSending ? "Enviando..." : "Enviar mensaje"}
       </button>
     </form>
   );

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { churchInfo, specialServices, transmissionInfo } from "@/lib/data";
+import { getChurchInfo, getSpecialServices, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
 import BigPlayer from "@/components/big-player";
 import CultoBadge from "@/components/culto-badge";
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function EnVivoPage() {
+  const [churchInfo, specialServices] = await Promise.all([getChurchInfo(), getSpecialServices()]);
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
@@ -38,7 +39,7 @@ export default async function EnVivoPage() {
         </Link>
       </div>
 
-      <BigPlayer />
+      <BigPlayer churchInfo={churchInfo} />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="border-t border-white/10 pt-4">

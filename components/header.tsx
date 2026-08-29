@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { churchInfo } from "@/lib/data";
+import type { ChurchInfo } from "@/lib/data";
 import { SocialBrandIcon } from "./social-icons";
 
 const links = [
@@ -15,7 +15,7 @@ const links = [
   { href: "/contacto", label: "Contacto" },
 ];
 
-export default function Header() {
+export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 

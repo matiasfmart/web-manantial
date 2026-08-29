@@ -8,4 +8,15 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.11.1
+      # ID del Google Sheet que alimenta los textos del sitio (ver README).
+      # Sin este valor, el sitio usa el contenido por defecto embebido en el código.
+      - key: GOOGLE_SHEET_ID
+        sync: false
+      # API key de Resend (resend.com) para el envío real del formulario de contacto.
+      - key: RESEND_API_KEY
+        sync: false
+      # Opcional: remitente verificado en Resend. Sin esto, usa el dominio de pruebas
+      # onboarding@resend.dev, que solo entrega al email con el que te registraste.
+      - key: RESEND_FROM_EMAIL
+        sync: false
     autoDeploy: true

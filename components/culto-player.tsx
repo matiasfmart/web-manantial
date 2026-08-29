@@ -1,4 +1,4 @@
-import { churchInfo } from "@/lib/data";
+import { getChurchInfo } from "@/lib/data";
 import { getTransmissionStatus, type TransmissionStatus } from "@/lib/youtube";
 
 /**
@@ -12,6 +12,7 @@ export default async function CultoPlayer({
   compact?: boolean;
   status?: TransmissionStatus;
 }) {
+  const churchInfo = await getChurchInfo();
   const transmissionStatus =
     status ??
     (churchInfo.youtubeChannelId

@@ -1,3 +1,17 @@
+import { getSheetRows, rowsToKeyValue } from "./sheets";
+
+/** Nombres exactos de las hojas (tabs) dentro del Google Sheet. */
+const SHEET_TABS = {
+  churchInfo: "DatosIglesia",
+  ministerios: "Ministerios",
+  reuniones: "Reuniones",
+  reunionesEspeciales: "ReunionesEspeciales",
+  equipoPastoral: "EquipoPastoral",
+  ofrendas: "Ofrendas",
+  ofrendasCategorias: "OfrendasCategorias",
+  programacionRadio: "ProgramacionRadio",
+} as const;
+
 export type Ministry = {
   slug: string;
   name: string;
@@ -20,7 +34,66 @@ export type Ministry = {
   isOutreach?: boolean;
 };
 
-export const ministries: Ministry[] = [
+type MinistryText = Omit<Ministry, "color" | "icon" | "image" | "image2">;
+
+/** Orden y slugs fijos de los ministerios (no editables desde la hoja). */
+export const ministrySlugs = [
+  "avivamiento-jovenes",
+  "anos-dorados",
+  "ibe",
+  "escuela-de-vida",
+  "escuela-biblica",
+  "avivamiento-en-las-calles",
+  "gdi",
+] as const;
+
+/** Imágenes, colores e íconos: se administran en el código, no desde la hoja. */
+const ministryMeta: Record<
+  string,
+  { color: string; icon: string; image: string; image2?: string; subMinistryImage?: string }
+> = {
+  "avivamiento-jovenes": {
+    color: "from-brand to-brand-dark",
+    icon: "flame",
+    image: "/images/ministries/avivamiento-jovenes-1.jpg",
+    image2: "/images/ministries/avivamiento-jovenes-2.jpg",
+  },
+  "anos-dorados": {
+    color: "from-gold to-gold-dark",
+    icon: "sun",
+    image: "/images/ministries/anos-dorados-1.jpg",
+    image2: "/images/ministries/anos-dorados-2.jpg",
+  },
+  ibe: {
+    color: "from-slate-500 to-slate-800",
+    icon: "book",
+    image: "/images/ministries/ibe.jpg",
+  },
+  "escuela-de-vida": {
+    color: "from-brand-dark to-brand",
+    icon: "seedling",
+    image: "/images/ministries/escuela-de-vida.jpg",
+  },
+  "escuela-biblica": {
+    color: "from-brand-light to-brand",
+    icon: "star",
+    image: "/images/ministries/escuela-biblica.jpg",
+  },
+  "avivamiento-en-las-calles": {
+    color: "from-brand to-brand-dark",
+    icon: "megaphone",
+    image: "/images/ministries/avivamiento-en-las-calles-1.jpg",
+    image2: "/images/ministries/avivamiento-en-las-calles-2.jpg",
+    subMinistryImage: "/images/ministries/buen-samaritano.jpg",
+  },
+  gdi: {
+    color: "from-slate-600 to-slate-800",
+    icon: "users",
+    image: "/images/ministries/gdi.jpg",
+  },
+};
+
+const defaultMinistries: MinistryText[] = [
   {
     slug: "avivamiento-jovenes",
     name: "Avivamiento Jóvenes",
@@ -34,10 +107,6 @@ export const ministries: Ministry[] = [
       "Además de la reunión semanal, organizamos retiros, campamentos, noches temáticas y actividades de servicio para que cada joven descubra su propósito.",
     ],
     audience: "Jóvenes y adolescentes",
-    color: "from-brand to-brand-dark",
-    icon: "flame",
-    image: "/images/ministries/avivamiento-jovenes-1.jpg",
-    image2: "/images/ministries/avivamiento-jovenes-2.jpg",
     subMinistry: {
       name: "Avivamiento Adolescente",
       schedule: "Domingos 18:00 h",
@@ -60,10 +129,6 @@ export const ministries: Ministry[] = [
       "Si sos parte de este hermoso grupo o querés invitar a un familiar, contactanos para confirmar la fecha del próximo encuentro.",
     ],
     audience: "Adultos mayores",
-    color: "from-gold to-gold-dark",
-    icon: "sun",
-    image: "/images/ministries/anos-dorados-1.jpg",
-    image2: "/images/ministries/anos-dorados-2.jpg",
   },
   {
     slug: "ibe",
@@ -78,9 +143,6 @@ export const ministries: Ministry[] = [
       "Es el camino ideal para quienes sienten un llamado a servir con mayor profundidad doctrinal y ministerial, con materias, docentes y un plan de estudios oficial.",
     ],
     audience: "Jóvenes y adultos con llamado ministerial",
-    color: "from-slate-500 to-slate-800",
-    icon: "book",
-    image: "/images/ministries/ibe.jpg",
   },
   {
     slug: "escuela-de-vida",
@@ -95,9 +157,6 @@ export const ministries: Ministry[] = [
       "Ideal si te acercaste hace poco a la iglesia y querés entender qué creemos y por qué, en un ambiente cálido y sin tecnicismos.",
     ],
     audience: "Nuevos creyentes",
-    color: "from-brand-dark to-brand",
-    icon: "seedling",
-    image: "/images/ministries/escuela-de-vida.jpg",
   },
   {
     slug: "escuela-biblica",
@@ -112,9 +171,6 @@ export const ministries: Ministry[] = [
       "Cada clase está organizada por edades, con materiales didácticos propios y actividades especiales durante el año.",
     ],
     audience: "Niños y preadolescentes",
-    color: "from-brand-light to-brand",
-    icon: "star",
-    image: "/images/ministries/escuela-biblica.jpg",
   },
   {
     slug: "avivamiento-en-las-calles",
@@ -129,17 +185,12 @@ export const ministries: Ministry[] = [
       "Dentro de este equipo funciona 'El Buen Samaritano', dedicado a la asistencia social.",
     ],
     audience: "Trabajo comunitario y evangelístico",
-    color: "from-brand to-brand-dark",
-    icon: "megaphone",
-    image: "/images/ministries/avivamiento-en-las-calles-1.jpg",
-    image2: "/images/ministries/avivamiento-en-las-calles-2.jpg",
     isOutreach: true,
     subMinistry: {
       name: "El Buen Samaritano",
       schedule: "Jornadas solidarias periódicas",
       description:
         "Dedicado a repartir comida, ropa y elementos de primera necesidad entre las personas en situación de calle, llevando ayuda concreta junto con la Palabra de Dios.",
-      image: "/images/ministries/buen-samaritano.jpg",
     },
   },
   {
@@ -155,18 +206,66 @@ export const ministries: Ministry[] = [
       "Los GDI también son considerados parte de las reuniones generales de la iglesia. Si querés sumarte a una célula cerca de tu casa, contactanos y te conectamos con un grupo.",
     ],
     audience: "Toda la congregación, por edad y sexo",
-    color: "from-slate-600 to-slate-800",
-    icon: "users",
-    image: "/images/ministries/gdi.jpg",
   },
 ];
 
-export const generalServices: {
+function rowToMinistry(row: Record<string, string>): MinistryText {
+  const longDescription = [row.longDescription1, row.longDescription2, row.longDescription3]
+    .map((s) => s?.trim())
+    .filter((s): s is string => Boolean(s));
+
+  return {
+    slug: row.slug,
+    name: row.name,
+    tagline: row.tagline,
+    schedule: row.schedule,
+    scheduleNote: row.scheduleNote || undefined,
+    description: row.description,
+    longDescription: longDescription.length > 0 ? longDescription : [row.description],
+    audience: row.audience,
+    isOutreach: row.isOutreach?.trim().toUpperCase() === "TRUE",
+    subMinistry: row.subMinistryName
+      ? {
+          name: row.subMinistryName,
+          schedule: row.subMinistrySchedule ?? "",
+          description: row.subMinistryDescription ?? "",
+        }
+      : undefined,
+  };
+}
+
+/** Trae los ministerios: usa la hoja "Ministerios" si tiene filas, si no el contenido por defecto. */
+export async function getMinistries(): Promise<Ministry[]> {
+  const rows = await getSheetRows(SHEET_TABS.ministerios);
+  const list = rows.length > 0 ? rows.map(rowToMinistry) : defaultMinistries;
+
+  return list
+    .filter((m) => ministryMeta[m.slug])
+    .map((m) => {
+      const meta = ministryMeta[m.slug];
+      return {
+        ...m,
+        ...meta,
+        subMinistry: m.subMinistry
+          ? { ...m.subMinistry, image: meta.subMinistryImage }
+          : undefined,
+      };
+    });
+}
+
+export async function getMinistryBySlug(slug: string): Promise<Ministry | undefined> {
+  const all = await getMinistries();
+  return all.find((m) => m.slug === slug);
+}
+
+export type GeneralService = {
   day: string;
   time: string;
   label: string;
   streamed?: boolean;
-}[] = [
+};
+
+const defaultGeneralServices: GeneralService[] = [
   { day: "Martes", time: "20:00 h", label: "Reunión general" },
   { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración" },
   { day: "Sábados", time: "10:30 h", label: "Escuela Bíblica (niños)" },
@@ -177,7 +276,25 @@ export const generalServices: {
   { day: "Domingos", time: "19:30 h", label: "Reunión general", streamed: true },
 ];
 
-export const specialServices = [
+export async function getGeneralServices(): Promise<GeneralService[]> {
+  const rows = await getSheetRows(SHEET_TABS.reuniones);
+  if (rows.length === 0) return defaultGeneralServices;
+  return rows.map((r) => ({
+    day: r.day,
+    time: r.time,
+    label: r.label,
+    streamed: r.streamed?.trim().toUpperCase() === "TRUE",
+  }));
+}
+
+export type SpecialService = {
+  name: string;
+  schedule: string;
+  description: string;
+  streamed?: boolean;
+};
+
+const defaultSpecialServices: SpecialService[] = [
   {
     name: "Noche de Unción",
     schedule: "Día 1 de cada mes",
@@ -194,6 +311,17 @@ export const specialServices = [
   },
 ];
 
+export async function getSpecialServices(): Promise<SpecialService[]> {
+  const rows = await getSheetRows(SHEET_TABS.reunionesEspeciales);
+  if (rows.length === 0) return defaultSpecialServices;
+  return rows.map((r) => ({
+    name: r.name,
+    schedule: r.schedule,
+    description: r.description,
+    streamed: r.streamed?.trim().toUpperCase() === "TRUE",
+  }));
+}
+
 export const transmissionInfo = {
   title: "Transmisión por YouTube",
   liveLabel: "Estamos en vivo ahora",
@@ -203,7 +331,21 @@ export const transmissionInfo = {
     "Transmitimos reuniones generales, Noche de Unción, Santa Cena y encuentros especiales que pueden surgir durante la semana.",
 };
 
-export const churchInfo = {
+/** Rutas de logos, IDs técnicos y links de tienda: no se editan desde la hoja. */
+const churchTechnical = {
+  logoLight: "/logo/logo-blanco.png",
+  logoDark: "/logo/logo-negro.png",
+  logoColor: "/logo/logo-color.png",
+  radioStreamUrl: "https://stream.example.com/radio-manantial.mp3",
+  // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
+  // Canal → Configuración avanzada, para activar el embed en vivo automático.
+  youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
+  appStore: "https://apps.apple.com/app/radio-manantial/id0000000000",
+  playStore:
+    "https://play.google.com/store/apps/details?id=org.iglesiamanantial.radio",
+};
+
+const defaultChurchText = {
   name: "Ministerio Manantial de Avivamiento",
   shortName: "Manantial de Avivamiento",
   auditoriumName: "Auditorio Manantial de Avivamiento",
@@ -212,80 +354,78 @@ export const churchInfo = {
   mapsQuery: "Av. Riestra 5651, Villa Lugano, CABA",
   phone: "+54 11 2799-4682",
   email: "-",
-  logoLight: "/logo/logo-blanco.png",
-  logoDark: "/logo/logo-negro.png",
-  logoColor: "/logo/logo-color.png",
   radioName: "Radio Maranata",
-  radioStreamUrl: "https://stream.example.com/radio-manantial.mp3",
-  // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
-  // Canal → Configuración avanzada, para activar el embed en vivo automático.
-  youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
   liveServiceSchedule: "Domingos 19:30 h",
-  social: {
-    instagram: "https://www.instagram.com/manantialavivamiento/",
-    youtube: "https://www.youtube.com/@ManantialdeAvivamiento",
-    facebook: "https://www.facebook.com/mavivamiento",
-    tiktok: "https://www.tiktok.com/@manantialavivamiento",
-  },
+  instagram: "https://www.instagram.com/manantialavivamiento/",
+  youtube: "https://www.youtube.com/@ManantialdeAvivamiento",
+  facebook: "https://www.facebook.com/mavivamiento",
+  tiktok: "https://www.tiktok.com/@manantialavivamiento",
   whatsappChannelUrl: "https://whatsapp.com/channel/0029VaakItABqbr5DFewW12c",
-  prayerRequest: {
-    intro:
-      "¿Necesitás que oremos por vos o por tu familia? Escribinos o llamanos, con toda confianza.",
-    mobile: "+54 9 11 2799-4682",
-    landline: "-",
-    whatsappLink: "https://wa.me/5491127994682",
-  },
-  appStore: "https://apps.apple.com/app/radio-manantial/id0000000000",
-  playStore:
-    "https://play.google.com/store/apps/details?id=org.iglesiamanantial.radio",
+  prayerIntro:
+    "¿Necesitás que oremos por vos o por tu familia? Escribinos o llamanos, con toda confianza.",
+  prayerMobile: "+54 9 11 2799-4682",
+  prayerLandline: "-",
+  prayerWhatsappLink: "https://wa.me/5491127994682",
 };
+
+export type ChurchInfo = Awaited<ReturnType<typeof getChurchInfo>>;
+
+export async function getChurchInfo() {
+  const rows = await getSheetRows(SHEET_TABS.churchInfo);
+  const kv = rowsToKeyValue(rows);
+  const t = (key: keyof typeof defaultChurchText) => kv[key] || defaultChurchText[key];
+
+  return {
+    ...churchTechnical,
+    name: t("name"),
+    shortName: t("shortName"),
+    auditoriumName: t("auditoriumName"),
+    historicNote: t("historicNote"),
+    address: t("address"),
+    mapsQuery: t("mapsQuery"),
+    phone: t("phone"),
+    email: t("email"),
+    radioName: t("radioName"),
+    liveServiceSchedule: t("liveServiceSchedule"),
+    social: {
+      instagram: t("instagram"),
+      youtube: t("youtube"),
+      facebook: t("facebook"),
+      tiktok: t("tiktok"),
+    },
+    whatsappChannelUrl: t("whatsappChannelUrl"),
+    prayerRequest: {
+      intro: t("prayerIntro"),
+      mobile: t("prayerMobile"),
+      landline: t("prayerLandline"),
+      whatsappLink: t("prayerWhatsappLink"),
+    },
+  };
+}
 
 export type PastoralMember = {
   displayName: string;
   role: string;
   image?: string;
-  suggestedImage: string;
 };
 
-export const pastoralTeam: PastoralMember[] = [
-  {
-    displayName: "Silvana Zagari",
-    role: "Pastora principal",
-    suggestedImage: "/images/pastoral/silvana-zagari.jpg",
-  },
-  {
-    displayName: "Iván González y Damaris Álvarez",
-    role: "Equipo pastoral",
-    suggestedImage: "/images/pastoral/ivan-damaris.jpg",
-  },
-  {
-    displayName: "Alejandro Martínez y Claudia Martínez",
-    role: "Equipo pastoral",
-    suggestedImage: "/images/pastoral/alejandro-claudia.jpg",
-  },
-  {
-    displayName: "Matías Martínez y Abigail Álvarez",
-    role: "Equipo pastoral",
-    suggestedImage: "/images/pastoral/matias-abigail.jpg",
-  },
-  {
-    displayName: "Mathias Díaz y Lorena Villalba",
-    role: "Equipo pastoral",
-    suggestedImage: "/images/pastoral/mathias-lorena.jpg",
-  },
-  {
-    displayName: "Samuel Arroyo y Leticia Arroyo",
-    role: "Equipo pastoral",
-    suggestedImage: "/images/pastoral/samuel-leticia.jpg",
-  },
-  {
-    displayName: "Orlando Flores",
-    role: "Evangelista",
-    suggestedImage: "/images/pastoral/orlando-flores.jpg",
-  },
+const defaultPastoralTeam: PastoralMember[] = [
+  { displayName: "Silvana Zagari", role: "Pastora principal" },
+  { displayName: "Iván González y Damaris Álvarez", role: "Equipo pastoral" },
+  { displayName: "Alejandro Martínez y Claudia Martínez", role: "Equipo pastoral" },
+  { displayName: "Matías Martínez y Abigail Álvarez", role: "Equipo pastoral" },
+  { displayName: "Mathias Díaz y Lorena Villalba", role: "Equipo pastoral" },
+  { displayName: "Samuel Arroyo y Leticia Arroyo", role: "Equipo pastoral" },
+  { displayName: "Orlando Flores", role: "Evangelista" },
 ];
 
-export const givingInfo = {
+export async function getPastoralTeam(): Promise<PastoralMember[]> {
+  const rows = await getSheetRows(SHEET_TABS.equipoPastoral);
+  if (rows.length === 0) return defaultPastoralTeam;
+  return rows.map((r) => ({ displayName: r.displayName, role: r.role }));
+}
+
+const defaultGivingInfo = {
   intro:
     "Ofrendar es un acto de adoración y gratitud a Dios. Gracias por sembrar junto a nosotros para que el evangelio siga llegando a más vidas, dentro y fuera de nuestro auditorio.",
   verse:
@@ -320,7 +460,35 @@ export const givingInfo = {
   ],
 };
 
-export const radioSchedule = [
+export async function getGivingInfo() {
+  const kv = rowsToKeyValue(await getSheetRows(SHEET_TABS.ofrendas));
+  const categoryRows = await getSheetRows(SHEET_TABS.ofrendasCategorias);
+  const categories =
+    categoryRows.length > 0
+      ? categoryRows.map((r) => ({ name: r.name, description: r.description }))
+      : defaultGivingInfo.categories;
+
+  return {
+    intro: kv.intro || defaultGivingInfo.intro,
+    verse: kv.verse || defaultGivingInfo.verse,
+    mercadoPago: {
+      label: "Mercado Pago",
+      link: kv.mpLink || defaultGivingInfo.mercadoPago.link,
+      alias: kv.mpAlias || defaultGivingInfo.mercadoPago.alias,
+    },
+    bankTransfer: {
+      bank: kv.bankName || defaultGivingInfo.bankTransfer.bank,
+      holder: kv.bankHolder || defaultGivingInfo.bankTransfer.holder,
+      cbu: kv.bankCbu || defaultGivingInfo.bankTransfer.cbu,
+      alias: kv.bankAlias || defaultGivingInfo.bankTransfer.alias,
+      cuit: kv.bankCuit || defaultGivingInfo.bankTransfer.cuit,
+    },
+    qrNote: kv.qrNote || defaultGivingInfo.qrNote,
+    categories,
+  };
+}
+
+const defaultRadioSchedule = [
   { time: "06:00 – 09:00", program: "Buen Día Manantial", host: "Equipo de radio" },
   { time: "09:00 – 12:00", program: "Alabanza sin fin", host: "Automatizado" },
   { time: "12:00 – 14:00", program: "Palabra al mediodía", host: "Pastor invitado" },
@@ -329,3 +497,10 @@ export const radioSchedule = [
   { time: "20:00 – 23:00", program: "Noche de Alabanza", host: "Equipo de radio" },
   { time: "23:00 – 06:00", program: "Adoración Nocturna", host: "Automatizado" },
 ];
+
+export async function getRadioSchedule() {
+  const rows = await getSheetRows(SHEET_TABS.programacionRadio);
+  if (rows.length === 0) return defaultRadioSchedule;
+  return rows.map((r) => ({ time: r.time, program: r.program, host: r.host }));
+}
+
