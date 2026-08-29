@@ -72,8 +72,8 @@ export default async function HomePage() {
             </span>
           </h1>
           <p className="mt-8 max-w-xl text-lg leading-relaxed text-white/70">
-            Somos {churchInfo.shortName}, una comunidad cristiana evangélica
-            moderna en el histórico {churchInfo.historicNote.replace(/^Conocido en el barrio de Lugano como el /, "")}.
+            Somos {churchInfo.shortName}, una ministerio cristiano evangélico
+            ubicado en el histórico {churchInfo.historicNote.replace(/^Conocido en el barrio de Lugano como el /, "")}.
             Te esperamos en nuestras reuniones y las 24 horas en nuestra radio online.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
