@@ -1,10 +1,14 @@
-"use client";
+import { transmissionInfo } from "@/lib/data";
+import type { TransmissionStatus } from "@/lib/youtube";
 
-import { churchInfo } from "@/lib/data";
-import { useLiveService } from "./use-live-service";
-
-export default function CultoBadge() {
-  const isLive = useLiveService();
+export default function CultoBadge({ status }: { status: TransmissionStatus }) {
+  const isLive = status.kind === "live";
+  const label =
+    status.kind === "live"
+      ? transmissionInfo.liveLabel
+      : status.kind === "latest"
+        ? transmissionInfo.latestLabel
+        : transmissionInfo.unavailableLabel;
 
   return (
     <span
@@ -24,7 +28,7 @@ export default function CultoBadge() {
           }`}
         />
       </span>
-      {isLive ? "En vivo ahora" : churchInfo.liveServiceSchedule}
+      {label}
     </span>
   );
 }

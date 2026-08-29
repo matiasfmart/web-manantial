@@ -177,6 +177,32 @@ export const generalServices: {
   { day: "Domingos", time: "19:30 h", label: "Reunión general", streamed: true },
 ];
 
+export const specialServices = [
+  {
+    name: "Noche de Unción",
+    schedule: "Día 1 de cada mes",
+    description:
+      "Una reunión especial para ungir con aceite, orar por milagros y buscar juntos la presencia de Dios.",
+    streamed: true,
+  },
+  {
+    name: "Santa Cena",
+    schedule: "Primer domingo de cada mes",
+    description:
+      "Dentro del culto dominical conmemoramos la cena del Señor como iglesia, recordando el sacrificio de Jesús.",
+    streamed: true,
+  },
+];
+
+export const transmissionInfo = {
+  title: "Transmisión por YouTube",
+  liveLabel: "Estamos en vivo ahora",
+  latestLabel: "Última reunión en vivo",
+  unavailableLabel: "Canal de YouTube",
+  description:
+    "Transmitimos reuniones generales, Noche de Unción, Santa Cena y encuentros especiales que pueden surgir durante la semana.",
+};
+
 export const churchInfo = {
   name: "Ministerio Manantial de Avivamiento",
   shortName: "Manantial de Avivamiento",

@@ -1,12 +1,72 @@
 import Image from "next/image";
 import Link from "next/link";
-import { churchInfo, generalServices, ministries } from "@/lib/data";
+import { churchInfo, generalServices, ministries, transmissionInfo } from "@/lib/data";
+import { getTransmissionStatus } from "@/lib/youtube";
 import MinistryCard from "@/components/ministry-card";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
-import LiveOrder from "@/components/live-order";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const transmissionStatus = churchInfo.youtubeChannelId
+    ? await getTransmissionStatus(churchInfo.youtubeChannelId)
+    : ({ kind: "unavailable" } as const);
+
+  const radioCard = (
+    <div className="card relative overflow-hidden p-8 sm:p-10">
+      <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-light">
+        <span className="h-2 w-2 animate-pulseSlow rounded-full bg-brand-light" />
+        On air · 24 h
+      </div>
+      <p className="mt-6 font-display text-2xl font-bold uppercase tracking-normal">
+        {churchInfo.radioName}
+      </p>
+      <p className="mt-1 text-sm text-white/50">
+        Alabanza, prédicas y contenido para toda la familia, sin parar.
+      </p>
+      <div className="mt-8 flex h-16 items-end gap-1">
+        {Array.from({ length: 24 }).map((_, i) => (
+          <span
+            key={i}
+            className="w-2 flex-1 rounded-full bg-gradient-to-t from-brand to-gold"
+            style={{ height: `${20 + ((i * 37) % 80)}%` }}
+          />
+        ))}
+      </div>
+      <Link href="/en-vivo" className="btn-primary mt-8 w-full sm:w-auto">
+        Escuchar ahora
+      </Link>
+    </div>
+  );
+
+  const youtubeCard = (
+    <div className="card relative overflow-hidden p-8 sm:p-10">
+      <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-white/60">
+          YouTube
+        </span>
+        <CultoBadge status={transmissionStatus} />
+      </div>
+      <p className="mt-6 font-display text-2xl font-bold uppercase tracking-normal">
+        {transmissionStatus.kind === "live"
+          ? transmissionInfo.liveLabel
+          : transmissionStatus.kind === "latest"
+            ? transmissionInfo.latestLabel
+            : transmissionInfo.title}
+      </p>
+      <p className="mt-1 text-sm text-white/50">
+        Reuniones generales, Noche de Unción, Santa Cena y encuentros especiales.
+      </p>
+      <div className="mt-8">
+        <CultoPlayer compact status={transmissionStatus} />
+      </div>
+      <Link href="/en-vivo" className="btn-secondary mt-8 w-full sm:w-auto">
+        Ver transmisión
+      </Link>
+    </div>
+  );
+
   return (
     <>
       {/* HERO */}
@@ -114,65 +174,23 @@ export default function HomePage() {
           Acompañanos estés donde estés
         </h2>
         <p className="mt-6 max-w-xl text-white/60">
-          Nuestra radio suena las 24 horas y, además, transmitimos el culto de
-          los {churchInfo.liveServiceSchedule.toLowerCase()} en vivo por
-          YouTube.
+          Nuestra radio suena las 24 horas y, además, transmitimos por YouTube
+          reuniones generales, Noche de Unción, Santa Cena y encuentros
+          especiales.
         </p>
 
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <LiveOrder
-            radio={
-              <div className="card relative overflow-hidden p-8 sm:p-10">
-                <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-brand-light">
-                  <span className="h-2 w-2 animate-pulseSlow rounded-full bg-brand-light" />
-                  On air · 24 h
-                </div>
-                <p className="mt-6 font-display text-2xl font-bold uppercase tracking-normal">
-                  {churchInfo.radioName}
-                </p>
-                <p className="mt-1 text-sm text-white/50">
-                  Alabanza, prédicas y contenido para toda la familia, sin parar.
-                </p>
-                <div className="mt-8 flex h-16 items-end gap-1">
-                  {Array.from({ length: 24 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="w-2 flex-1 rounded-full bg-gradient-to-t from-brand to-gold"
-                      style={{ height: `${20 + ((i * 37) % 80)}%` }}
-                    />
-                  ))}
-                </div>
-                <Link href="/en-vivo" className="btn-primary mt-8 w-full sm:w-auto">
-                  Escuchar ahora
-                </Link>
-              </div>
-            }
-            culto={
-              <div className="card relative overflow-hidden p-8 sm:p-10">
-                <div className="absolute -left-16 -top-16 h-56 w-56 rounded-full bg-gold/20 blur-3xl" />
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold uppercase tracking-widest text-white/60">
-                    Culto por YouTube
-                  </span>
-                  <CultoBadge />
-                </div>
-                <p className="mt-6 font-display text-2xl font-bold uppercase tracking-normal">
-                  Transmisión del culto
-                </p>
-                <p className="mt-1 text-sm text-white/50">
-                  En vivo los {churchInfo.liveServiceSchedule.toLowerCase()}, con
-                  repetición disponible el resto de la semana.
-                </p>
-                <div className="mt-8">
-                  <CultoPlayer compact />
-                </div>
-                <Link href="/en-vivo" className="btn-secondary mt-8 w-full sm:w-auto">
-                  Ver transmisión
-                </Link>
-              </div>
-            }
-          />
+          {transmissionStatus.kind === "live" ? (
+            <>
+              {youtubeCard}
+              {radioCard}
+            </>
+          ) : (
+            <>
+              {radioCard}
+              {youtubeCard}
+            </>
+          )}
         </div>
       </section>
 

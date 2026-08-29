@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { churchInfo, generalServices } from "@/lib/data";
+import { churchInfo, generalServices, specialServices } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Reuniones y horarios",
   description:
-    "Conocé todos los horarios de reunión de la iglesia: cultos generales, GDI, jóvenes, adolescentes y escuela bíblica.",
+    "Conocé los horarios de reunión de la iglesia: reuniones generales, GDI, jóvenes, adolescentes, escuela bíblica y reuniones especiales.",
 };
 
 const days = ["Martes", "Miércoles", "Sábados", "Domingos"];
@@ -67,6 +67,59 @@ export default function ReunionesPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-16">
+        <p className="eyebrow">Reuniones especiales fijas</p>
+        <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
+          Momentos importantes del mes
+        </h2>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60">
+          Además de nuestras reuniones semanales, cada mes tenemos espacios
+          especiales de oración, consagración y comunión como iglesia.
+        </p>
+        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {specialServices.map((service) => (
+            <div key={service.name} className="card p-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="font-display text-2xl font-bold uppercase tracking-normal">
+                  {service.name}
+                </h3>
+                {service.streamed && (
+                  <Link
+                    href="/en-vivo"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-light"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+                    Se transmite por YouTube
+                  </Link>
+                )}
+              </div>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-brand-light">
+                {service.schedule}
+              </p>
+              <p className="mt-4 text-sm leading-relaxed text-white/60">
+                {service.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-10 card p-8">
+        <p className="eyebrow">Encuentros especiales</p>
+        <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
+          Algunas reuniones surgen durante el año
+        </h2>
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
+          También realizamos semanas de oración, invitados especiales, fines de
+          semana ministeriales y otros encuentros fuera del calendario fijo. Si
+          se transmiten, aparecen automáticamente en la sección En vivo desde
+          nuestro canal de YouTube.
+        </p>
+        <Link href="/en-vivo" className="btn-secondary mt-6">
+          Ir a En vivo
+        </Link>
       </div>
 
       <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

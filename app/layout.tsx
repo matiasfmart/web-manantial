@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: `%s · ${churchInfo.name}`,
   },
   description:
-    "Iglesia cristiana evangélica en Villa Lugano, Buenos Aires. Reuniones, ministerios y la Radio Manantial en vivo, las 24 horas.",
+    "Iglesia cristiana evangélica en Villa Lugano, Buenos Aires. Reuniones, ministerios y Radio Maranata en vivo, las 24 horas.",
   openGraph: {
     title: churchInfo.name,
     description:

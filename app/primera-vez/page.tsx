@@ -69,12 +69,11 @@ export default function PrimeraVezPage() {
         <div>
           <p className="eyebrow">¿Preferís mirar antes de venir?</p>
           <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-            Mirá un culto en vivo o grabado
+            Mirá una reunión en vivo o grabada
           </h2>
           <p className="mt-2 max-w-lg text-sm text-white/60">
-            Podés conocernos primero desde tu casa, viendo la transmisión de
-            nuestro culto de los {churchInfo.liveServiceSchedule.toLowerCase()}{" "}
-            por YouTube.
+            Podés conocernos primero desde tu casa, viendo la última reunión o
+            acompañándonos cuando transmitimos por YouTube.
           </p>
         </div>
         <Link href="/en-vivo" className="btn-secondary shrink-0">

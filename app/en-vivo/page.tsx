@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { churchInfo } from "@/lib/data";
+import { churchInfo, specialServices, transmissionInfo } from "@/lib/data";
+import { getTransmissionStatus } from "@/lib/youtube";
 import BigPlayer from "@/components/big-player";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
-import LiveOrder from "@/components/live-order";
 
 export const metadata: Metadata = {
   title: "En vivo",
   description:
-    "Escuchá Radio Manantial las 24 horas y mirá la transmisión en vivo de nuestro culto de los domingos por YouTube.",
+    "Escuchá Radio Maranata las 24 horas y mirá las transmisiones en vivo de Ministerio Manantial de Avivamiento por YouTube.",
 };
 
-export default function EnVivoPage() {
+export default async function EnVivoPage() {
+  const transmissionStatus = churchInfo.youtubeChannelId
+    ? await getTransmissionStatus(churchInfo.youtubeChannelId)
+    : ({ kind: "unavailable" } as const);
+
   const radioBlock = (
     <div className="mt-16">
       <div className="mb-6 flex items-center gap-3">
@@ -32,18 +36,18 @@ export default function EnVivoPage() {
     <div className="mt-16">
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <h2 className="font-display text-2xl font-bold uppercase tracking-normal">
-          Culto en vivo por YouTube
+          {transmissionInfo.title}
         </h2>
-        <CultoBadge />
+        <CultoBadge status={transmissionStatus} />
       </div>
 
       <div className="card overflow-hidden">
-        <CultoPlayer />
+        <CultoPlayer status={transmissionStatus} />
         <div className="flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8">
           <p className="max-w-lg text-sm text-white/60">
-            Fuera de horario de transmisión vas a ver acá el último culto
-            completo. Cuando estemos en vivo, este mismo espacio se actualiza
-            automáticamente.
+            {transmissionStatus.kind === "live"
+              ? "Esta transmisión viene directamente desde nuestro canal de YouTube."
+              : "Cuando no estamos transmitiendo, este espacio muestra la última reunión disponible del canal. Si YouTube no devuelve un video válido, evitamos mostrar un reproductor roto."}
           </p>
           <a
             href={churchInfo.social.youtube}
@@ -65,12 +69,57 @@ export default function EnVivoPage() {
         Todo lo que transmitimos en vivo
       </h1>
       <p className="mt-6 max-w-2xl text-white/60">
-        Nuestra radio suena las 24 horas del día y, además, transmitimos el
-        culto de los {churchInfo.liveServiceSchedule.toLowerCase()} por YouTube
-        para que puedas acompañarnos estés donde estés.
+        Nuestra radio suena las 24 horas del día y, además, transmitimos por
+        YouTube nuestras reuniones generales, noches especiales y encuentros
+        que pueden surgir durante la semana.
       </p>
 
-      <LiveOrder radio={radioBlock} culto={cultoBlock} />
+      {transmissionStatus.kind === "live" ? (
+        <>
+          {cultoBlock}
+          {radioBlock}
+        </>
+      ) : (
+        <>
+          {radioBlock}
+          {cultoBlock}
+        </>
+      )}
+
+      <div className="mt-20">
+        <p className="eyebrow">También transmitimos</p>
+        <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
+          Reuniones fijas y encuentros especiales
+        </h2>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60">
+          {transmissionInfo.description} Cuando el canal esté en vivo, esta
+          página prioriza automáticamente la transmisión actual.
+        </p>
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="card p-6">
+            <p className="font-display text-lg font-bold uppercase tracking-normal">
+              Reunión general
+            </p>
+            <p className="mt-2 text-sm font-semibold text-brand-light">
+              {churchInfo.liveServiceSchedule}
+            </p>
+            <p className="mt-3 text-sm text-white/60">
+              Transmisión habitual de la reunión dominical.
+            </p>
+          </div>
+          {specialServices.map((service) => (
+            <div key={service.name} className="card p-6">
+              <p className="font-display text-lg font-bold uppercase tracking-normal">
+                {service.name}
+              </p>
+              <p className="mt-2 text-sm font-semibold text-brand-light">
+                {service.schedule}
+              </p>
+              <p className="mt-3 text-sm text-white/60">{service.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* REDES */}
       <div className="mt-20 card p-8 sm:p-10">

@@ -1,25 +1,62 @@
-"use client";
-
 import { churchInfo } from "@/lib/data";
+import { getTransmissionStatus, type TransmissionStatus } from "@/lib/youtube";
 
 /**
- * Muestra el embed en vivo del culto por YouTube si ya se configuró el ID del
- * canal (churchInfo.youtubeChannelId). Mientras tanto, ofrece un acceso directo
- * a "/live", que YouTube redirige automáticamente a la transmisión en curso o,
- * si no hay ninguna, al último video del canal.
+ * Muestra una transmisión confirmada; si YouTube no devuelve un video válido,
+ * evita renderizar el iframe para no mostrar reproductores rotos.
  */
-export default function CultoPlayer({ compact = false }: { compact?: boolean }) {
-  if (churchInfo.youtubeChannelId) {
+export default async function CultoPlayer({
+  compact = false,
+  status,
+}: {
+  compact?: boolean;
+  status?: TransmissionStatus;
+}) {
+  const transmissionStatus =
+    status ??
+    (churchInfo.youtubeChannelId
+      ? await getTransmissionStatus(churchInfo.youtubeChannelId)
+      : { kind: "unavailable" as const });
+
+  if (transmissionStatus.kind === "live") {
     return (
       <div className="aspect-video w-full overflow-hidden rounded-xl bg-surface2">
         <iframe
           className="h-full w-full"
-          src={`https://www.youtube.com/embed/live_stream?channel=${churchInfo.youtubeChannelId}`}
-          title="Culto en vivo — Ministerio Manantial de Avivamiento"
+          src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?autoplay=1`}
+          title={transmissionStatus.title ?? "Transmisión en vivo — Ministerio Manantial de Avivamiento"}
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
+      </div>
+    );
+  }
+
+  if (transmissionStatus.kind === "latest") {
+    const fecha = transmissionStatus.publishedAt
+      ? new Date(transmissionStatus.publishedAt).toLocaleDateString("es-AR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : null;
+
+    return (
+      <div className={`w-full ${compact ? "space-y-1" : "space-y-2"}`}>
+        <div className="aspect-video w-full overflow-hidden rounded-xl bg-surface2">
+          <iframe
+            className="h-full w-full"
+            src={`https://www.youtube.com/embed/${transmissionStatus.videoId}`}
+            title={transmissionStatus.title ?? "Última reunión en vivo"}
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        <p className="px-1 text-sm text-white/60">
+          Última reunión en vivo{fecha ? ` — ${fecha}` : ""}
+        </p>
       </div>
     );
   }
@@ -39,7 +76,10 @@ export default function CultoPlayer({ compact = false }: { compact?: boolean }) 
         </svg>
       </span>
       <span className="max-w-xs px-4 text-sm font-semibold text-white/70">
-        Ver en vivo o la última reunión en YouTube
+        Ver el canal de YouTube
+      </span>
+      <span className="max-w-sm px-4 text-xs text-white/40">
+        No pudimos confirmar una transmisión disponible en este momento.
       </span>
     </a>
   );

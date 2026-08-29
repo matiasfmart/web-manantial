@@ -5,7 +5,7 @@ import BigPlayer from "@/components/big-player";
 export const metadata: Metadata = {
   title: "Radio en vivo",
   description:
-    "Escuchá Radio Manantial en vivo, las 24 horas. Descargá también nuestra aplicación móvil para iOS y Android.",
+    "Escuchá Radio Maranata en vivo, las 24 horas. Descargá también nuestra aplicación móvil para iOS y Android.",
 };
 
 export default function RadioPage() {
@@ -52,7 +52,7 @@ export default function RadioPage() {
           <div>
             <p className="eyebrow">Llevala a todos lados</p>
             <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-              Descargá la app de Radio Manantial
+              Descargá la app de {churchInfo.radioName}
             </h2>
             <p className="mt-4 max-w-md text-white/60">
               Escuchá la radio desde tu celular, recibí notificaciones de

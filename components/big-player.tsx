@@ -1,5 +1,6 @@
 "use client";
 
+import { churchInfo } from "@/lib/data";
 import { useRadio } from "./radio-context";
 
 export default function BigPlayer() {
@@ -37,7 +38,7 @@ export default function BigPlayer() {
             </span>
           </div>
           <p className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-            Radio Manantial
+            {churchInfo.radioName}
           </p>
           <p className="mt-2 text-sm text-white/50">
             Transmisión oficial online las 24 horas, los 7 días de la semana.
