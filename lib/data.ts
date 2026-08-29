@@ -196,18 +196,18 @@ export const churchInfo = {
   youtubeChannelId: "",
   liveServiceSchedule: "Domingos 19:30 h",
   social: {
-    instagram: "https://instagram.com/iglesiamanantial",
+    instagram: "https://www.instagram.com/manantialavivamiento/",
     youtube: "https://www.youtube.com/@ManantialdeAvivamiento",
-    facebook: "https://facebook.com/iglesiamanantial",
-    tiktok: "https://tiktok.com/@iglesiamanantial",
+    facebook: "https://www.facebook.com/mavivamiento",
+    tiktok: "https://www.tiktok.com/@manantialavivamiento",
   },
-  whatsappChannelUrl: "https://whatsapp.com/channel/0000000000000000000000",
+  whatsappChannelUrl: "https://whatsapp.com/channel/0029VaakItABqbr5DFewW12c",
   prayerRequest: {
     intro:
       "¿Necesitás que oremos por vos o por tu familia? Escribinos o llamanos, con toda confianza.",
-    mobile: "+54 9 11 5555-5555",
-    landline: "+54 11 4605-5555",
-    whatsappLink: "https://wa.me/5491155555555",
+    mobile: "+54 9 11 2799-4682",
+    landline: "-",
+    whatsappLink: "https://wa.me/5491127994682",
   },
   appStore: "https://apps.apple.com/app/radio-manantial/id0000000000",
   playStore:
@@ -237,14 +237,14 @@ export const givingInfo = {
     '"Cada uno dé como propuso en su corazón: no con tristeza, ni por necesidad, porque Dios ama al dador alegre." — 2 Corintios 9:7',
   mercadoPago: {
     label: "Mercado Pago",
-    link: "https://link.mercadopago.com.ar/iglesiamanantial",
-    alias: "IGLESIA.MANANTIAL.MP",
+    link: "-",
+    alias: "manan.tial.aviva",
   },
   bankTransfer: {
     bank: "Banco Nación",
     holder: "Asociación Iglesia Manantial",
     cbu: "0000003100000000123456",
-    alias: "IGLESIA.MANANTIAL",
+    alias: "EJEMPLO.MANANTIAL",
     cuit: "30-00000000-0",
   },
   qrNote:
