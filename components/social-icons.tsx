@@ -84,17 +84,23 @@ export function SocialTextLink({
   href,
   label,
   platform,
+  variant = "dark",
 }: {
   href: string;
   label: string;
   platform: SocialPlatform;
+  variant?: "dark" | "light";
 }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="btn-secondary !py-2.5 !px-5 text-xs"
+      className={
+        variant === "light"
+          ? "inline-flex items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-ink transition hover:border-ink/40 hover:bg-ink/5"
+          : "btn-secondary !py-2.5 !px-5 text-xs"
+      }
     >
       <SocialBrandIcon platform={platform} />
       {label}

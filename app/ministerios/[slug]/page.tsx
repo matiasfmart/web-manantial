@@ -76,71 +76,76 @@ export default async function MinistryPage({
         </div>
       </section>
 
-      <section className="section grid grid-cols-1 gap-10 py-16 sm:py-20 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          {ministry.longDescription.map((p, i) => (
-            <p key={i} className="mb-6 leading-relaxed text-white/70">
-              {p}
-            </p>
-          ))}
+      <section className="bg-white py-16 text-ink sm:py-20">
+        <div className="section grid grid-cols-1 gap-10 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            {ministry.longDescription.map((p, i) => (
+              <p key={i} className="mb-6 leading-relaxed text-ink/70">
+                {p}
+              </p>
+            ))}
 
-          {ministry.image2 && (
-            <div className="relative mb-8 mt-2 h-72 w-full overflow-hidden border border-white/10 sm:h-96">
-              <Image
-                src={ministry.image2}
-                alt={`${ministry.name} — foto 2`}
-                fill
-                sizes="(min-width: 1024px) 66vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          )}
-
-          {ministry.subMinistry && (
-            <div className="mt-10 border-y border-white/10 py-6">
-              {ministry.subMinistry.image && (
-                <div className="relative mb-6 h-56 w-full overflow-hidden">
-                  <Image
-                    src={ministry.subMinistry.image}
-                    alt={ministry.subMinistry.name}
-                    fill
-                    sizes="(min-width: 1024px) 66vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div>
-                <p className="eyebrow">Dentro de este ministerio</p>
-                <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-                  {ministry.subMinistry.name}
-                </h2>
-                <p className="mt-2 text-sm font-semibold text-brand-light">
-                  {ministry.subMinistry.schedule}
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-white/60">
-                  {ministry.subMinistry.description}
-                </p>
+            {ministry.image2 && (
+              <div className="relative mb-8 mt-2 h-72 w-full overflow-hidden border border-ink/10 sm:h-96">
+                <Image
+                  src={ministry.image2}
+                  alt={`${ministry.name} — foto 2`}
+                  fill
+                  sizes="(min-width: 1024px) 66vw, 100vw"
+                  className="object-cover"
+                />
               </div>
-            </div>
-          )}
-        </div>
+            )}
 
-        <aside className="h-fit border-y border-white/10 py-6 lg:border-l lg:border-y-0 lg:py-0 lg:pl-8">
-          <p className="eyebrow">
-            {ministry.isOutreach ? "Sumate a colaborar" : "¿Querés sumarte?"}
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-white/60">
-            {ministry.isOutreach
-              ? "Si querés colaborar con recursos o tu tiempo para esta obra, contactanos."
-              : "Contactanos y te ayudamos a dar el primer paso en este ministerio."}
-          </p>
-          <Link href="/contacto" className="btn-primary mt-6 w-full">
-            Contactar a la iglesia
-          </Link>
-          <Link href="/reuniones" className="btn-secondary mt-3 w-full">
-            Ver todos los horarios
-          </Link>
-        </aside>
+            {ministry.subMinistry && (
+              <div className="mt-10 border-y border-ink/10 py-6">
+                {ministry.subMinistry.image && (
+                  <div className="relative mb-6 h-56 w-full overflow-hidden">
+                    <Image
+                      src={ministry.subMinistry.image}
+                      alt={ministry.subMinistry.name}
+                      fill
+                      sizes="(min-width: 1024px) 66vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <p className="eyebrow !text-brand">Dentro de este ministerio</p>
+                  <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
+                    {ministry.subMinistry.name}
+                  </h2>
+                  <p className="mt-2 text-sm font-semibold text-brand">
+                    {ministry.subMinistry.schedule}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-ink/60">
+                    {ministry.subMinistry.description}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <aside className="h-fit border-y border-ink/10 py-6 lg:border-l lg:border-y-0 lg:py-0 lg:pl-8">
+            <p className="eyebrow !text-brand">
+              {ministry.isOutreach ? "Sumate a colaborar" : "¿Querés sumarte?"}
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-ink/60">
+              {ministry.isOutreach
+                ? "Si querés colaborar con recursos o tu tiempo para esta obra, contactanos."
+                : "Contactanos y te ayudamos a dar el primer paso en este ministerio."}
+            </p>
+            <Link href="/contacto" className="btn-primary mt-6 w-full">
+              Contactar a la iglesia
+            </Link>
+            <Link
+              href="/reuniones"
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-ink transition hover:border-ink/40 hover:bg-ink/5"
+            >
+              Ver todos los horarios
+            </Link>
+          </aside>
+        </div>
       </section>
     </article>
   );

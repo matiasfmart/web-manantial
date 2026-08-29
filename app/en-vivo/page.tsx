@@ -100,92 +100,97 @@ export default async function EnVivoPage() {
   );
 
   return (
-    <section className="section py-20 sm:py-24">
-      <p className="eyebrow">Ahora mismo</p>
-      <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
-        Todo lo que transmitimos en vivo
-      </h1>
-      <p className="mt-6 max-w-2xl text-white/60">
-        Nuestra radio suena las 24 horas del día y, además, transmitimos por
-        YouTube nuestras reuniones generales, noches especiales y encuentros
-        que pueden surgir durante la semana.
-      </p>
-
-      {transmissionStatus.kind === "live" ? (
-        <>
-          {cultoBlock}
-          {radioBlock}
-        </>
-      ) : (
-        <>
-          {radioBlock}
-          {cultoBlock}
-        </>
-      )}
-
-      <div className="mt-20">
-        <p className="eyebrow">También transmitimos</p>
-        <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-          Reuniones fijas y encuentros especiales
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60">
-          {transmissionInfo.description} Cuando el canal esté en vivo, esta
-          página prioriza automáticamente la transmisión actual.
+    <>
+      <section className="section py-20 sm:py-24">
+        <p className="eyebrow">Ahora mismo</p>
+        <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
+          Todo lo que transmitimos en vivo
+        </h1>
+        <p className="mt-6 max-w-2xl text-white/60">
+          Nuestra radio suena las 24 horas del día y, además, transmitimos por
+          YouTube nuestras reuniones generales, noches especiales y encuentros
+          que pueden surgir durante la semana.
         </p>
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div className="border-t border-white/10 pt-5">
-            <p className="font-display text-lg font-bold uppercase tracking-normal">
-              Reunión general
-            </p>
-            <p className="mt-2 text-sm font-semibold text-brand-light">
-              {churchInfo.liveServiceSchedule}
-            </p>
-            <p className="mt-3 text-sm text-white/60">
-              Transmisión habitual de la reunión dominical.
-            </p>
-          </div>
-          {specialServices.map((service) => (
-            <div key={service.name} className="border-t border-white/10 pt-5">
+
+        {transmissionStatus.kind === "live" ? (
+          <>
+            {cultoBlock}
+            {radioBlock}
+          </>
+        ) : (
+          <>
+            {radioBlock}
+            {cultoBlock}
+          </>
+        )}
+      </section>
+
+      {/* TAMBIEN TRANSMITIMOS (fondo claro: info complementaria de fácil lectura) */}
+      <section className="bg-white py-16 text-ink sm:py-20">
+        <div className="section">
+          <p className="eyebrow !text-brand">También transmitimos</p>
+          <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
+            Reuniones fijas y encuentros especiales
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink/60">
+            {transmissionInfo.description} Cuando el canal esté en vivo, esta
+            página prioriza automáticamente la transmisión actual.
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="border-t border-ink/10 pt-5">
               <p className="font-display text-lg font-bold uppercase tracking-normal">
-                {service.name}
+                Reunión general
               </p>
-              <p className="mt-2 text-sm font-semibold text-brand-light">
-                {service.schedule}
+              <p className="mt-2 text-sm font-semibold text-brand">
+                {churchInfo.liveServiceSchedule}
               </p>
-              <p className="mt-3 text-sm text-white/60">{service.description}</p>
+              <p className="mt-3 text-sm text-ink/60">
+                Transmisión habitual de la reunión dominical.
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
+            {specialServices.map((service) => (
+              <div key={service.name} className="border-t border-ink/10 pt-5">
+                <p className="font-display text-lg font-bold uppercase tracking-normal">
+                  {service.name}
+                </p>
+                <p className="mt-2 text-sm font-semibold text-brand">
+                  {service.schedule}
+                </p>
+                <p className="mt-3 text-sm text-ink/60">{service.description}</p>
+              </div>
+            ))}
+          </div>
 
-      {/* REDES */}
-      <div className="mt-16 border-y border-white/10 py-6">
-        <p className="eyebrow">Seguinos</p>
-        <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-          No te pierdas nada
-        </h2>
-        <p className="mt-3 max-w-lg text-sm text-white/60">
-          Sumate a nuestras redes para enterarte de horarios especiales,
-          avisos y contenido de la semana.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-4">
-          <SocialTextLink href={churchInfo.whatsappChannelUrl} label="Canal de WhatsApp" platform="whatsapp" />
-          <SocialTextLink href={churchInfo.social.instagram} label="Instagram" platform="instagram" />
-          <SocialTextLink href={churchInfo.social.youtube} label="YouTube" platform="youtube" />
-          <SocialTextLink href={churchInfo.social.facebook} label="Facebook" platform="facebook" />
-          <SocialTextLink href={churchInfo.social.tiktok} label="TikTok" platform="tiktok" />
-        </div>
-      </div>
+          {/* REDES */}
+          <div className="mt-16 border-y border-ink/10 py-6">
+            <p className="eyebrow !text-brand">Seguinos</p>
+            <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
+              No te pierdas nada
+            </h2>
+            <p className="mt-3 max-w-lg text-sm text-ink/60">
+              Sumate a nuestras redes para enterarte de horarios especiales,
+              avisos y contenido de la semana.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-4">
+              <SocialTextLink href={churchInfo.whatsappChannelUrl} label="Canal de WhatsApp" platform="whatsapp" variant="light" />
+              <SocialTextLink href={churchInfo.social.instagram} label="Instagram" platform="instagram" variant="light" />
+              <SocialTextLink href={churchInfo.social.youtube} label="YouTube" platform="youtube" variant="light" />
+              <SocialTextLink href={churchInfo.social.facebook} label="Facebook" platform="facebook" variant="light" />
+              <SocialTextLink href={churchInfo.social.tiktok} label="TikTok" platform="tiktok" variant="light" />
+            </div>
+          </div>
 
-      <div className="mt-10 flex flex-wrap gap-4">
-        <Link href="/radio" className="text-sm font-semibold text-brand-light underline underline-offset-4">
-          Ver programación completa de la radio
-        </Link>
-        <Link href="/reuniones" className="text-sm font-semibold text-brand-light underline underline-offset-4">
-          Ver todos los horarios de reunión
-        </Link>
-      </div>
-    </section>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <Link href="/radio" className="text-sm font-semibold text-brand underline underline-offset-4">
+              Ver programación completa de la radio
+            </Link>
+            <Link href="/reuniones" className="text-sm font-semibold text-brand underline underline-offset-4">
+              Ver todos los horarios de reunión
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
 

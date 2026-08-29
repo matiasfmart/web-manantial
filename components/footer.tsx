@@ -10,7 +10,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-3">
             <Image src={churchInfo.logoColor} alt="" width={36} height={36} className="h-9 w-9" />
-            <p className="font-display text-xl font-bold">{churchInfo.shortName}</p>
+            <p className="font-display text-xl font-bold uppercase">{churchInfo.shortName}</p>
           </div>
           <p className="mt-3 text-sm text-white/50">{churchInfo.auditoriumName}</p>
           <p className="mt-4 text-sm leading-relaxed text-white/60">

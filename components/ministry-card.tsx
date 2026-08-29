@@ -3,11 +3,21 @@ import Link from "next/link";
 import MinistryIcon from "./ministry-icon";
 import type { Ministry } from "@/lib/data";
 
-export default function MinistryCard({ ministry }: { ministry: Ministry }) {
+export default function MinistryCard({
+  ministry,
+  variant = "dark",
+}: {
+  ministry: Ministry;
+  variant?: "dark" | "light";
+}) {
+  const isLight = variant === "light";
+
   return (
     <Link
       href={`/ministerios/${ministry.slug}`}
-      className="group flex h-full flex-col border-t border-white/15 pt-4 transition hover:border-brand/50"
+      className={`group flex h-full flex-col border-t pt-4 transition hover:border-brand/50 ${
+        isLight ? "border-ink/15" : "border-white/15"
+      }`}
     >
       <div className="relative h-44 w-full overflow-hidden bg-surface sm:h-48">
         <Image
@@ -29,18 +39,32 @@ export default function MinistryCard({ ministry }: { ministry: Ministry }) {
       </div>
 
       <div className="flex flex-1 flex-col py-5">
-        <h3 className="font-display text-xl font-bold uppercase tracking-normal">
+        <h3
+          className={`font-display text-xl font-bold uppercase tracking-normal ${
+            isLight ? "text-ink" : "text-white"
+          }`}
+        >
           {ministry.name}
         </h3>
-        <p className="mt-1 text-sm font-medium text-brand-light">{ministry.tagline}</p>
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">
+        <p className={`mt-1 text-sm font-medium ${isLight ? "text-brand" : "text-brand-light"}`}>
+          {ministry.tagline}
+        </p>
+        <p className={`mt-3 flex-1 text-sm leading-relaxed ${isLight ? "text-ink/60" : "text-white/60"}`}>
           {ministry.description}
         </p>
-        <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-xs">
-          <span className="font-semibold uppercase tracking-wide text-white/70">
+        <div
+          className={`mt-5 flex items-center justify-between border-t pt-4 text-xs ${
+            isLight ? "border-ink/10" : "border-white/10"
+          }`}
+        >
+          <span className={`font-semibold uppercase tracking-wide ${isLight ? "text-ink/70" : "text-white/70"}`}>
             {ministry.schedule}
           </span>
-          <span className="text-brand-light opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100">
+          <span
+            className={`opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 ${
+              isLight ? "text-brand" : "text-brand-light"
+            }`}
+          >
             Ver más →
           </span>
         </div>

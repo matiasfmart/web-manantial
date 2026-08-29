@@ -169,28 +169,33 @@ export default async function HomePage() {
       </section>
 
       {/* MINISTERIOS */}
-      <section className="section py-16 sm:py-20">
-        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
-          <div>
-            <p className="eyebrow">Vida en comunidad</p>
-            <h2 className="mt-4 font-display text-4xl font-bold uppercase tracking-normal sm:text-5xl">
-              Nuestras áreas ministeriales
-            </h2>
+      <section className="bg-white py-16 text-ink sm:py-20">
+        <div className="section">
+          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+            <div>
+              <p className="eyebrow !text-brand">Vida en comunidad</p>
+              <h2 className="mt-4 font-display text-4xl font-bold uppercase tracking-normal text-ink sm:text-5xl">
+                Nuestras áreas ministeriales
+              </h2>
+            </div>
+            <Link
+              href="/ministerios"
+              className="inline-flex shrink-0 items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-sm font-semibold uppercase tracking-wide text-ink transition hover:border-ink/40 hover:bg-ink/5"
+            >
+              Ver todos los ministerios
+            </Link>
           </div>
-          <Link href="/ministerios" className="btn-secondary shrink-0">
-            Ver todos los ministerios
-          </Link>
-        </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {ministries.map((m) => (
-            <MinistryCard key={m.slug} ministry={m} />
-          ))}
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {ministries.map((m) => (
+              <MinistryCard key={m.slug} ministry={m} variant="light" />
+            ))}
+          </div>
         </div>
       </section>
 
       {/* UBICACION */}
-      <section className="section pb-24">
+      <section className="section py-16 sm:py-20">
         <div className="grid grid-cols-1 overflow-hidden border-y border-white/10 lg:grid-cols-2">
           <div className="p-6 sm:p-8 lg:p-10">
             <p className="eyebrow">Te esperamos</p>
