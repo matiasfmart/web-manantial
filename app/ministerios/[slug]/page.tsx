@@ -1,0 +1,151 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ministries } from "@/lib/data";
+import MinistryIcon from "@/components/ministry-icon";
+
+export function generateStaticParams() {
+  return ministries.map((m) => ({ slug: m.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const ministry = ministries.find((m) => m.slug === slug);
+  if (!ministry) return {};
+  return {
+    title: ministry.name,
+    description: ministry.description,
+  };
+}
+
+export default async function MinistryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const ministry = ministries.find((m) => m.slug === slug);
+  if (!ministry) notFound();
+
+  return (
+    <article>
+      <section className="relative overflow-hidden border-b border-white/10 bg-surface py-24">
+        <Image
+          src={ministry.image}
+          alt={ministry.name}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/85 to-surface/40" />
+        <div
+          className={`absolute -right-24 -top-24 h-96 w-96 rounded-full bg-gradient-to-br ${ministry.color} opacity-25 blur-[100px]`}
+        />
+        <div className="section relative">
+          <Link href="/ministerios" className="text-sm text-white/50 hover:text-white">
+            ← Todos los ministerios
+          </Link>
+          <div
+            className={`mt-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${ministry.color} text-white shadow-glow`}
+          >
+            <MinistryIcon icon={ministry.icon} className="h-8 w-8" />
+          </div>
+          <h1 className="mt-6 max-w-3xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
+            {ministry.name}
+          </h1>
+          <p className="mt-4 text-lg font-medium text-brand-light">
+            {ministry.tagline}
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-4 text-sm">
+            <span className="rounded-full border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide">
+              {ministry.schedule}
+            </span>
+            <span className="rounded-full border border-white/15 px-4 py-2 font-semibold uppercase tracking-wide text-white/70">
+              {ministry.audience}
+            </span>
+          </div>
+          {ministry.scheduleNote && (
+            <p className="mt-4 max-w-xl text-sm italic text-white/50">
+              {ministry.scheduleNote}
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="section grid grid-cols-1 gap-14 py-24 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          {ministry.longDescription.map((p, i) => (
+            <p key={i} className="mb-6 leading-relaxed text-white/70">
+              {p}
+            </p>
+          ))}
+
+          {ministry.image2 && (
+            <div className="relative mt-2 mb-8 h-72 w-full overflow-hidden rounded-2xl border border-white/10 sm:h-96">
+              <Image
+                src={ministry.image2}
+                alt={`${ministry.name} — foto 2`}
+                fill
+                sizes="(min-width: 1024px) 66vw, 100vw"
+                className="object-cover"
+              />
+            </div>
+          )}
+
+          {ministry.subMinistry && (
+            <div className="card mt-10 overflow-hidden">
+              {ministry.subMinistry.image && (
+                <div className="relative h-56 w-full">
+                  <Image
+                    src={ministry.subMinistry.image}
+                    alt={ministry.subMinistry.name}
+                    fill
+                    sizes="(min-width: 1024px) 66vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <div className="p-8">
+                <p className="eyebrow">Dentro de este ministerio</p>
+                <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
+                  {ministry.subMinistry.name}
+                </h2>
+                <p className="mt-2 text-sm font-semibold text-brand-light">
+                  {ministry.subMinistry.schedule}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-white/60">
+                  {ministry.subMinistry.description}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <aside className="card h-fit p-8">
+          <p className="eyebrow">
+            {ministry.isOutreach ? "Sumate a colaborar" : "¿Querés sumarte?"}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-white/60">
+            {ministry.isOutreach
+              ? "Si querés colaborar con recursos o tu tiempo para esta obra, contactanos."
+              : "Contactanos y te ayudamos a dar el primer paso en este ministerio."}
+          </p>
+          <Link href="/contacto" className="btn-primary mt-6 w-full">
+            Contactar a la iglesia
+          </Link>
+          <Link href="/reuniones" className="btn-secondary mt-3 w-full">
+            Ver todos los horarios
+          </Link>
+        </aside>
+      </section>
+    </article>
+  );
+}
+
