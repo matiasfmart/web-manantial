@@ -241,19 +241,48 @@ export const churchInfo = {
 };
 
 export type PastoralMember = {
-  names: string[];
+  displayName: string;
   role: string;
+  image?: string;
+  suggestedImage: string;
 };
 
-// Fotos pendientes: reemplazar los avatares con iniciales por fotos reales del equipo pastoral.
 export const pastoralTeam: PastoralMember[] = [
-  { names: ["Silvana Zagari"], role: "Pastora principal" },
-  { names: ["Iván González", "Damaris Álvarez"], role: "Equipo pastoral" },
-  { names: ["Alejandro Martínez", "Claudia Martínez"], role: "Equipo pastoral" },
-  { names: ["Matías Martínez", "Abigail Álvarez"], role: "Equipo pastoral" },
-  { names: ["Mathias Díaz", "Lorena Villalba"], role: "Equipo pastoral" },
-  { names: ["Samuel Arroyo", "Leticia Arroyo"], role: "Equipo pastoral" },
-  { names: ["Orlando Flores"], role: "Evangelista" },
+  {
+    displayName: "Silvana Zagari",
+    role: "Pastora principal",
+    suggestedImage: "/images/pastoral/silvana-zagari.jpg",
+  },
+  {
+    displayName: "Iván González y Damaris Álvarez",
+    role: "Equipo pastoral",
+    suggestedImage: "/images/pastoral/ivan-damaris.jpg",
+  },
+  {
+    displayName: "Alejandro Martínez y Claudia Martínez",
+    role: "Equipo pastoral",
+    suggestedImage: "/images/pastoral/alejandro-claudia.jpg",
+  },
+  {
+    displayName: "Matías Martínez y Abigail Álvarez",
+    role: "Equipo pastoral",
+    suggestedImage: "/images/pastoral/matias-abigail.jpg",
+  },
+  {
+    displayName: "Mathias Díaz y Lorena Villalba",
+    role: "Equipo pastoral",
+    suggestedImage: "/images/pastoral/mathias-lorena.jpg",
+  },
+  {
+    displayName: "Samuel Arroyo y Leticia Arroyo",
+    role: "Equipo pastoral",
+    suggestedImage: "/images/pastoral/samuel-leticia.jpg",
+  },
+  {
+    displayName: "Orlando Flores",
+    role: "Evangelista",
+    suggestedImage: "/images/pastoral/orlando-flores.jpg",
+  },
 ];
 
 export const givingInfo = {

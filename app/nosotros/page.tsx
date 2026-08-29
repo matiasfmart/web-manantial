@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { churchInfo, pastoralTeam } from "@/lib/data";
 
@@ -43,38 +44,53 @@ export default function NosotrosPage() {
       </section>
 
       {/* PASTORADO */}
-      <section className="bg-white py-24 text-ink">
+      <section className="bg-white py-20 text-ink">
         <div className="section">
-          <p className="eyebrow !text-brand">Liderazgo</p>
-          <h2 className="mt-3 max-w-xl font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-            Nuestro equipo pastoral
-          </h2>
-          <p className="mt-4 max-w-xl text-ink/60">
-            Un equipo comprometido con acompañar a cada familia y cada
-            ministerio de la iglesia, en cada etapa de la vida.
-          </p>
+          <div className="max-w-2xl">
+            <p className="eyebrow !text-brand">Acompañamiento pastoral</p>
+            <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
+              Personas que sirven y acompañan
+            </h2>
+            <p className="mt-4 text-ink/60">
+              Nuestro equipo pastoral acompaña la vida espiritual de la iglesia
+              con oración, enseñanza y cuidado cercano.
+            </p>
+          </div>
 
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
             {pastoralTeam.map((member) => (
               <div
-                key={member.names.join("-")}
-                className="flex items-center gap-4 rounded-2xl border border-ink/10 bg-surface2/[0.03] p-5"
+                key={member.displayName}
+                className="group flex items-center gap-4 rounded-2xl border border-ink/10 bg-white p-3 shadow-[0_18px_55px_rgba(5,7,12,0.06)] transition hover:border-brand/25"
               >
-                <div className="flex -space-x-3">
-                  {member.names.map((name) => (
-                    <div
-                      key={name}
-                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-brand to-brand-dark text-sm font-bold text-white"
-                    >
-                      {initials(name)}
-                    </div>
-                  ))}
+                <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-ink sm:h-28 sm:w-28">
+                  {member.image ? (
+                    <Image
+                      src={member.image}
+                      alt={member.displayName}
+                      fill
+                      sizes="112px"
+                      className="object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-brand to-ink" />
+                      <Image
+                        src={churchInfo.logoColor}
+                        alt=""
+                        width={44}
+                        height={44}
+                        className="relative h-11 w-11"
+                      />
+                    </>
+                  )}
                 </div>
-                <div>
-                  <p className="font-semibold leading-tight">
-                    {member.names.join(" y ")}
+                <div className="h-16 w-px shrink-0 bg-gradient-to-b from-brand via-gold to-transparent" />
+                <div className="min-w-0 pr-2">
+                  <p className="font-display text-lg font-bold uppercase leading-tight tracking-normal text-ink">
+                    {member.displayName}
                   </p>
-                  <p className="text-xs uppercase tracking-wide text-ink/40">
+                  <p className="mt-1 text-xs uppercase tracking-wide text-ink/40">
                     {member.role}
                   </p>
                 </div>
@@ -91,16 +107,6 @@ export default function NosotrosPage() {
       </section>
     </>
   );
-}
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter((part) => part.length > 2)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
 }
 
 function ValueCard({ title, text }: { title: string; text: string }) {
