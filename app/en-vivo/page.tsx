@@ -5,6 +5,7 @@ import { getTransmissionStatus } from "@/lib/youtube";
 import BigPlayer from "@/components/big-player";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
+import { SocialTextLink } from "@/components/social-icons";
 
 export const metadata: Metadata = {
   title: "En vivo",
@@ -132,21 +133,11 @@ export default async function EnVivoPage() {
           avisos y contenido de la semana.
         </p>
         <div className="mt-6 flex flex-wrap gap-4">
-          <a href={churchInfo.whatsappChannelUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary !py-2.5 !px-5 text-xs">
-            Canal de WhatsApp
-          </a>
-          <a href={churchInfo.social.instagram} target="_blank" rel="noopener noreferrer" className="btn-secondary !py-2.5 !px-5 text-xs">
-            Instagram
-          </a>
-          <a href={churchInfo.social.youtube} target="_blank" rel="noopener noreferrer" className="btn-secondary !py-2.5 !px-5 text-xs">
-            YouTube
-          </a>
-          <a href={churchInfo.social.facebook} target="_blank" rel="noopener noreferrer" className="btn-secondary !py-2.5 !px-5 text-xs">
-            Facebook
-          </a>
-          <a href={churchInfo.social.tiktok} target="_blank" rel="noopener noreferrer" className="btn-secondary !py-2.5 !px-5 text-xs">
-            TikTok
-          </a>
+          <SocialTextLink href={churchInfo.whatsappChannelUrl} label="Canal de WhatsApp" platform="whatsapp" />
+          <SocialTextLink href={churchInfo.social.instagram} label="Instagram" platform="instagram" />
+          <SocialTextLink href={churchInfo.social.youtube} label="YouTube" platform="youtube" />
+          <SocialTextLink href={churchInfo.social.facebook} label="Facebook" platform="facebook" />
+          <SocialTextLink href={churchInfo.social.tiktok} label="TikTok" platform="tiktok" />
         </div>
       </div>
 

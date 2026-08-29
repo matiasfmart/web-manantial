@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { churchInfo } from "@/lib/data";
+import { SocialBrandIcon } from "@/components/social-icons";
 
 export const metadata: Metadata = {
   title: "Primera vez",
@@ -98,6 +99,7 @@ export default function PrimeraVezPage() {
             rel="noopener noreferrer"
             className="btn-primary !py-2.5 !px-5 text-xs"
           >
+            <SocialBrandIcon platform="whatsapp" />
             Escribir por WhatsApp
           </a>
           <Link href="/contacto" className="btn-secondary !py-2.5 !px-5 text-xs">

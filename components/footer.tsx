@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { churchInfo, ministries } from "@/lib/data";
+import { SocialBrandIcon, SocialCircleLink } from "./social-icons";
 
 export default function Footer() {
   return (
@@ -19,11 +20,11 @@ export default function Footer() {
             {churchInfo.historicNote}
           </p>
           <div className="mt-5 flex gap-3">
-            <SocialIcon href={churchInfo.whatsappChannelUrl} label="WhatsApp" />
-            <SocialIcon href={churchInfo.social.instagram} label="Instagram" />
-            <SocialIcon href={churchInfo.social.youtube} label="YouTube" />
-            <SocialIcon href={churchInfo.social.facebook} label="Facebook" />
-            <SocialIcon href={churchInfo.social.tiktok} label="TikTok" />
+            <SocialCircleLink href={churchInfo.whatsappChannelUrl} label="WhatsApp" platform="whatsapp" />
+            <SocialCircleLink href={churchInfo.social.instagram} label="Instagram" platform="instagram" />
+            <SocialCircleLink href={churchInfo.social.youtube} label="YouTube" platform="youtube" />
+            <SocialCircleLink href={churchInfo.social.facebook} label="Facebook" platform="facebook" />
+            <SocialCircleLink href={churchInfo.social.tiktok} label="TikTok" platform="tiktok" />
           </div>
         </div>
 
@@ -66,6 +67,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="btn-secondary mt-4 !py-2 !px-4 text-xs"
           >
+            <SocialBrandIcon platform="whatsapp" />
             Escribir por WhatsApp
           </a>
           <p className="mt-6 text-xs text-white/40">
@@ -74,19 +76,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
-}
-
-function SocialIcon({ href, label }: { href: string; label: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-brand hover:text-brand-light"
-    >
-      <span className="text-xs font-bold">{label[0]}</span>
-    </a>
   );
 }

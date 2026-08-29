@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { churchInfo } from "@/lib/data";
 import ContactForm from "@/components/contact-form";
+import { SocialBrandIcon } from "@/components/social-icons";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -57,6 +58,7 @@ export default function ContactoPage() {
               rel="noopener noreferrer"
               className="btn-primary mt-6"
             >
+              <SocialBrandIcon platform="whatsapp" />
               Escribir por WhatsApp
             </a>
           </div>
