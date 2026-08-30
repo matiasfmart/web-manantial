@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -12,12 +12,12 @@ export default function NotFound() {
         radio mientras tanto.
       </p>
       <div className="mt-8 flex gap-4">
-        <Link href="/" className="btn-primary">
+        <ButtonLink href="/" variant="primary">
           Ir al inicio
-        </Link>
-        <Link href="/radio" className="btn-secondary">
+        </ButtonLink>
+        <ButtonLink href="/radio" variant="secondary">
           Escuchar radio
-        </Link>
+        </ButtonLink>
       </div>
     </section>
   );

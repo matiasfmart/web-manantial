@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { ChurchInfo } from "@/lib/data";
 import { SocialBrandIcon } from "./social-icons";
+import { BadgeDot } from "./ui/badge";
+import { ButtonLink } from "./ui/button";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -50,8 +52,8 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium tracking-wide transition hover:text-brand ${
-                pathname === link.href ? "text-brand" : "text-ink/65"
+              className={`link-underline text-sm font-medium tracking-wide transition hover:text-brand ${
+                pathname === link.href ? "link-underline-active text-brand" : "text-ink/65"
               }`}
             >
               {link.label}
@@ -60,22 +62,13 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/en-vivo"
-            className="btn-secondary !px-4 !py-2 text-xs"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-            </span>
+          <ButtonLink href="/en-vivo" variant="onair" size="sm">
+            <BadgeDot tone="onair" pulse />
             En vivo
-          </Link>
-          <Link
-            href="/ofrendas"
-            className="inline-flex items-center justify-center bg-ink px-5 py-2 text-xs font-semibold text-white transition hover:bg-carbon active:scale-95"
-          >
+          </ButtonLink>
+          <ButtonLink href="/ofrendas" variant="primary" size="sm">
             Ofrendar
-          </Link>
+          </ButtonLink>
         </div>
 
         <button
@@ -145,24 +138,13 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
 
             <div className="mt-auto border-t border-white/10 pt-5">
               <div className="grid grid-cols-2 gap-2">
-              <Link
-                href="/en-vivo"
-                onClick={() => setOpen(false)}
-                className="btn-secondary-dark px-4 py-3 text-sm"
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-                </span>
+              <ButtonLink href="/en-vivo" onClick={() => setOpen(false)} variant="onair" tone="dark" className="px-4 py-3 text-sm">
+                <BadgeDot tone="onair" pulse />
                 En vivo
-              </Link>
-              <Link
-                href="/ofrendas"
-                onClick={() => setOpen(false)}
-                className="btn-primary-dark px-4 py-3 text-sm"
-              >
+              </ButtonLink>
+              <ButtonLink href="/ofrendas" onClick={() => setOpen(false)} variant="primary" tone="dark" className="px-4 py-3 text-sm">
                 Ofrendar
-              </Link>
+              </ButtonLink>
               </div>
 
               <div className="mt-6 flex items-center justify-between gap-4">

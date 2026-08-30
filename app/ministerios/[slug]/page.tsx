@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ministrySlugs, getMinistryBySlug } from "@/lib/data";
 import MinistryIcon from "@/components/ministry-icon";
+import { ButtonLink } from "@/components/ui/button";
 
 export function generateStaticParams() {
   return ministrySlugs.map((slug) => ({ slug }));
@@ -135,15 +136,12 @@ export default async function MinistryPage({
                 ? "Si querés colaborar con recursos o tu tiempo para esta obra, contactanos."
                 : "Contactanos y te ayudamos a dar el primer paso en este ministerio."}
             </p>
-            <Link href="/contacto" className="btn-primary mt-6 w-full">
+            <ButtonLink href="/contacto" variant="primary" className="mt-6 w-full">
               Contactar a la iglesia
-            </Link>
-            <Link
-              href="/reuniones"
-              className="btn-secondary mt-3 w-full"
-            >
+            </ButtonLink>
+            <ButtonLink href="/reuniones" variant="secondary" className="mt-3 w-full">
               Ver todos los horarios
-            </Link>
+            </ButtonLink>
           </aside>
         </div>
       </section>

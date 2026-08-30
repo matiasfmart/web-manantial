@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getChurchInfo, getGeneralServices, getSpecialServices } from "@/lib/data";
+import { BadgeDot, BadgeLink } from "@/components/ui/badge";
+import { ButtonLink } from "@/components/ui/button";
+import { InteractiveLink } from "@/components/ui/interactive-link";
 
 export const metadata: Metadata = {
   title: "Reuniones y horarios",
@@ -30,9 +33,9 @@ export default async function ReunionesPage() {
           Integración (GDI) también forman parte de nuestras reuniones
           generales, pero se organizan en distintos hogares — conocé más en la
           sección de{" "}
-          <Link href="/ministerios/gdi" className="text-brand underline underline-offset-4">
+          <InteractiveLink href="/ministerios/gdi" className="text-brand">
             GDI
-          </Link>
+          </InteractiveLink>
           .
         </p>
       </section>
@@ -60,13 +63,10 @@ export default async function ReunionesPage() {
                         <span className="flex items-center gap-2 font-medium text-ink/80">
                           {s.label}
                           {s.streamed && (
-                            <Link
-                              href="/en-vivo"
-                              className="inline-flex items-center gap-1.5 border border-ink/20 bg-ink/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-ink/70"
-                            >
-                              <span className="h-1.5 w-1.5 animate-pulseSlow rounded-full bg-brand" />
+                            <BadgeLink href="/en-vivo" variant="onair">
+                              <BadgeDot tone="onair" pulse />
                               Se transmite por YouTube
-                            </Link>
+                            </BadgeLink>
                           )}
                         </span>
                         <span className="font-display text-xl text-ink">
@@ -97,13 +97,10 @@ export default async function ReunionesPage() {
                       {service.name}
                     </h3>
                     {service.streamed && (
-                      <Link
-                        href="/en-vivo"
-                        className="inline-flex items-center gap-1.5 border border-ink/20 bg-ink/5 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-ink/70"
-                      >
-                        <span className="h-1.5 w-1.5 animate-pulseSlow rounded-full bg-brand" />
+                      <BadgeLink href="/en-vivo" variant="onair">
+                        <BadgeDot tone="onair" pulse />
                         Se transmite por YouTube
-                      </Link>
+                      </BadgeLink>
                     )}
                   </div>
                   <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-ink/65">
@@ -131,9 +128,9 @@ export default async function ReunionesPage() {
             se transmiten, aparecen automáticamente en la sección En vivo desde
             nuestro canal de YouTube.
           </p>
-          <Link href="/en-vivo" className="btn-secondary mt-6">
+          <ButtonLink href="/en-vivo" variant="secondary" className="mt-6">
             Ir a En vivo
-          </Link>
+          </ButtonLink>
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-stagger>

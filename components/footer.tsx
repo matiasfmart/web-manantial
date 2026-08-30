@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ChurchInfo, Ministry } from "@/lib/data";
 import { SocialBrandIcon, SocialCircleLink } from "./social-icons";
+import { ExternalButtonLink } from "./ui/button";
 
 export default function Footer({
   churchInfo,
@@ -67,15 +68,16 @@ export default function Footer({
             <li>{churchInfo.prayerRequest.landline} (fijo)</li>
             <li>{churchInfo.email}</li>
           </ul>
-          <a
+          <ExternalButtonLink
             href={churchInfo.prayerRequest.whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary-dark mt-4 !py-2 !px-4 text-xs"
+            variant="secondary"
+            tone="dark"
+            size="sm"
+            className="mt-4"
           >
             <SocialBrandIcon platform="whatsapp" />
             Escribir por WhatsApp
-          </a>
+          </ExternalButtonLink>
           <p className="mt-6 text-xs text-white/45">
             © {new Date().getFullYear()} {churchInfo.name}. Todos los derechos reservados.
           </p>

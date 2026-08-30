@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getChurchInfo, getGivingInfo } from "@/lib/data";
+import { ExternalButtonLink } from "@/components/ui/button";
+import { ExternalInteractiveLink } from "@/components/ui/interactive-link";
 
 export const metadata: Metadata = {
   title: "Ofrendas",
@@ -69,14 +71,12 @@ export default async function OfrendasPage() {
                   <div className="mt-6 border-y border-ink/10 py-4 text-sm">
                     <Row label="Alias" value={givingInfo.mercadoPago.alias} />
                   </div>
-                  <a
+                  <ExternalButtonLink
                     href={givingInfo.mercadoPago.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary mt-6"
+                    className="mt-6"
                   >
                     Ofrendar con Mercado Pago
-                  </a>
+                  </ExternalButtonLink>
                 </div>
               </div>
             </section>
@@ -127,9 +127,9 @@ export default async function OfrendasPage() {
 
         <p className="mt-14 text-sm text-ink/50">
           ¿Tenés dudas sobre tu ofrenda o necesitás un comprobante? Escribinos a{" "}
-          <a href={`mailto:${churchInfo.email}`} className="text-brand underline underline-offset-4">
+          <ExternalInteractiveLink href={`mailto:${churchInfo.email}`} className="text-brand">
             {churchInfo.email}
-          </a>
+          </ExternalInteractiveLink>
           .
         </p>
       </section>

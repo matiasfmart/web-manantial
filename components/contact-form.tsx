@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [submitted, setSubmitted] = useState(false);
@@ -82,7 +83,7 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
         />
       </div>
       {error && <p className="animate-[revealUp_240ms_ease-out_forwards] text-sm text-red-400">{error}</p>}
-      <button type="submit" disabled={isSending} className="btn-primary w-full disabled:opacity-60">
+      <Button type="submit" disabled={isSending} variant="primary" className="w-full disabled:opacity-60">
         {isSending ? (
           <span className="inline-flex items-center gap-2">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
@@ -93,7 +94,7 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
         ) : (
           "Enviar mensaje"
         )}
-      </button>
+      </Button>
     </form>
   );
 }

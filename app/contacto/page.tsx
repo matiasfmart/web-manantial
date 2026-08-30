@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getChurchInfo } from "@/lib/data";
 import ContactForm from "@/components/contact-form";
 import { SocialBrandIcon } from "@/components/social-icons";
+import { ExternalButtonLink } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Contacto",
@@ -58,15 +59,13 @@ export default async function ContactoPage() {
                 <p>📱 {churchInfo.prayerRequest.mobile}</p>
                 <p>☎️ {churchInfo.prayerRequest.landline}</p>
               </div>
-              <a
+              <ExternalButtonLink
                 href={churchInfo.prayerRequest.whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary mt-6"
+                className="mt-6"
               >
                 <SocialBrandIcon platform="whatsapp" />
                 Escribir por WhatsApp
-              </a>
+              </ExternalButtonLink>
             </div>
 
             <div className="overflow-hidden border border-ink/10">

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getChurchInfo, getGeneralServices, getMinistries, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
 import MinistryCard from "@/components/ministry-card";
@@ -7,6 +6,8 @@ import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
 import RadioStrip from "@/components/radio-strip";
 import AnimatedCounter from "@/components/animated-counter";
+import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
+import { InteractiveLink } from "@/components/ui/interactive-link";
 
 export default async function HomePage() {
   const [churchInfo, generalServices, ministries] = await Promise.all([
@@ -38,9 +39,9 @@ export default async function HomePage() {
           <p className="mt-3 text-sm leading-relaxed text-white/60">
             Reuniones generales, Noche de Unción, Santa Cena y encuentros especiales.
           </p>
-          <Link href="/en-vivo" className="btn-secondary-dark mt-7 w-full sm:w-auto">
+          <ButtonLink href="/en-vivo" variant="onair" tone="dark" className="mt-7 w-full sm:w-auto">
             Ver transmisión
-          </Link>
+          </ButtonLink>
         </div>
         <CultoPlayer compact status={transmissionStatus} />
       </div>
@@ -74,19 +75,19 @@ export default async function HomePage() {
             Reuniones, comunidad y acompañamiento espiritual para toda la familia.
           </p>
           <div className="mt-10 flex flex-wrap gap-4 opacity-0 animate-[revealUp_520ms_cubic-bezier(0.22,1,0.36,1)_560ms_forwards]">
-            <Link href="/reuniones" className="btn-primary-dark">
+            <ButtonLink href="/reuniones" variant="primary" tone="dark">
               Ver horarios
-            </Link>
-            <Link href="/radio" className="inline-flex items-center text-sm font-medium text-white/75 underline underline-offset-4 hover:text-white">
+            </ButtonLink>
+            <InteractiveLink href="/radio" className="inline-flex items-center text-sm font-medium text-white/75 hover:text-white">
               Escuchar radio
-            </Link>
+            </InteractiveLink>
           </div>
-          <Link
+          <InteractiveLink
             href="/primera-vez"
-            className="link-underline mt-6 inline-block opacity-0 animate-[revealUp_460ms_cubic-bezier(0.22,1,0.36,1)_680ms_forwards] text-sm font-medium text-white/70 hover:text-white"
+            className="mt-6 inline-block opacity-0 animate-[revealUp_460ms_cubic-bezier(0.22,1,0.36,1)_680ms_forwards] text-sm font-medium text-white/70 hover:text-white"
           >
             ¿Es tu primera vez? Empezá acá
-          </Link>
+          </InteractiveLink>
         </div>
       </section>
 
@@ -182,12 +183,9 @@ export default async function HomePage() {
                 Nuestras áreas ministeriales
               </h2>
             </div>
-            <Link
-              href="/ministerios"
-              className="btn-secondary shrink-0"
-            >
+            <ButtonLink href="/ministerios" variant="secondary" className="shrink-0">
               Ver todos los ministerios
-            </Link>
+            </ButtonLink>
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-stagger>
@@ -211,19 +209,16 @@ export default async function HomePage() {
               {churchInfo.historicNote}
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
-              <a
+              <ExternalButtonLink
                 href={`https://maps.google.com/?q=${encodeURIComponent(
                   churchInfo.mapsQuery
                 )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary"
               >
                 Cómo llegar
-              </a>
-              <Link href="/contacto" className="btn-secondary">
+              </ExternalButtonLink>
+              <ButtonLink href="/contacto" variant="secondary">
                 Contactanos
-              </Link>
+              </ButtonLink>
             </div>
           </div>
           <div className="min-h-[280px] w-full" data-reveal style={{ "--motion-delay": "180ms" } as React.CSSProperties}>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { getChurchInfo, getPastoralTeam } from "@/lib/data";
+import { ButtonLink } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Nosotros",
@@ -102,9 +102,9 @@ export default async function NosotrosPage() {
       </section>
 
       <section className="section py-16 text-center">
-        <Link href="/contacto" className="btn-primary">
+        <ButtonLink href="/contacto" variant="primary">
           Quiero saber más
-        </Link>
+        </ButtonLink>
       </section>
     </>
   );

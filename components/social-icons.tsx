@@ -1,3 +1,5 @@
+import { ExternalButtonLink } from "./ui/button";
+
 type SocialPlatform = "whatsapp" | "instagram" | "youtube" | "facebook" | "tiktok";
 
 export function SocialBrandIcon({
@@ -96,18 +98,9 @@ export function SocialTextLink({
   variant?: "dark" | "light";
 }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={
-        variant === "light"
-          ? "btn-secondary !py-2.5 !px-5 text-xs"
-          : "btn-secondary !py-2.5 !px-5 text-xs"
-      }
-    >
+    <ExternalButtonLink href={href} variant="secondary" tone={variant} size="sm">
       <SocialBrandIcon platform={platform} />
       {label}
-    </a>
+    </ExternalButtonLink>
   );
 }

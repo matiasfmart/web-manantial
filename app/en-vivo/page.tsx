@@ -6,6 +6,8 @@ import BigPlayer from "@/components/big-player";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
 import { SocialTextLink } from "@/components/social-icons";
+import { ExternalButtonLink } from "@/components/ui/button";
+import { ExternalInteractiveLink, InteractiveLink } from "@/components/ui/interactive-link";
 
 export const metadata: Metadata = {
   title: "En vivo",
@@ -30,20 +32,23 @@ export default async function EnVivoPage() {
             </span>
             <p className="eyebrow">Audio 24 horas</p>
           </div>
-          <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal sm:text-3xl">
+          <h2 className="mt-3 font-display text-2xl font-semibold tracking-normal sm:text-3xl">
             {churchInfo.radioName}
           </h2>
+          <p className="mt-2 max-w-lg text-sm leading-relaxed text-copy">
+            Siempre disponible para escuchar desde el sitio, incluso cuando no hay video en vivo.
+          </p>
         </div>
-        <Link href="/radio" className="text-sm font-semibold text-brand underline underline-offset-4">
+        <InteractiveLink href="/radio" className="text-sm font-semibold text-ink/75 hover:text-ink">
           Ver programación completa
-        </Link>
+        </InteractiveLink>
       </div>
 
       <BigPlayer churchInfo={churchInfo} />
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="border-t border-ink/10 pt-4">
-          <p className="font-display text-lg font-bold uppercase tracking-normal">
+          <p className="font-display text-lg font-semibold tracking-normal">
             Siempre encendida
           </p>
           <p className="mt-2 text-sm text-ink/60">
@@ -51,7 +56,7 @@ export default async function EnVivoPage() {
           </p>
         </div>
         <div className="border-t border-ink/10 pt-4">
-          <p className="font-display text-lg font-bold uppercase tracking-normal">
+          <p className="font-display text-lg font-semibold tracking-normal">
             Desde el auditorio
           </p>
           <p className="mt-2 text-sm text-ink/60">
@@ -59,7 +64,7 @@ export default async function EnVivoPage() {
           </p>
         </div>
         <div className="border-t border-ink/10 pt-4">
-          <p className="font-display text-lg font-bold uppercase tracking-normal">
+          <p className="font-display text-lg font-semibold tracking-normal">
             En la app
           </p>
           <p className="mt-2 text-sm text-ink/60">
@@ -72,11 +77,29 @@ export default async function EnVivoPage() {
 
   const cultoBlock = (
     <div className="mt-16">
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <h2 className="font-display text-2xl font-bold uppercase tracking-normal">
-          {transmissionInfo.title}
-        </h2>
-        <CultoBadge status={transmissionStatus} />
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="eyebrow">Video de reuniones</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <h2 className="font-display text-2xl font-semibold tracking-normal sm:text-3xl">
+              {transmissionInfo.title}
+            </h2>
+            <CultoBadge status={transmissionStatus} />
+          </div>
+          <p className="mt-2 max-w-lg text-sm leading-relaxed text-copy">
+            {transmissionStatus.kind === "live"
+              ? "Hay una reunión transmitiéndose ahora desde nuestro canal."
+              : transmissionStatus.kind === "latest"
+                ? "Ahora no hay transmisión en vivo; dejamos disponible la última reunión encontrada."
+                : "Cuando haya una reunión activa, este espacio se actualizará automáticamente."}
+          </p>
+        </div>
+        <ExternalInteractiveLink
+          href={churchInfo.social.youtube}
+          className="link-underline text-sm font-semibold text-ink/75 hover:text-ink"
+        >
+          Abrir YouTube
+        </ExternalInteractiveLink>
       </div>
 
       <div className="overflow-hidden border-y border-ink/10">
@@ -87,14 +110,13 @@ export default async function EnVivoPage() {
               ? "Esta transmisión viene directamente desde nuestro canal de YouTube."
               : "Cuando no estamos transmitiendo, este espacio muestra la última reunión disponible del canal. Si YouTube no devuelve un video válido, evitamos mostrar un reproductor roto."}
           </p>
-          <a
+          <ExternalButtonLink
             href={churchInfo.social.youtube}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary shrink-0"
+            variant="secondary"
+            className="shrink-0"
           >
             Ver canal de YouTube
-          </a>
+          </ExternalButtonLink>
         </div>
       </div>
     </div>
@@ -182,12 +204,12 @@ export default async function EnVivoPage() {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/radio" className="text-sm font-semibold text-brand underline underline-offset-4">
+            <InteractiveLink href="/radio" className="text-sm font-semibold text-brand">
               Ver programación completa de la radio
-            </Link>
-            <Link href="/reuniones" className="text-sm font-semibold text-brand underline underline-offset-4">
+            </InteractiveLink>
+            <InteractiveLink href="/reuniones" className="text-sm font-semibold text-brand">
               Ver todos los horarios de reunión
-            </Link>
+            </InteractiveLink>
           </div>
         </div>
       </section>

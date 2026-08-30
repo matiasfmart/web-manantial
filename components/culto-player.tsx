@@ -67,20 +67,23 @@ export default async function CultoPlayer({
       href={`${churchInfo.social.youtube}/live`}
       target="_blank"
       rel="noopener noreferrer"
-      className={`motion-scale-in group flex aspect-video w-full flex-col items-center justify-center gap-3 border border-ink/10 bg-surface2 text-center transition hover:bg-surface2/70 ${
+      className={`motion-scale-in group flex aspect-video w-full flex-col items-center justify-center gap-4 border border-ink/10 bg-surface2 px-6 text-center transition hover:border-brand/35 hover:bg-mist ${
         compact ? "gap-2" : ""
       }`}
     >
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink/10 text-ink transition group-hover:scale-110">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white transition duration-300 group-hover:scale-105 group-hover:bg-brand-dark">
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
           <path d="M8 5v14l11-7z" />
         </svg>
       </span>
-      <span className="max-w-xs px-4 text-sm font-semibold text-ink/75">
-        Ver el canal de YouTube
+      <span className="max-w-xs text-sm font-semibold text-ink">
+        No hay una transmisión activa ahora
       </span>
-      <span className="max-w-sm px-4 text-xs text-ink/45">
-        No pudimos confirmar una transmisión disponible en este momento.
+      <span className="max-w-sm text-xs leading-relaxed text-copy">
+        Podés abrir el canal para ver próximas emisiones o reuniones recientes.
+      </span>
+      <span className="link-underline text-xs font-semibold text-ink/70">
+        Ir al canal →
       </span>
     </a>
   );

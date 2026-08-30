@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getChurchInfo } from "@/lib/data";
 import { SocialBrandIcon } from "@/components/social-icons";
 import FirstVisitAccordion from "@/components/first-visit-accordion";
+import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Primera vez",
@@ -52,17 +53,14 @@ export default async function PrimeraVezPage() {
         </p>
 
         <div className="mt-10 flex flex-wrap gap-4">
-          <a
+          <ExternalButtonLink
             href={`https://www.google.com/maps?q=${encodeURIComponent(churchInfo.mapsQuery)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary"
           >
             Cómo llegar
-          </a>
-          <Link href="/reuniones" className="btn-secondary">
+          </ExternalButtonLink>
+          <ButtonLink href="/reuniones" variant="secondary">
             Ver horarios de reunión
-          </Link>
+          </ButtonLink>
         </div>
       </section>
 
@@ -89,9 +87,9 @@ export default async function PrimeraVezPage() {
               acompañándonos cuando transmitimos por YouTube.
             </p>
           </div>
-          <Link href="/en-vivo" className="btn-secondary shrink-0">
+          <ButtonLink href="/en-vivo" variant="secondary" className="shrink-0">
             Ir a En vivo
-          </Link>
+          </ButtonLink>
         </div>
 
         {/* CONTACTO DIRECTO */}
@@ -105,18 +103,16 @@ export default async function PrimeraVezPage() {
             llegar en colectivo, o lo que necesites.
           </p>
           <div className="mt-6 flex flex-wrap gap-4">
-            <a
+            <ExternalButtonLink
               href={churchInfo.prayerRequest.whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary !py-2.5 !px-5 text-xs"
+              size="sm"
             >
               <SocialBrandIcon platform="whatsapp" />
               Escribir por WhatsApp
-            </a>
-            <Link href="/contacto" className="btn-secondary !py-2.5 !px-5 text-xs">
+            </ExternalButtonLink>
+            <ButtonLink href="/contacto" variant="secondary" size="sm">
               Ir a Contacto
-            </Link>
+            </ButtonLink>
           </div>
         </div>
       </section>

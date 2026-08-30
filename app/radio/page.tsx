@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getChurchInfo, getRadioSchedule } from "@/lib/data";
 import BigPlayer from "@/components/big-player";
+import { ExternalButtonLink } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Radio en vivo",
@@ -67,22 +68,18 @@ export default async function RadioPage() {
                 para iOS y Android.
               </p>
               <div className="mt-8 flex flex-wrap gap-4">
-                <a
+                <ExternalButtonLink
                   href={churchInfo.appStore}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary"
+                  variant="secondary"
                 >
                    App Store
-                </a>
-                <a
+                </ExternalButtonLink>
+                <ExternalButtonLink
                   href={churchInfo.playStore}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary"
+                  variant="secondary"
                 >
                   ▶ Google Play
-                </a>
+                </ExternalButtonLink>
               </div>
             </div>
             <div className="flex justify-center">

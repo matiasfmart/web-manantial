@@ -22,6 +22,11 @@ const config: Config = {
           light: "#8da6ad",
           dark: "#304c54",
         },
+        onair: {
+          DEFAULT: "#a33a32",
+          light: "#f3e8e6",
+          dark: "#6f2722",
+        },
         gold: {
           DEFAULT: "#b88748",
           light: "#c9a36e",

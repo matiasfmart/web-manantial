@@ -1,45 +1,17 @@
 "use client";
 
 import type { ChurchInfo } from "@/lib/data";
-import { useRadio } from "./radio-context";
+import { RadioPlayButton, RadioStatus, VolumeControl } from "./radio-controls";
 
 export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
-  const { isPlaying, isLoading, hasError, toggle, volume, setVolume } = useRadio();
-
   return (
     <div className="relative overflow-hidden border-y border-ink/10 py-6 sm:py-8">
       <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
-        <button
-          onClick={toggle}
-          aria-label={isPlaying ? "Pausar" : "Reproducir"}
-          className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-ink text-white transition hover:scale-105 hover:bg-carbon active:scale-95 sm:h-24 sm:w-24"
-        >
-          {isLoading ? (
-            <span className="h-7 w-7 animate-spin rounded-full border-4 border-white/30 border-t-white" />
-          ) : isPlaying ? (
-            <PauseIcon />
-          ) : (
-            <PlayIcon />
-          )}
-        </button>
+        <RadioPlayButton size="lg" label="Escuchar Radio Maranata" />
 
         <div className="flex-1">
           <div className="flex items-center justify-center gap-2 sm:justify-start">
-            <span
-              className={`h-2 w-2 rounded-full ${
-                isPlaying ? "animate-pulseSlow bg-brand" : "bg-ink/25"
-              }`}
-            />
-            <span className="text-xs font-semibold uppercase tracking-widest text-ink/60">
-              {isPlaying ? "En vivo ahora" : "Presioná play para escuchar"}
-            </span>
-            {isPlaying && (
-              <span className="audio-bars ml-1 hidden h-4 items-end gap-0.5 sm:flex" aria-hidden="true">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <span key={index} className="h-full w-1 bg-brand" />
-                ))}
-              </span>
-            )}
+            <RadioStatus idleLabel="Presioná play para escuchar" />
           </div>
           <p className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
             {churchInfo.radioName}
@@ -47,52 +19,9 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
           <p className="mt-2 text-sm text-ink/60">
             Transmisión oficial online las 24 horas, los 7 días de la semana.
           </p>
-          {hasError && (
-            <p className="mt-3 text-sm text-red-400">
-              No pudimos conectar con la transmisión. Verificá tu conexión e
-              intentá nuevamente.
-            </p>
-          )}
-
-          <div className="mt-6 flex items-center justify-center gap-3 sm:justify-start">
-            <VolumeIcon />
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              className="h-1.5 w-40 cursor-pointer appearance-none rounded-full bg-ink/15 accent-brand"
-              aria-label="Volumen"
-            />
-          </div>
+          <div className="mt-6"><VolumeControl /></div>
         </div>
       </div>
     </div>
-  );
-}
-
-function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-9 w-9">
-      <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-}
-
-function PauseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-9 w-9">
-      <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
-    </svg>
-  );
-}
-
-function VolumeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 text-ink/50">
-      <path d="M3 10v4h4l5 5V5L7 10H3z" />
-    </svg>
   );
 }
