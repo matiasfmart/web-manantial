@@ -41,7 +41,7 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 | Hoja | Columnas | Para qué es |
 |---|---|---|
 | `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, oración y textos institucionales |
-| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers` | Texto, orientación y CTA de cada uno de los 7 ministerios |
+| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers`, `featured`, `featuredOrder` | Texto, orientación, CTA y destacados de cada uno de los 7 ministerios |
 | `Reuniones` | `day`, `time`, `label`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Horario semanal general |
 | `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote` | Noche de Unción, Santa Cena, etc. |
 | `PrimeraVez` | `order`, `title`, `text` | Preguntas frecuentes de la página para visitantes nuevos |
@@ -67,6 +67,10 @@ cada punto con `|`, por ejemplo: `Alabanza | Palabra práctica | Comunidad`.
 Todas estas columnas son opcionales y usan valores adecuados por defecto si se
 dejan vacías.
 
+En `Ministerios`, usá `featured=TRUE` para mostrar un ministerio en Inicio y
+`featuredOrder` para definir su posición. Inicio muestra hasta tres destacados;
+si no hay ninguno marcado, muestra los primeros tres disponibles.
+
 Para los textos de la página `Nosotros`, agregá en `DatosIglesia` las claves
 opcionales `historyTitle`, `historyText`, `vision`, `mission`, `values` y
 `communityStatement`. En `values`, separá cada valor con `|`, por ejemplo:
@@ -81,6 +85,12 @@ Para la página `Primera vez`, `DatosIglesia` admite las claves opcionales
 `firstVisitWhatsappMessage`. En la hoja `PrimeraVez`, `order` define el orden
 de las preguntas; la primera fila es la que aparece abierta inicialmente. Si
 esa hoja está vacía, se usan las preguntas y el orden por defecto del sitio.
+
+Para Inicio, `DatosIglesia` admite `homeHeroKicker`, `homeHeroTitle`,
+`homeHeroText`, `homeWelcomeTitle`, `homeWelcomeText`, `homeStats1Value`,
+`homeStats1Label`, `homeStats2Value`, `homeStats2Label`, `homeStats3Value`,
+`homeStats3Label`, `homeStats4Value` y `homeStats4Label`. Estos campos editan
+el hero, el mensaje de bienvenida y los cuatro datos breves de la portada.
 
 Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
 usa `auditorium`. Para `ReunionesEspeciales`, `recurrence` puede ser

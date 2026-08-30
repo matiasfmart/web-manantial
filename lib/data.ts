@@ -29,6 +29,8 @@ export type Ministry = {
   contactTopic: string;
   highlights: string[];
   acceptingMembers: boolean;
+  featured: boolean;
+  featuredOrder?: number;
   color: string;
   icon: string;
   image: string;
@@ -121,6 +123,8 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Ministerios o GDI",
     highlights: ["Alabanza", "Palabra práctica", "Comunidad", "Actividades durante el año"],
     acceptingMembers: true,
+    featured: true,
+    featuredOrder: 2,
     subMinistry: {
       name: "Avivamiento Adolescente",
       schedule: "Domingos 18:00 h",
@@ -149,6 +153,7 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Ministerios o GDI",
     highlights: ["Comunión", "Palabra", "Testimonios", "Compañerismo"],
     acceptingMembers: true,
+    featured: false,
   },
   {
     slug: "ibe",
@@ -169,6 +174,7 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Ministerios o GDI",
     highlights: ["Formación teológica", "Clases presenciales", "Plan oficial", "Docentes preparados"],
     acceptingMembers: true,
+    featured: false,
   },
   {
     slug: "escuela-de-vida",
@@ -189,6 +195,7 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Ministerios o GDI",
     highlights: ["Fundamentos de fe", "Acompañamiento", "Enseñanza práctica", "Primeros pasos"],
     acceptingMembers: true,
+    featured: false,
   },
   {
     slug: "escuela-biblica",
@@ -209,6 +216,8 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Ministerios o GDI",
     highlights: ["Maestros capacitados", "Aprendizaje bíblico", "Actividades", "Espacio seguro"],
     acceptingMembers: true,
+    featured: true,
+    featuredOrder: 1,
   },
   {
     slug: "avivamiento-en-las-calles",
@@ -229,6 +238,7 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Fundación o colaboración",
     highlights: ["Evangelismo", "Oración", "Ayuda concreta", "El Buen Samaritano"],
     acceptingMembers: false,
+    featured: false,
     isOutreach: true,
     subMinistry: {
       name: "El Buen Samaritano",
@@ -256,6 +266,8 @@ const defaultMinistries: MinistryText[] = [
     contactTopic: "Ministerios o GDI",
     highlights: ["Grupos pequeños", "Palabra", "Contención", "Comunidad"],
     acceptingMembers: true,
+    featured: true,
+    featuredOrder: 3,
   },
 ];
 
@@ -285,6 +297,10 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
     acceptingMembers: row.acceptingMembers?.trim()
       ? row.acceptingMembers.trim().toUpperCase() === "TRUE"
       : fallback?.acceptingMembers ?? row.slug !== "avivamiento-en-las-calles",
+    featured: row.featured?.trim()
+      ? row.featured.trim().toUpperCase() === "TRUE"
+      : fallback?.featured ?? false,
+    featuredOrder: Number(row.featuredOrder) || fallback?.featuredOrder,
     isOutreach: row.isOutreach?.trim().toUpperCase() === "TRUE",
     subMinistry: row.subMinistryName
       ? {
@@ -512,6 +528,20 @@ const defaultChurchText = {
   firstVisitArrivalStep2: "Te ayudamos a encontrar lugar.",
   firstVisitArrivalStep3: "Podés participar a tu ritmo.",
   firstVisitWhatsappMessage: "Hola, es mi primera vez y tengo una consulta antes de visitar.",
+  homeHeroKicker: "Manantial de Avivamiento",
+  homeHeroTitle: "Una comunidad de fe en Villa Lugano.",
+  homeHeroText:
+    "Un ministerio cristiano evangélico en el histórico Ex Cine Progreso. Reuniones, comunidad y acompañamiento espiritual para toda la familia.",
+  homeWelcomeTitle: "Una comunidad para crecer acompañado",
+  homeWelcomeText: "Un espacio para venir como estás, conocer personas y crecer acompañado.",
+  homeStats1Value: "7",
+  homeStats1Label: "Áreas ministeriales",
+  homeStats2Value: "24/7",
+  homeStats2Label: "Radio en vivo",
+  homeStats3Value: "+25",
+  homeStats3Label: "Años",
+  homeStats4Value: "1",
+  homeStats4Label: "Comunidad",
 };
 
 export type ChurchInfo = Awaited<ReturnType<typeof getChurchInfo>>;
@@ -553,6 +583,19 @@ export async function getChurchInfo() {
       arrivalTitle: t("firstVisitArrivalTitle"),
       arrivalSteps: [t("firstVisitArrivalStep1"), t("firstVisitArrivalStep2"), t("firstVisitArrivalStep3")],
       whatsappMessage: t("firstVisitWhatsappMessage"),
+    },
+    home: {
+      heroKicker: t("homeHeroKicker"),
+      heroTitle: t("homeHeroTitle"),
+      heroText: t("homeHeroText"),
+      welcomeTitle: t("homeWelcomeTitle"),
+      welcomeText: t("homeWelcomeText"),
+      stats: [
+        [t("homeStats1Value"), t("homeStats1Label")],
+        [t("homeStats2Value"), t("homeStats2Label")],
+        [t("homeStats3Value"), t("homeStats3Label")],
+        [t("homeStats4Value"), t("homeStats4Label")],
+      ],
     },
     prayerRequest: {
       intro: t("prayerIntro"),

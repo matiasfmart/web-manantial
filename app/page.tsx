@@ -1,13 +1,14 @@
 import Image from "next/image";
 import { getChurchInfo, getGeneralServices, getMinistries, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
+import { formatScheduleDate, getNextGeneralService } from "@/lib/schedule";
 import MinistryCard from "@/components/ministry-card";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
 import RadioStrip from "@/components/radio-strip";
 import AnimatedCounter from "@/components/animated-counter";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
-import { InteractiveLink } from "@/components/ui/interactive-link";
+import { ExternalInteractiveLink, InteractiveLink } from "@/components/ui/interactive-link";
 
 export default async function HomePage() {
   const [churchInfo, generalServices, ministries] = await Promise.all([
@@ -18,6 +19,16 @@ export default async function HomePage() {
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
+  const nextGeneralService = getNextGeneralService(
+    generalServices.filter((service) => service.location !== "homes")
+  );
+  const weeklyHighlights = ["Martes", "Miércoles", "Sábados", "Domingos"]
+    .map((day) => generalServices.find((service) => service.day === day))
+    .filter((service): service is NonNullable<typeof service> => Boolean(service));
+  const featuredMinistries = ministries.filter((ministry) => ministry.featured);
+  const ministriesForHome = (featuredMinistries.length > 0 ? featuredMinistries : ministries)
+    .sort((left, right) => (left.featuredOrder ?? Number.MAX_SAFE_INTEGER) - (right.featuredOrder ?? Number.MAX_SAFE_INTEGER))
+    .slice(0, 3);
 
   const youtubeCard = (
     <div className="border-y border-white/15 py-6 text-white">
@@ -39,9 +50,19 @@ export default async function HomePage() {
           <p className="mt-3 text-sm leading-relaxed text-white/60">
             Reuniones generales, Noche de Unción, Santa Cena y encuentros especiales.
           </p>
-          <ButtonLink href="/en-vivo" variant="onair" tone="dark" className="mt-7 w-full sm:w-auto">
-            Ver transmisión
-          </ButtonLink>
+          {transmissionStatus.kind === "live" ? (
+            <ButtonLink href="/en-vivo" variant="onair" tone="dark" className="mt-7 w-full sm:w-auto">
+              Ver transmisión en vivo
+            </ButtonLink>
+          ) : transmissionStatus.kind === "latest" ? (
+            <ButtonLink href="/en-vivo" variant="secondary" tone="dark" className="mt-7 w-full sm:w-auto">
+              Ver última reunión
+            </ButtonLink>
+          ) : (
+            <ExternalInteractiveLink href={churchInfo.social.youtube} className="mt-7 inline-block text-sm font-semibold text-white/70 hover:text-white">
+              Ir al canal de YouTube
+            </ExternalInteractiveLink>
+          )}
         </div>
         <CultoPlayer compact status={transmissionStatus} />
       </div>
@@ -65,31 +86,45 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-radial-fade" />
 
         <div className="section relative z-10 py-32">
-          <p className="eyebrow !text-white/60 opacity-0 animate-[revealUp_560ms_cubic-bezier(0.22,1,0.36,1)_120ms_forwards]">Villa Lugano · Buenos Aires</p>
+          <p className="eyebrow !text-white/60 opacity-0 animate-[revealUp_560ms_cubic-bezier(0.22,1,0.36,1)_120ms_forwards]">{churchInfo.home.heroKicker} · Villa Lugano</p>
           <h1 className="mt-6 max-w-4xl opacity-0 animate-[revealUp_660ms_cubic-bezier(0.22,1,0.36,1)_260ms_forwards] font-display font-display-emphasis text-6xl font-semibold leading-[0.98] tracking-normal text-white sm:text-7xl lg:text-8xl">
-            Una comunidad de fe en Villa Lugano.
+            {churchInfo.home.heroTitle}
           </h1>
           <p className="mt-8 max-w-xl opacity-0 animate-[revealUp_620ms_cubic-bezier(0.22,1,0.36,1)_420ms_forwards] text-lg leading-relaxed text-white/70">
-            Somos {churchInfo.shortName}, un ministerio cristiano evangélico en
-            el histórico {churchInfo.historicNote.replace(/^Conocido en el barrio de Lugano como el /, "")}.
-            Reuniones, comunidad y acompañamiento espiritual para toda la familia.
+            {churchInfo.home.heroText}
           </p>
           <div className="mt-10 flex flex-wrap gap-4 opacity-0 animate-[revealUp_520ms_cubic-bezier(0.22,1,0.36,1)_560ms_forwards]">
             <ButtonLink href="/reuniones" variant="primary" tone="dark">
               Ver horarios
             </ButtonLink>
-            <InteractiveLink href="/radio" className="inline-flex items-center text-sm font-medium text-white/75 hover:text-white">
-              Escuchar radio
-            </InteractiveLink>
           </div>
-          <InteractiveLink
-            href="/primera-vez"
-            className="mt-6 inline-block opacity-0 animate-[revealUp_460ms_cubic-bezier(0.22,1,0.36,1)_680ms_forwards] text-sm font-medium text-white/70 hover:text-white"
-          >
-            ¿Es tu primera vez? Empezá acá
-          </InteractiveLink>
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 opacity-0 animate-[revealUp_460ms_cubic-bezier(0.22,1,0.36,1)_680ms_forwards]">
+            <InteractiveLink href="/primera-vez" className="text-sm font-medium text-white/80 hover:text-white">¿Es tu primera vez? Empezá acá</InteractiveLink>
+            <InteractiveLink href="/radio" className="text-sm font-medium text-white/70 hover:text-white">Escuchar radio</InteractiveLink>
+          </div>
         </div>
       </section>
+
+      {nextGeneralService && (
+        <section className="bg-mist py-10 text-ink sm:py-12">
+          <div className="section border-y border-ink/15 px-5 py-6 sm:flex sm:items-end sm:justify-between sm:px-8 sm:py-7">
+            <div>
+              <p className="eyebrow">Próxima reunión</p>
+              <time className="mt-3 block font-display font-display-emphasis text-3xl font-semibold text-ink sm:text-4xl">
+                {formatScheduleDate(nextGeneralService.date, nextGeneralService.service.time)}
+              </time>
+              <p className="mt-2 font-display text-xl font-semibold text-carbon">{nextGeneralService.service.label}</p>
+              <p className="mt-1 text-sm text-copy">{churchInfo.auditoriumName}</p>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3 sm:mt-0">
+              <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
+                Cómo llegar
+              </ExternalButtonLink>
+              <ButtonLink href="/reuniones" variant="secondary">Ver agenda</ButtonLink>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* BIENVENIDA */}
       <section className="bg-mist py-16 sm:py-20 text-ink">
@@ -106,20 +141,13 @@ export default async function HomePage() {
           <div className="order-1 lg:order-2">
             <p className="eyebrow">Bienvenido a casa</p>
             <h2 className="mt-4 font-display text-4xl font-semibold tracking-normal text-ink sm:text-5xl">
-              {churchInfo.shortName}
+              {churchInfo.home.welcomeTitle}
             </h2>
             <p className="mt-6 max-w-lg text-ink/60">
-              Una iglesia moderna en el corazón de Villa Lugano, donde cada
-              generación encuentra un lugar: familias, jóvenes, niños y
-              adultos mayores, todos bienvenidos tal cual son.
+              {churchInfo.home.welcomeText}
             </p>
             <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4" data-stagger>
-              {[
-                ["7", "Áreas ministeriales"],
-                ["24/7", "Radio en vivo"],
-                ["+25", "Años haciendo Iglesia"],
-                ["1", "Familia"],
-              ].map(([n, l]) => (
+              {churchInfo.home.stats.map(([n, l]) => (
                 <div key={l}>
                   <p className="font-display font-display-emphasis text-4xl font-semibold text-brand-dark"><AnimatedCounter value={n} /></p>
                   <p className="mt-1 text-xs uppercase tracking-wide text-ink/50">{l}</p>
@@ -130,16 +158,21 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* PROXIMAS REUNIONES */}
       <section className="border-y border-brand/15 bg-surface py-6">
-        <div className="section marquee-mask overflow-hidden">
-          <div className="marquee-track flex animate-marquee gap-10 whitespace-nowrap text-sm font-medium uppercase tracking-wide text-ink/65">
-            {[...generalServices, ...generalServices].map((s, i) => (
+        <div className="section">
+          <div className="flex items-center justify-between gap-4">
+            <p className="eyebrow">Durante la semana</p>
+            <InteractiveLink href="/reuniones" className="text-xs font-semibold text-brand-dark">Ver agenda completa</InteractiveLink>
+          </div>
+          <div className="marquee-mask mt-4 overflow-hidden">
+            <div className="marquee-track flex animate-marquee gap-10 whitespace-nowrap text-sm font-medium text-ink/65">
+            {[...weeklyHighlights, ...weeklyHighlights].map((s, i) => (
               <span key={i} className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-                {s.day} {s.time} — {s.label}
+                {s.day} · {s.label}
               </span>
             ))}
+            </div>
           </div>
         </div>
       </section>
@@ -160,13 +193,13 @@ export default async function HomePage() {
           <div className="mt-10 space-y-5">
             {transmissionStatus.kind === "live" ? (
               <>
-                {youtubeCard}
-                <RadioStrip churchInfo={churchInfo} variant="dark" />
+                <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Video</p>{youtubeCard}</div>
+                <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Audio 24 h</p><RadioStrip churchInfo={churchInfo} variant="dark" /></div>
               </>
             ) : (
               <>
-                <RadioStrip churchInfo={churchInfo} variant="dark" />
-                {youtubeCard}
+                <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Audio 24 h</p><RadioStrip churchInfo={churchInfo} variant="dark" /></div>
+                <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Video</p>{youtubeCard}</div>
               </>
             )}
           </div>
@@ -180,7 +213,7 @@ export default async function HomePage() {
             <div>
               <p className="eyebrow">Vida en comunidad</p>
               <h2 className="mt-4 font-display text-4xl font-semibold tracking-normal text-ink sm:text-5xl">
-                Nuestras áreas ministeriales
+                Ministerios destacados
               </h2>
             </div>
             <ButtonLink href="/ministerios" variant="secondary" className="shrink-0">
@@ -189,9 +222,16 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" data-stagger>
-            {ministries.map((m) => (
+            {ministriesForHome.map((m) => (
               <MinistryCard key={m.slug} ministry={m} variant="light" />
             ))}
+          </div>
+          <div className="mt-10 border-y border-ink/10 py-6 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="font-display text-xl font-semibold text-ink">¿No sabés por dónde empezar?</p>
+              <p className="mt-2 text-sm text-copy">Te contamos horarios, cómo llegar y qué esperar en tu primera visita.</p>
+            </div>
+            <ButtonLink href="/primera-vez" variant="secondary" className="mt-5 sm:mt-0">Empezá acá</ButtonLink>
           </div>
         </div>
       </section>
