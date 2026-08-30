@@ -7,6 +7,7 @@ import FloatingPlayer from "@/components/floating-player";
 import MotionProvider from "@/components/motion-provider";
 import { RadioProvider } from "@/components/radio-context";
 import { getChurchInfo, getMinistries } from "@/lib/data";
+import { getTransmissionStatus } from "@/lib/youtube";
 
 const sansFont = Manrope({
   subsets: ["latin"],
@@ -47,13 +48,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const [churchInfo, ministries] = await Promise.all([getChurchInfo(), getMinistries()]);
+  const transmissionStatus = churchInfo.youtubeChannelId
+    ? await getTransmissionStatus(churchInfo.youtubeChannelId)
+    : ({ kind: "unavailable" } as const);
 
   return (
     <html lang="es-AR" data-scroll-behavior="smooth" className={sansFont.variable}>
       <body className="font-body antialiased">
         <RadioProvider streamUrl={churchInfo.radioStreamUrl}>
           <MotionProvider />
-          <Header churchInfo={churchInfo} />
+          <Header churchInfo={churchInfo} transmissionStatus={transmissionStatus} />
           <main className="min-h-screen">{children}</main>
           <Footer churchInfo={churchInfo} ministries={ministries} />
           <FloatingPlayer churchInfo={churchInfo} />

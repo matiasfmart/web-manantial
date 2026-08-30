@@ -9,17 +9,25 @@ import { SocialBrandIcon } from "./social-icons";
 import { BadgeDot } from "./ui/badge";
 import { ButtonLink } from "./ui/button";
 import { InteractiveLink } from "./ui/interactive-link";
+import type { TransmissionStatus } from "@/lib/youtube";
 
 const links = [
   { href: "/", label: "Inicio" },
-  { href: "/nosotros", label: "Nosotros" },
-  { href: "/ministerios", label: "Ministerios" },
   { href: "/reuniones", label: "Reuniones" },
+  { href: "/ministerios", label: "Ministerios" },
   { href: "/radio", label: "Radio" },
+  { href: "/nosotros", label: "Nosotros" },
   { href: "/contacto", label: "Contacto" },
 ];
+const firstVisit = { href: "/primera-vez", label: "¿Es tu primera vez?", prompt: "Empezá acá" };
 
-export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
+export default function Header({
+  churchInfo,
+  transmissionStatus,
+}: {
+  churchInfo: ChurchInfo;
+  transmissionStatus: TransmissionStatus;
+}) {
   const [open, setOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -43,6 +51,7 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
     if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current);
     setIsClosing(false);
     setOpen(true);
+    requestAnimationFrame(() => menuRef.current?.scrollTo({ top: 0 }));
   };
 
   useEffect(() => {
@@ -75,7 +84,10 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
       }
 
       if (event.key !== "Tab" || !menuRef.current) return;
-      const focusable = Array.from(menuRef.current.querySelectorAll<HTMLElement>(focusableSelector));
+      const focusable = [
+        menuButtonRef.current,
+        ...Array.from(menuRef.current.querySelectorAll<HTMLElement>(focusableSelector)),
+      ].filter((element): element is HTMLElement => Boolean(element));
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
 
@@ -108,7 +120,7 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
 
   return (
     <header className={`sticky top-0 z-50 border-b bg-[#f7f7f4] text-ink transition-[border-color,background-color] duration-[220ms] ${scrolled ? "border-ink/20" : "border-ink/10"}`}>
-      <div className={`section flex items-center justify-between gap-3 py-2 transition-[height] duration-[220ms] ${scrolled ? "h-14 sm:h-16" : "h-16 sm:h-[68px]"}`}>
+      <div className={`section flex h-16 items-center justify-between gap-3 py-2 transition-[height] duration-[220ms] ${scrolled ? "lg:h-16" : "lg:h-[68px]"}`}>
         <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" onClick={() => setOpen(false)}>
           <Image
             src={churchInfo.logoColor}
@@ -139,10 +151,22 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <ButtonLink href="/en-vivo" variant="onair" size="sm">
-            <BadgeDot tone="onair" pulse />
-            En vivo
-          </ButtonLink>
+          <InteractiveLink
+            href={firstVisit.href}
+            className="whitespace-nowrap text-sm font-semibold text-brand-dark hover:text-ink"
+          >
+            {firstVisit.label} <span className="text-ink/45">{firstVisit.prompt}</span>
+          </InteractiveLink>
+          {transmissionStatus.kind === "live" ? (
+            <ButtonLink href="/en-vivo" variant="onair" size="sm">
+              <BadgeDot tone="onair" pulse />
+              En vivo
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/en-vivo" variant="secondary" size="sm">
+              {transmissionStatus.kind === "latest" ? "Última reunión" : "YouTube"}
+            </ButtonLink>
+          )}
           <ButtonLink href="/ofrendas" variant="primary" size="sm">
             Ofrendar
           </ButtonLink>
@@ -178,8 +202,8 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
       </div>
 
       {isMenuMounted && (
-        <nav ref={menuRef} id="mobile-navigation" aria-label="Navegación principal" className={`fixed inset-x-0 top-16 z-40 max-h-[calc(100svh-4rem)] overflow-y-auto border-t border-white/10 bg-ink sm:top-[68px] lg:hidden ${isClosing ? "animate-[panelOut_240ms_cubic-bezier(0.22,1,0.36,1)_forwards]" : "animate-[panelIn_320ms_cubic-bezier(0.22,1,0.36,1)]"}`}>
-          <div className="section flex min-h-[calc(100svh-4rem)] flex-col py-6 sm:min-h-[calc(100svh-68px)]">
+        <nav ref={menuRef} id="mobile-navigation" aria-label="Navegación principal" className={`fixed left-0 top-16 z-40 h-[calc(100svh-4rem)] w-screen overflow-y-auto border-t border-white/10 bg-ink lg:hidden ${isClosing ? "animate-[panelOut_240ms_cubic-bezier(0.22,1,0.36,1)_forwards]" : "animate-[panelIn_320ms_cubic-bezier(0.22,1,0.36,1)]"}`}>
+          <div className="section flex min-h-full flex-col py-6">
             <div className="border-b border-white/10 pb-6">
               <p className="font-display text-2xl font-black uppercase tracking-normal">
                 Manantial de Avivamiento
@@ -187,6 +211,21 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
               <p className="mt-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/45">
                 Villa Lugano · CABA
               </p>
+            </div>
+
+            <div className="border-b border-brand/45 py-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-brand-light">¿Es tu primera vez?</p>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">Te contamos horarios, cómo llegar y qué esperar.</p>
+              <ButtonLink
+                href={firstVisit.href}
+                onClick={closeMenu}
+                variant="secondary"
+                tone="dark"
+                size="sm"
+                className="mt-4 w-full border-brand/60 text-white hover:border-brand-light"
+              >
+                {firstVisit.prompt}
+              </ButtonLink>
             </div>
 
             <div className="py-4">
@@ -216,24 +255,20 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
                   </span>
                 </Link>
               ))}
-              <ButtonLink
-                href="/primera-vez"
-                onClick={closeMenu}
-                variant="secondary"
-                tone="dark"
-                size="sm"
-                className="mt-5 w-full"
-              >
-                ¿Es tu primera vez?
-              </ButtonLink>
             </div>
 
             <div className="mt-auto border-t border-white/10 pt-5">
               <div className="grid grid-cols-2 gap-2">
-              <ButtonLink href="/en-vivo" onClick={closeMenu} variant="onair" tone="dark" className="px-4 py-3 text-sm">
-                <BadgeDot tone="onair" pulse />
-                En vivo
-              </ButtonLink>
+              {transmissionStatus.kind === "live" ? (
+                <ButtonLink href="/en-vivo" onClick={closeMenu} variant="onair" tone="dark" className="px-4 py-3 text-sm">
+                  <BadgeDot tone="onair" pulse />
+                  En vivo
+                </ButtonLink>
+              ) : (
+                <ButtonLink href="/en-vivo" onClick={closeMenu} variant="secondary" tone="dark" className="px-4 py-3 text-sm">
+                  {transmissionStatus.kind === "latest" ? "Última reunión" : "YouTube"}
+                </ButtonLink>
+              )}
               <ButtonLink href="/ofrendas" onClick={closeMenu} variant="primary" tone="dark" className="px-4 py-3 text-sm">
                 Ofrendar
               </ButtonLink>
