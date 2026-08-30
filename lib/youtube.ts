@@ -58,6 +58,11 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
 }
 
 function extractLiveVideoId(html: string) {
+  const videoDetailsMatch = html.match(
+    /"videoDetails":\{"videoId":"([^"]+)"[\s\S]{0,2000}?"isLive":true/
+  );
+  if (videoDetailsMatch?.[1]) return videoDetailsMatch[1];
+
   const liveIndex = html.indexOf('"isLiveNow":true');
   if (liveIndex === -1) return null;
 
