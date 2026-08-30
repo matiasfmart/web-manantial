@@ -215,6 +215,16 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
                   </span>
                 </Link>
               ))}
+              <ButtonLink
+                href="/primera-vez"
+                onClick={closeMenu}
+                variant="secondary"
+                tone="dark"
+                size="sm"
+                className="mt-5 w-full"
+              >
+                ¿Es tu primera vez?
+              </ButtonLink>
             </div>
 
             <div className="mt-auto border-t border-white/10 pt-5">

@@ -10,6 +10,7 @@ const SHEET_TABS = {
   ofrendas: "Ofrendas",
   ofrendasCategorias: "OfrendasCategorias",
   programacionRadio: "ProgramacionRadio",
+  primeraVez: "PrimeraVez",
 } as const;
 
 export type Ministry = {
@@ -504,6 +505,13 @@ const defaultChurchText = {
   values: "Fe genuina | Familia | Servicio | Excelencia | Comunidad",
   communityStatement:
     "Una fe que se vive en comunidad, sirviendo a las personas y al barrio que nos rodea.",
+  firstVisitIntro:
+    "Te contamos lo esencial para llegar tranquilo: horarios, ubicación y qué vas a encontrar al entrar.",
+  firstVisitArrivalTitle: "Cuando llegues",
+  firstVisitArrivalStep1: "Te recibimos en la entrada.",
+  firstVisitArrivalStep2: "Te ayudamos a encontrar lugar.",
+  firstVisitArrivalStep3: "Podés participar a tu ritmo.",
+  firstVisitWhatsappMessage: "Hola, es mi primera vez y tengo una consulta antes de visitar.",
 };
 
 export type ChurchInfo = Awaited<ReturnType<typeof getChurchInfo>>;
@@ -539,6 +547,12 @@ export async function getChurchInfo() {
       mission: t("mission"),
       values: t("values").split("|").map((value) => value.trim()).filter(Boolean),
       communityStatement: t("communityStatement"),
+    },
+    firstVisit: {
+      intro: t("firstVisitIntro"),
+      arrivalTitle: t("firstVisitArrivalTitle"),
+      arrivalSteps: [t("firstVisitArrivalStep1"), t("firstVisitArrivalStep2"), t("firstVisitArrivalStep3")],
+      whatsappMessage: t("firstVisitWhatsappMessage"),
     },
     prayerRequest: {
       intro: t("prayerIntro"),
@@ -576,6 +590,61 @@ export async function getPastoralTeam(): Promise<PastoralMember[]> {
       order: Number(r.order) || index + 1,
     }))
     .sort((left, right) => (left.order ?? 0) - (right.order ?? 0));
+}
+
+export type FirstVisitItem = {
+  title: string;
+  text: string;
+  order: number;
+};
+
+const defaultFirstVisitItems: FirstVisitItem[] = [
+  {
+    title: "¿Voy a estar solo?",
+    text: "Nuestro equipo de bienvenida te va a recibir en la entrada, y con gusto te acompaña a un lugar y responde cualquier duda.",
+    order: 1,
+  },
+  {
+    title: "¿Y si no creo en nada de esto?",
+    text: "No hay problema. Vení a observar, a escuchar, a hacer preguntas. Nadie te va a obligar a nada: la puerta está abierta para vos tal cual estás.",
+    order: 2,
+  },
+  {
+    title: "¿Cómo me visto?",
+    text: "Como quieras. Vení con la ropa que te haga sentir cómodo, no hace falta nada formal.",
+    order: 3,
+  },
+  {
+    title: "¿Venís con niños o adolescentes?",
+    text: "Los más chicos tienen su propio espacio durante la reunión. Para adolescentes, también contamos con encuentros pensados para su etapa.",
+    order: 4,
+  },
+  {
+    title: "¿Cuánto dura?",
+    text: "Nuestras reuniones generales duran entre una hora y media y dos horas: alabanza, palabra y un momento de oración.",
+    order: 5,
+  },
+  {
+    title: "¿Cómo llego?",
+    text: "Estamos en Av. Riestra 5651, Villa Lugano, en el edificio conocido en el barrio como el Ex Cine Progreso. Hay colectivos y opciones de estacionamiento en la zona.",
+    order: 6,
+  },
+];
+
+export async function getFirstVisitItems(): Promise<FirstVisitItem[]> {
+  const rows = await getSheetRows(SHEET_TABS.primeraVez);
+  if (rows.length === 0) return defaultFirstVisitItems;
+
+  const items = rows
+    .filter((row) => row.title?.trim() && row.text?.trim())
+    .map((row, index) => ({
+      title: row.title.trim(),
+      text: row.text.trim(),
+      order: Number(row.order) || index + 1,
+    }))
+    .sort((left, right) => left.order - right.order);
+
+  return items.length > 0 ? items : defaultFirstVisitItems;
 }
 
 const defaultGivingInfo = {

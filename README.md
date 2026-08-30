@@ -44,6 +44,7 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 | `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers` | Texto, orientación y CTA de cada uno de los 7 ministerios |
 | `Reuniones` | `day`, `time`, `label`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Horario semanal general |
 | `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote` | Noche de Unción, Santa Cena, etc. |
+| `PrimeraVez` | `order`, `title`, `text` | Preguntas frecuentes de la página para visitantes nuevos |
 | `EquipoPastoral` | `displayName`, `role`, `order` | Pastora principal, matrimonios, evangelista y orden de aparición |
 | `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
 | `OfrendasCategorias` | `name`, `description` | "Ofrenda general", "Diezmo", etc. |
@@ -73,6 +74,13 @@ opcionales `historyTitle`, `historyText`, `vision`, `mission`, `values` y
 `EquipoPastoral`, `order` es un número opcional para decidir el orden visible
 del equipo. Las imágenes pastorales siguen siendo archivos estáticos dentro de
 `public/images/pastoral`, para no exponer paths de imágenes en la hoja.
+
+Para la página `Primera vez`, `DatosIglesia` admite las claves opcionales
+`firstVisitIntro`, `firstVisitArrivalTitle`, `firstVisitArrivalStep1`,
+`firstVisitArrivalStep2`, `firstVisitArrivalStep3` y
+`firstVisitWhatsappMessage`. En la hoja `PrimeraVez`, `order` define el orden
+de las preguntas; la primera fila es la que aparece abierta inicialmente. Si
+esa hoja está vacía, se usan las preguntas y el orden por defecto del sitio.
 
 Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
 usa `auditorium`. Para `ReunionesEspeciales`, `recurrence` puede ser
