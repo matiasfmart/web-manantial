@@ -46,8 +46,14 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
       const title = decodeXml(entry?.match(/<media:title>(.*?)<\/media:title>/)?.[1] ?? null);
       const publishedAt = entry?.match(/<published>(.*?)<\/published>/)?.[1] ?? null;
 
-      if (videoId && (await isEmbeddableVideo(videoId))) {
-        return { kind: "latest", videoId, title, publishedAt };
+      if (videoId) {
+        if (await isLiveVideo(videoId)) {
+          return { kind: "live", videoId, title };
+        }
+
+        if (await isEmbeddableVideo(videoId)) {
+          return { kind: "latest", videoId, title, publishedAt };
+        }
       }
     }
   } catch (err) {
@@ -88,6 +94,28 @@ async function isEmbeddableVideo(videoId: string) {
   } catch {
     return false;
   }
+}
+
+async function isLiveVideo(videoId: string) {
+  try {
+    const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+      headers: { "user-agent": "Mozilla/5.0" },
+      cache: "no-store",
+    });
+    if (!response.ok) return false;
+
+    const html = await response.text();
+    const videoDetails = new RegExp(
+      `"videoDetails":\\{"videoId":"${escapeRegExp(videoId)}"[\\s\\S]{0,2000}?"isLive":true`
+    );
+    return videoDetails.test(html);
+  } catch {
+    return false;
+  }
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function decodeXml(value: string | null) {
