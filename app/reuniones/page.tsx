@@ -3,10 +3,10 @@ import { getChurchInfo, getGeneralServices, getSpecialServices } from "@/lib/dat
 import { Badge, BadgeDot, BadgeLink } from "@/components/ui/badge";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import WeeklySchedule from "@/components/weekly-schedule";
-import { calendarUrl, formatScheduleDate, getNextGeneralService, getNextSpecialOccurrence, getServiceLocation } from "@/lib/schedule";
+import { calendarUrl, formatScheduleDate, getNextGeneralService, getNextPublicGathering, getNextSpecialOccurrence, getServiceLocation } from "@/lib/schedule";
 
 export const metadata: Metadata = {
-  title: "Reuniones y horarios",
+  title: "Agenda",
   description:
     "Conocé los horarios de reunión de la iglesia: reuniones generales, GDI, jóvenes, adolescentes, escuela bíblica y reuniones especiales.",
 };
@@ -20,7 +20,8 @@ export default async function ReunionesPage() {
     getGeneralServices(),
     getSpecialServices(),
   ]);
-  const nextService = getNextGeneralService(generalServices);
+  const nextWeeklyService = getNextGeneralService(generalServices.filter((service) => service.isPublic));
+  const nextPublicGathering = getNextPublicGathering(generalServices, specialServices);
   const specialServicesWithDate = specialServices.map((service) => ({
     service,
     occurrence: getNextSpecialOccurrence(service),
@@ -29,34 +30,28 @@ export default async function ReunionesPage() {
   return (
     <>
       <section className="section py-20 sm:py-24">
-        <p className="eyebrow">Reuniones públicas</p>
+        <p className="eyebrow">Agenda de la iglesia</p>
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
-          Sumate a nuestras reuniones
+          Encontrá tu próximo espacio
         </h1>
         <p className="mt-6 max-w-2xl text-ink/65">
           Horarios, ubicación y formas de acompañarnos durante la semana.
         </p>
 
-        {nextService && (
+        {nextPublicGathering && (
           <div className="mt-12 border-y border-ink/15 bg-mist px-5 py-6 sm:px-8 sm:py-8">
             <p className="eyebrow">Próxima reunión</p>
             <time className="mt-4 block font-display text-3xl font-bold text-ink sm:text-4xl">
-              {formatScheduleDate(nextService.date, nextService.service.time)}
+              {formatScheduleDate(nextPublicGathering.date, nextPublicGathering.time)}
             </time>
             <p className="mt-2 font-display text-xl font-semibold text-carbon sm:text-2xl">
-              {nextService.service.label}
+              {nextPublicGathering.label}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-copy">
-              <span>{getServiceLocation(nextService.service)}</span>
-              {nextService.service.streamed && (
-                <Badge variant="video">
-                  <BadgeDot tone="brand" />
-                  Disponible en YouTube
-                </Badge>
-              )}
+              <span>{getServiceLocation(nextPublicGathering)}</span>
             </div>
             <div className="mt-7 flex flex-wrap gap-3">
-              {nextService.service.location === "homes" ? (
+              {nextPublicGathering.location === "homes" ? (
                 <ButtonLink href="/ministerios/gdi" variant="primary">
                   Consultar por un GDI
                 </ButtonLink>
@@ -65,25 +60,6 @@ export default async function ReunionesPage() {
                   Cómo llegar
                 </ExternalButtonLink>
               )}
-              {nextService.service.calendarEnabled !== false && (
-                <ExternalButtonLink
-                  href={calendarUrl({
-                    title: nextService.service.calendarTitle || nextService.service.label,
-                    date: nextService.date,
-                    time: nextService.service.time,
-                    location: getServiceLocation(nextService.service),
-                    durationMinutes: nextService.service.calendarDurationMinutes,
-                  })}
-                  variant="secondary"
-                >
-                  Agendar
-                </ExternalButtonLink>
-              )}
-              {nextService.service.streamed && (
-                <ButtonLink href="/en-vivo" variant="secondary">
-                  Ver transmisión
-                </ButtonLink>
-              )}
             </div>
           </div>
         )}
@@ -91,16 +67,16 @@ export default async function ReunionesPage() {
 
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section">
-          <p className="eyebrow">Horario semanal</p>
+          <p className="eyebrow">Agenda semanal</p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">
             Encontrá tu próximo espacio
           </h2>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-copy">
-            Reuniones generales en el auditorio y GDI durante la semana en hogares de la comunidad.
+            Reuniones abiertas, espacios por edad y actividades de formación durante la semana.
           </p>
 
           <div className="mt-8">
-            <WeeklySchedule services={generalServices} initialDay={nextService?.service.day || "Domingos"} />
+            <WeeklySchedule services={generalServices} initialDay={nextWeeklyService?.service.day || "Domingos"} />
           </div>
 
           <div className="mt-10 border-y border-ink/10 py-6 sm:flex sm:items-center sm:justify-between">

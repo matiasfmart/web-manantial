@@ -367,10 +367,14 @@ export async function getMinistryBySlug(slug: string): Promise<Ministry | undefi
   return all.find((m) => m.slug === slug);
 }
 
+export type ServiceAudience = "all" | "children" | "teens" | "youth" | "formation" | "service";
+
 export type GeneralService = {
   day: string;
   time: string;
   label: string;
+  isPublic: boolean;
+  audience: ServiceAudience;
   streamed?: boolean;
   location?: "auditorium" | "homes";
   locationLabel?: string;
@@ -380,14 +384,14 @@ export type GeneralService = {
 };
 
 const defaultGeneralServices: GeneralService[] = [
-  { day: "Martes", time: "20:00 h", label: "Reunión general" },
-  { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración", location: "homes" },
-  { day: "Sábados", time: "10:30 h", label: "Escuela Bíblica (niños)" },
-  { day: "Sábados", time: "19:00 h", label: "Reunión general" },
-  { day: "Sábados", time: "20:30 h", label: "Avivamiento Jóvenes" },
-  { day: "Domingos", time: "10:30 h", label: "Reunión general" },
-  { day: "Domingos", time: "18:00 h", label: "Avivamiento Adolescente" },
-  { day: "Domingos", time: "19:30 h", label: "Reunión general", streamed: true },
+  { day: "Martes", time: "20:00 h", label: "Reunión general", isPublic: true, audience: "all" },
+  { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración", isPublic: true, audience: "all", location: "homes" },
+  { day: "Sábados", time: "10:30 h", label: "Escuela Bíblica (niños)", isPublic: false, audience: "children" },
+  { day: "Sábados", time: "19:00 h", label: "Reunión general", isPublic: true, audience: "all" },
+  { day: "Sábados", time: "20:30 h", label: "Avivamiento Jóvenes", isPublic: false, audience: "youth" },
+  { day: "Domingos", time: "10:30 h", label: "Reunión general", isPublic: true, audience: "all" },
+  { day: "Domingos", time: "18:00 h", label: "Avivamiento Adolescente", isPublic: false, audience: "teens" },
+  { day: "Domingos", time: "19:30 h", label: "Reunión general", isPublic: true, audience: "all", streamed: true },
 ];
 
 export async function getGeneralServices(): Promise<GeneralService[]> {
@@ -397,6 +401,10 @@ export async function getGeneralServices(): Promise<GeneralService[]> {
     day: r.day,
     time: r.time,
     label: r.label,
+    isPublic: r.isPublic?.trim()
+      ? r.isPublic.trim().toUpperCase() === "TRUE"
+      : isPublicGeneralService(r.label),
+    audience: parseServiceAudience(r.audience) ?? inferServiceAudience(r.label),
     streamed: r.streamed?.trim().toUpperCase() === "TRUE",
     location: r.location?.trim().toLowerCase() === "homes" ? "homes" : "auditorium",
     locationLabel: r.locationLabel || undefined,
@@ -410,6 +418,7 @@ export type SpecialService = {
   name: string;
   schedule: string;
   description: string;
+  isPublic: boolean;
   streamed?: boolean;
   recurrence: "first-day" | "first-sunday";
   time?: string;
@@ -422,6 +431,12 @@ export type SpecialService = {
   nextTime?: string;
   nextStreamed?: boolean;
   nextNote?: string;
+  featureOnHome: boolean;
+  featureTitle?: string;
+  featureDate?: string;
+  featureAudience?: string;
+  featureCtaLabel?: string;
+  featureCtaUrl?: string;
 };
 
 const defaultSpecialServices: SpecialService[] = [
@@ -430,18 +445,22 @@ const defaultSpecialServices: SpecialService[] = [
     schedule: "Día 1 de cada mes",
     description:
       "Una reunión especial para ungir con aceite, orar por milagros y buscar juntos la presencia de Dios.",
+    isPublic: true,
     streamed: true,
     recurrence: "first-day",
     calendarEnabled: true,
+    featureOnHome: false,
   },
   {
     name: "Santa Cena",
     schedule: "Primer domingo de cada mes",
     description:
       "Dentro del culto dominical conmemoramos la cena del Señor como iglesia, recordando el sacrificio de Jesús.",
+    isPublic: true,
     streamed: true,
     recurrence: "first-sunday",
     calendarEnabled: true,
+    featureOnHome: false,
   },
 ];
 
@@ -452,6 +471,7 @@ export async function getSpecialServices(): Promise<SpecialService[]> {
     name: r.name,
     schedule: r.schedule,
     description: r.description,
+    isPublic: r.isPublic?.trim() ? r.isPublic.trim().toUpperCase() === "TRUE" : true,
     streamed: r.streamed?.trim().toUpperCase() === "TRUE",
     recurrence: r.recurrence?.trim() === "first-sunday" || r.name === "Santa Cena" ? "first-sunday" : "first-day",
     time: r.time || undefined,
@@ -466,7 +486,35 @@ export async function getSpecialServices(): Promise<SpecialService[]> {
       ? r.nextStreamed.trim().toUpperCase() === "TRUE"
       : undefined,
     nextNote: r.nextNote?.trim() || undefined,
+    featureOnHome: r.featureOnHome?.trim().toUpperCase() === "TRUE",
+    featureTitle: r.featureTitle?.trim() || undefined,
+    featureDate: r.featureDate?.trim() || undefined,
+    featureAudience: r.featureAudience?.trim() || undefined,
+    featureCtaLabel: r.featureCtaLabel?.trim() || undefined,
+    featureCtaUrl: r.featureCtaUrl?.trim() || undefined,
   }));
+}
+
+function isPublicGeneralService(label: string) {
+  const normalizedLabel = label.trim().toLocaleLowerCase("es-AR");
+  return normalizedLabel.includes("reunión general") || normalizedLabel.includes("gdi");
+}
+
+function parseServiceAudience(value?: string): ServiceAudience | undefined {
+  const audience = value?.trim().toLowerCase();
+  return audience === "all" || audience === "children" || audience === "teens" || audience === "youth" || audience === "formation" || audience === "service"
+    ? audience
+    : undefined;
+}
+
+function inferServiceAudience(label: string): ServiceAudience {
+  const normalizedLabel = label.trim().toLocaleLowerCase("es-AR");
+  if (normalizedLabel.includes("niño") || normalizedLabel.includes("escuela bíblica")) return "children";
+  if (normalizedLabel.includes("adolesc")) return "teens";
+  if (normalizedLabel.includes("joven")) return "youth";
+  if (normalizedLabel.includes("ibe") || normalizedLabel.includes("escuela de vida")) return "formation";
+  if (normalizedLabel.includes("calle") || normalizedLabel.includes("solidari")) return "service";
+  return "all";
 }
 
 export const transmissionInfo = {

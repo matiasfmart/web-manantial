@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { getChurchInfo, getGeneralServices, getMinistries, getRadioSchedule, transmissionInfo } from "@/lib/data";
+import { getChurchInfo, getGeneralServices, getMinistries, getRadioSchedule, getSpecialServices, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
-import { formatScheduleDate, getNextGeneralService } from "@/lib/schedule";
+import { formatScheduleDate, getFeaturedHomeActivity, getNextPublicGathering, getServiceLocation } from "@/lib/schedule";
 import { getCurrentRadioProgram } from "@/lib/radio-schedule";
 import MinistryCard from "@/components/ministry-card";
 import CultoBadge from "@/components/culto-badge";
@@ -12,20 +12,20 @@ import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import { ExternalInteractiveLink, InteractiveLink } from "@/components/ui/interactive-link";
 
 export default async function HomePage() {
-  const [churchInfo, generalServices, ministries, radioSchedule] = await Promise.all([
+  const [churchInfo, generalServices, ministries, radioSchedule, specialServices] = await Promise.all([
     getChurchInfo(),
     getGeneralServices(),
     getMinistries(),
     getRadioSchedule(),
+    getSpecialServices(),
   ]);
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
-  const nextGeneralService = getNextGeneralService(
-    generalServices.filter((service) => service.location !== "homes")
-  );
+  const nextPublicGathering = getNextPublicGathering(generalServices, specialServices);
+  const featuredHomeActivity = getFeaturedHomeActivity(specialServices);
   const weeklyHighlights = ["Martes", "Miércoles", "Sábados", "Domingos"]
-    .map((day) => generalServices.find((service) => service.day === day))
+    .map((day) => generalServices.find((service) => service.day === day && service.isPublic))
     .filter((service): service is NonNullable<typeof service> => Boolean(service));
   const featuredMinistries = ministries.filter((ministry) => ministry.featured);
   const ministriesForHome = (featuredMinistries.length > 0 ? featuredMinistries : ministries)
@@ -109,21 +109,23 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {nextGeneralService && (
+      {nextPublicGathering && (
         <section className="bg-mist py-10 text-ink sm:py-12">
           <div className="section border-y border-ink/15 px-5 py-6 sm:flex sm:items-end sm:justify-between sm:px-8 sm:py-7">
             <div>
               <p className="eyebrow">Próxima reunión</p>
               <time className="mt-3 block font-display font-display-emphasis text-3xl font-semibold text-ink sm:text-4xl">
-                {formatScheduleDate(nextGeneralService.date, nextGeneralService.service.time)}
+                {formatScheduleDate(nextPublicGathering.date, nextPublicGathering.time)}
               </time>
-              <p className="mt-2 font-display text-xl font-semibold text-carbon">{nextGeneralService.service.label}</p>
-              <p className="mt-1 text-sm text-copy">{churchInfo.auditoriumName}</p>
+              <p className="mt-2 font-display text-xl font-semibold text-carbon">{nextPublicGathering.label}</p>
+              <p className="mt-1 text-sm text-copy">{getServiceLocation(nextPublicGathering)}</p>
             </div>
             <div className="mt-6 flex flex-wrap gap-3 sm:mt-0">
-              <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
-                Cómo llegar
-              </ExternalButtonLink>
+              {nextPublicGathering.location !== "homes" && (
+                <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
+                  Cómo llegar
+                </ExternalButtonLink>
+              )}
               <ButtonLink href="/reuniones" variant="secondary">Ver agenda</ButtonLink>
             </div>
           </div>
@@ -178,8 +180,39 @@ export default async function HomePage() {
             ))}
             </div>
           </div>
+          <div className="mt-5 border-t border-ink/10 pt-4">
+            <InteractiveLink href="/reuniones" className="text-sm font-semibold text-ink/70 hover:text-ink">
+              ¿Buscás una actividad para tu edad o interés? Ver agenda completa
+            </InteractiveLink>
+          </div>
         </div>
       </section>
+
+      {featuredHomeActivity && (
+        <section className="bg-white py-8 text-ink sm:py-10">
+          <div className="section border-y border-brand/25 py-6 sm:flex sm:items-end sm:justify-between sm:gap-8">
+            <div>
+              <p className="eyebrow">Encuentro destacado</p>
+              <h2 className="mt-3 font-display text-2xl font-semibold tracking-normal sm:text-3xl">
+                {featuredHomeActivity.title}
+              </h2>
+              <p className="mt-2 text-sm text-copy">
+                {formatScheduleDate(featuredHomeActivity.date, featuredHomeActivity.time)}
+                {featuredHomeActivity.audience ? ` · ${featuredHomeActivity.audience}` : ""}
+              </p>
+            </div>
+            {/^https?:\/\//.test(featuredHomeActivity.ctaUrl) ? (
+              <ExternalButtonLink href={featuredHomeActivity.ctaUrl} variant="secondary" className="mt-5 sm:mt-0">
+                {featuredHomeActivity.ctaLabel}
+              </ExternalButtonLink>
+            ) : (
+              <ButtonLink href={featuredHomeActivity.ctaUrl} variant="secondary" className="mt-5 sm:mt-0">
+                {featuredHomeActivity.ctaLabel}
+              </ButtonLink>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* EN VIVO */}
       <section className="bg-ink py-16 text-white sm:py-20">

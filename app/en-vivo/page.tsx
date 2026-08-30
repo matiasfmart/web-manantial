@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 type UpcomingTransmission = {
   title: string;
   detail: string;
-  dateKey: number;
+  startsAt: number;
 };
 
 export default async function EnVivoPage() {
@@ -39,10 +39,10 @@ export default async function EnVivoPage() {
 
       return {
         title: service.name,
-        detail: service.time
-          ? formatScheduleDate(occurrence.date, service.time)
+        detail: service.nextTime ?? service.time
+          ? formatScheduleDate(occurrence.date, service.nextTime ?? service.time)
           : `${formatScheduleDate(occurrence.date)} · ${service.schedule}`,
-        dateKey: occurrence.date.year * 10_000 + occurrence.date.month * 100 + occurrence.date.day,
+        startsAt: toBuenosAiresTimestamp(occurrence.date, service.nextTime ?? service.time),
       } satisfies UpcomingTransmission;
     })
     .filter((service): service is UpcomingTransmission => Boolean(service));
@@ -51,12 +51,12 @@ export default async function EnVivoPage() {
       ? [{
           title: nextGeneralTransmission.service.label,
           detail: formatScheduleDate(nextGeneralTransmission.date, nextGeneralTransmission.service.time),
-          dateKey: nextGeneralTransmission.date.year * 10_000 + nextGeneralTransmission.date.month * 100 + nextGeneralTransmission.date.day,
+          startsAt: toBuenosAiresTimestamp(nextGeneralTransmission.date, nextGeneralTransmission.service.time),
         } satisfies UpcomingTransmission]
       : []),
     ...nextSpecialTransmissions,
   ]
-    .sort((left, right) => left.dateKey - right.dateKey)
+    .sort((left, right) => left.startsAt - right.startsAt)
     .slice(0, 3);
   const nextTransmission = upcomingTransmissions[0];
 
@@ -129,7 +129,7 @@ export default async function EnVivoPage() {
           {upcomingTransmissions.length > 0 && (
             <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3" data-stagger>
               {upcomingTransmissions.map((transmission) => (
-                <div key={`${transmission.title}-${transmission.dateKey}`} className="border-t border-ink/10 pt-5">
+                <div key={`${transmission.title}-${transmission.startsAt}`} className="border-t border-ink/10 pt-5">
                   <p className="text-xs font-semibold uppercase tracking-widest text-brand-dark">YouTube</p>
                   <p className="mt-3 font-display text-xl font-semibold text-ink">{transmission.title}</p>
                   <p className="mt-2 text-sm font-medium text-copy">{transmission.detail}</p>
@@ -145,4 +145,15 @@ export default async function EnVivoPage() {
       </section>
     </>
   );
+}
+
+function toBuenosAiresTimestamp(
+  date: { year: number; month: number; day: number },
+  time?: string
+) {
+  const match = time?.match(/(\d{1,2}):(\d{2})/);
+  const hours = match ? Number(match[1]) : 23;
+  const minutes = match ? Number(match[2]) : 59;
+
+  return Date.UTC(date.year, date.month - 1, date.day, hours + 3, minutes);
 }

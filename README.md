@@ -41,8 +41,8 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 |---|---|---|
 | `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, oración y textos institucionales |
 | `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers`, `featured`, `featuredOrder` | Texto, orientación, CTA y destacados de cada uno de los 7 ministerios |
-| `Reuniones` | `day`, `time`, `label`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Horario semanal general |
-| `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote` | Noche de Unción, Santa Cena, etc. |
+| `Reuniones` | `day`, `time`, `label`, `isPublic`, `audience`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Agenda semanal general y actividades por audiencia |
+| `ReunionesEspeciales` | `name`, `schedule`, `description`, `isPublic`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote`, `featureOnHome`, `featureTitle`, `featureDate`, `featureAudience`, `featureCtaLabel`, `featureCtaUrl` | Noche de Unción, Santa Cena y eventos excepcionales |
 | `PrimeraVez` | `order`, `title`, `text` | Preguntas frecuentes de la página para visitantes nuevos |
 | `EquipoPastoral` | `displayName`, `role`, `order` | Pastora principal, matrimonios, evangelista y orden de aparición |
 | `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
@@ -92,11 +92,25 @@ Para Inicio, `DatosIglesia` admite `homeHeroKicker`, `homeHeroTitle`,
 el hero, el mensaje de bienvenida y los cuatro datos breves de la portada.
 
 Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
-usa `auditorium`. Para `ReunionesEspeciales`, `recurrence` puede ser
+usa `auditorium`. Usá `isPublic=TRUE` para que una reunión aparezca como
+próxima reunión en Inicio; `FALSE` la reserva para actividades de un grupo
+específico. Si la columna se deja vacía, Inicio incluye automáticamente las
+filas cuyo nombre contiene `Reunión general` o `GDI`. Para
+la columna `audience`, usá `all`, `children`, `teens`, `youth`, `formation` o
+`service`; estos valores alimentan los filtros de la Agenda. Para
+`ReunionesEspeciales`, `isPublic` también admite `TRUE` o `FALSE` y
+`recurrence` puede ser
 `first-day` o `first-sunday`; sin valor, Santa Cena usa `first-sunday` y las
 demás reuniones `first-day`. `calendarEnabled` admite `TRUE` o `FALSE`, y las
 columnas de calendario son opcionales: el sitio conserva valores por defecto
 si no se completan.
+
+Para destacar un único evento excepcional en Inicio, completá una fila de
+`ReunionesEspeciales` con `featureOnHome=TRUE`. Podés personalizar el texto
+con `featureTitle`, indicar la fecha puntual con `featureDate` (`YYYY-MM-DD`),
+mostrar una audiencia con `featureAudience` y definir la acción mediante
+`featureCtaLabel` y `featureCtaUrl`. Si hay más de una fila marcada, el sitio
+muestra solamente la próxima; los eventos pasados no se muestran.
 
 Si una reunión especial cambia de fecha, cargá `nextDate` con formato
 `YYYY-MM-DD`. Mientras esa fecha sea actual o futura, reemplaza la recurrencia

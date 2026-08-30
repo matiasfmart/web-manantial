@@ -1,12 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import type { GeneralService } from "@/lib/data";
+import type { GeneralService, ServiceAudience } from "@/lib/data";
 import { getServiceLocation } from "@/lib/schedule";
 import { BadgeDot, BadgeLink } from "./ui/badge";
 import { InteractiveLink } from "./ui/interactive-link";
 
 const days = ["Martes", "Miércoles", "Sábados", "Domingos"];
+const audienceFilters: Array<{ value: "any" | ServiceAudience; label: string }> = [
+  { value: "any", label: "Todas" },
+  { value: "all", label: "Toda la iglesia" },
+  { value: "children", label: "Niños" },
+  { value: "teens", label: "Adolescentes" },
+  { value: "youth", label: "Jóvenes" },
+  { value: "formation", label: "Formación" },
+  { value: "service", label: "Servicio" },
+];
 
 export default function WeeklySchedule({
   services,
@@ -15,8 +24,12 @@ export default function WeeklySchedule({
   services: GeneralService[];
   initialDay: string;
 }) {
+  const [audience, setAudience] = useState<"any" | ServiceAudience>("any");
+  const visibleServices = audience === "any"
+    ? services
+    : services.filter((service) => service.audience === audience);
   const groups = days
-    .map((day) => ({ day, services: services.filter((service) => service.day === day) }))
+    .map((day) => ({ day, services: visibleServices.filter((service) => service.day === day) }))
     .filter((group) => group.services.length > 0);
   const [openDay, setOpenDay] = useState<string | null>(
     groups.some((group) => group.day === initialDay) ? initialDay : groups[0]?.day ?? null
@@ -24,6 +37,27 @@ export default function WeeklySchedule({
 
   return (
     <>
+      <div className="mb-6 flex gap-2 overflow-x-auto pb-2" role="group" aria-label="Filtrar actividades por audiencia">
+        {audienceFilters.map((filter) => (
+          <button
+            key={filter.value}
+            type="button"
+            onClick={() => {
+              setAudience(filter.value);
+              const firstDay = days.find((day) => visibleServices.some((service) => service.day === day && (filter.value === "any" || service.audience === filter.value)));
+              setOpenDay(firstDay ?? null);
+            }}
+            aria-pressed={audience === filter.value}
+            className={`shrink-0 border px-3 py-2 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+              audience === filter.value
+                ? "border-ink bg-ink text-white"
+                : "border-ink/15 text-ink/65 hover:border-ink/45 hover:text-ink"
+            }`}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </div>
       <div className="divide-y divide-line border-y border-line lg:hidden">
         {groups.map((group) => {
           const isOpen = group.day === openDay;
@@ -81,6 +115,7 @@ function ScheduleRow({ service }: { service: GeneralService }) {
           <p className="font-semibold text-carbon">{service.label}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
             <span>{getServiceLocation(service)}</span>
+            {service.audience !== "all" && <span>Para {audienceLabel(service.audience)}</span>}
             {service.streamed && (
               <BadgeLink href="/en-vivo" variant="video">
                 <BadgeDot tone="brand" />
@@ -97,4 +132,14 @@ function ScheduleRow({ service }: { service: GeneralService }) {
       </div>
     </div>
   );
+}
+
+function audienceLabel(audience: Exclude<ServiceAudience, "all">) {
+  return {
+    children: "niños",
+    teens: "adolescentes",
+    youth: "jóvenes",
+    formation: "formación",
+    service: "servicio",
+  }[audience];
 }

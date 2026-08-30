@@ -3,6 +3,7 @@ import type { GeneralService, SpecialService } from "./data";
 const BUENOS_AIRES_TIME_ZONE = "America/Argentina/Buenos_Aires";
 const WEEKDAY_INDEX: Record<string, number> = {
   Domingo: 0,
+  Domingos: 0,
   Lunes: 1,
   Martes: 2,
   Miércoles: 3,
@@ -22,7 +23,24 @@ export type SpecialOccurrence = {
   isOverride: boolean;
 };
 
-export function getServiceLocation(service: GeneralService | SpecialService) {
+export type PublicGathering = {
+  label: string;
+  date: BuenosAiresDate;
+  time?: string;
+  location?: "auditorium" | "homes";
+  locationLabel?: string;
+};
+
+export type FeaturedHomeActivity = {
+  title: string;
+  date: BuenosAiresDate;
+  time: string | undefined;
+  audience: string | undefined;
+  ctaLabel: string;
+  ctaUrl: string;
+};
+
+export function getServiceLocation(service: GeneralService | SpecialService | PublicGathering) {
   if (service.locationLabel) return service.locationLabel;
   return service.location === "homes" ? "En hogares" : "Auditorio";
 }
@@ -53,9 +71,10 @@ export function getNextGeneralService(services: GeneralService[], now = new Date
 
 export function getNextSpecialOccurrence(service: SpecialService, now = new Date()) {
   const current = getBuenosAiresDate(now);
+  const currentTime = now.getTime();
   const override = parseDate(service.nextDate);
 
-  if (override && toDateKey(override) >= toDateKey(current)) {
+  if (override && isFutureSpecialOccurrence(override, service.nextTime ?? service.time, currentTime)) {
     return { date: override, isOverride: true } satisfies SpecialOccurrence;
   }
 
@@ -68,12 +87,83 @@ export function getNextSpecialOccurrence(service: SpecialService, now = new Date
       : 1;
     const candidate = { year, month: normalizedMonth, day };
 
-    if (toDateKey(candidate) >= toDateKey(current)) {
+    if (isFutureSpecialOccurrence(candidate, service.time, currentTime)) {
       return { date: candidate, isOverride: false } satisfies SpecialOccurrence;
     }
   }
 
   return undefined;
+}
+
+export function getNextPublicGathering(
+  generalServices: GeneralService[],
+  specialServices: SpecialService[],
+  now = new Date()
+) {
+  const nextGeneralService = getNextGeneralService(
+    generalServices.filter((service) => service.isPublic),
+    now
+  );
+  const gatherings: PublicGathering[] = nextGeneralService
+    ? [{
+        label: nextGeneralService.service.label,
+        date: nextGeneralService.date,
+        time: nextGeneralService.service.time,
+        location: nextGeneralService.service.location,
+        locationLabel: nextGeneralService.service.locationLabel,
+      }]
+    : [];
+
+  specialServices
+    .filter((service) => service.isPublic)
+    .forEach((service) => {
+      const occurrence = getNextSpecialOccurrence(service, now);
+      if (!occurrence) return;
+
+      gatherings.push({
+        label: service.name,
+        date: occurrence.date,
+        time: service.nextTime ?? service.time,
+        location: service.location,
+        locationLabel: service.locationLabel,
+      });
+    });
+
+  return gatherings
+    .sort((left, right) => toGatheringTimestamp(left) - toGatheringTimestamp(right))[0];
+}
+
+export function getFeaturedHomeActivity(specialServices: SpecialService[], now = new Date()) {
+  const nowTimestamp = now.getTime();
+
+  return specialServices
+    .filter((service) => service.featureOnHome)
+    .map((service) => {
+      const time = service.nextTime ?? service.time;
+      const date = service.featureDate
+        ? parseDate(service.featureDate)
+        : getNextSpecialOccurrence(service, now)?.date;
+      if (!date || !isFutureSpecialOccurrence(date, time, nowTimestamp)) return null;
+
+      return {
+        title: service.featureTitle || service.name,
+        date,
+        time,
+        audience: service.featureAudience,
+        ctaLabel: service.featureCtaLabel || "Ver agenda",
+        ctaUrl: service.featureCtaUrl || "/reuniones",
+      } satisfies FeaturedHomeActivity;
+    })
+    .filter((activity): activity is FeaturedHomeActivity => Boolean(activity))
+    .sort((left, right) => toGatheringTimestamp(left) - toGatheringTimestamp(right))[0];
+}
+
+function isFutureSpecialOccurrence(date: BuenosAiresDate, time: string | undefined, currentTime: number) {
+  const parsedTime = time ? parseTime(time) : undefined;
+  if (!parsedTime) return toDateKey(date) > toDateKey(getBuenosAiresDate(new Date(currentTime)));
+
+  const startsAt = Date.UTC(date.year, date.month - 1, date.day, parsedTime.hour + 3, parsedTime.minute);
+  return startsAt > currentTime;
 }
 
 export function formatScheduleDate(date: BuenosAiresDate, time?: string) {
@@ -158,4 +248,15 @@ function firstSundayOfMonth(year: number, month: number) {
 
 function toDateKey(date: BuenosAiresDate) {
   return date.year * 10_000 + date.month * 100 + date.day;
+}
+
+function toGatheringTimestamp(gathering: Pick<PublicGathering, "date" | "time">) {
+  const time = gathering.time ? parseTime(gathering.time) : undefined;
+  return Date.UTC(
+    gathering.date.year,
+    gathering.date.month - 1,
+    gathering.date.day,
+    (time?.hour ?? 23) + 3,
+    time?.minute ?? 59
+  );
 }
