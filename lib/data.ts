@@ -10,6 +10,7 @@ const SHEET_TABS = {
   ofrendas: "Ofrendas",
   ofrendasCategorias: "OfrendasCategorias",
   programacionRadio: "ProgramacionRadio",
+  primeraVez: "PrimeraVez",
 } as const;
 
 export type Ministry = {
@@ -21,6 +22,15 @@ export type Ministry = {
   description: string;
   longDescription: string[];
   audience: string;
+  category: "life-stage" | "formation" | "community" | "serve";
+  location: "auditorium" | "homes" | "community";
+  locationLabel?: string;
+  joinLabel: string;
+  contactTopic: string;
+  highlights: string[];
+  acceptingMembers: boolean;
+  featured: boolean;
+  featuredOrder?: number;
   color: string;
   icon: string;
   image: string;
@@ -107,6 +117,14 @@ const defaultMinistries: MinistryText[] = [
       "Además de la reunión semanal, organizamos retiros, campamentos, noches temáticas y actividades de servicio para que cada joven descubra su propósito.",
     ],
     audience: "Jóvenes y adolescentes",
+    category: "life-stage",
+    location: "auditorium",
+    joinLabel: "Quiero sumarme a Jóvenes",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Alabanza", "Palabra práctica", "Comunidad", "Actividades durante el año"],
+    acceptingMembers: true,
+    featured: true,
+    featuredOrder: 2,
     subMinistry: {
       name: "Avivamiento Adolescente",
       schedule: "Domingos 18:00 h",
@@ -129,6 +147,13 @@ const defaultMinistries: MinistryText[] = [
       "Si sos parte de este hermoso grupo o querés invitar a un familiar, contactanos para confirmar la fecha del próximo encuentro.",
     ],
     audience: "Adultos mayores",
+    category: "life-stage",
+    location: "auditorium",
+    joinLabel: "Quiero conocer Años Dorados",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Comunión", "Palabra", "Testimonios", "Compañerismo"],
+    acceptingMembers: true,
+    featured: false,
   },
   {
     slug: "ibe",
@@ -143,6 +168,13 @@ const defaultMinistries: MinistryText[] = [
       "Es el camino ideal para quienes sienten un llamado a servir con mayor profundidad doctrinal y ministerial, con materias, docentes y un plan de estudios oficial.",
     ],
     audience: "Jóvenes y adultos con llamado ministerial",
+    category: "formation",
+    location: "auditorium",
+    joinLabel: "Quiero consultar por I.B.E.",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Formación teológica", "Clases presenciales", "Plan oficial", "Docentes preparados"],
+    acceptingMembers: true,
+    featured: false,
   },
   {
     slug: "escuela-de-vida",
@@ -157,6 +189,13 @@ const defaultMinistries: MinistryText[] = [
       "Ideal si te acercaste hace poco a la iglesia y querés entender qué creemos y por qué, en un ambiente cálido y sin tecnicismos.",
     ],
     audience: "Nuevos creyentes",
+    category: "formation",
+    location: "auditorium",
+    joinLabel: "Quiero conocer Escuela de Vida",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Fundamentos de fe", "Acompañamiento", "Enseñanza práctica", "Primeros pasos"],
+    acceptingMembers: true,
+    featured: false,
   },
   {
     slug: "escuela-biblica",
@@ -171,6 +210,14 @@ const defaultMinistries: MinistryText[] = [
       "Cada clase está organizada por edades, con materiales didácticos propios y actividades especiales durante el año.",
     ],
     audience: "Niños y preadolescentes",
+    category: "life-stage",
+    location: "auditorium",
+    joinLabel: "Quiero conocer Escuela Bíblica",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Maestros capacitados", "Aprendizaje bíblico", "Actividades", "Espacio seguro"],
+    acceptingMembers: true,
+    featured: true,
+    featuredOrder: 1,
   },
   {
     slug: "avivamiento-en-las-calles",
@@ -185,6 +232,13 @@ const defaultMinistries: MinistryText[] = [
       "Dentro de este equipo funciona 'El Buen Samaritano', dedicado a la asistencia social.",
     ],
     audience: "Trabajo comunitario y evangelístico",
+    category: "serve",
+    location: "community",
+    joinLabel: "Conocé cómo colaborar",
+    contactTopic: "Fundación o colaboración",
+    highlights: ["Evangelismo", "Oración", "Ayuda concreta", "El Buen Samaritano"],
+    acceptingMembers: false,
+    featured: false,
     isOutreach: true,
     subMinistry: {
       name: "El Buen Samaritano",
@@ -206,6 +260,14 @@ const defaultMinistries: MinistryText[] = [
       "Los GDI también son considerados parte de las reuniones generales de la iglesia. Si querés sumarte a una célula cerca de tu casa, contactanos y te conectamos con un grupo.",
     ],
     audience: "Toda la congregación, por edad y sexo",
+    category: "community",
+    location: "homes",
+    joinLabel: "Encontrá un GDI",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Grupos pequeños", "Palabra", "Contención", "Comunidad"],
+    acceptingMembers: true,
+    featured: true,
+    featuredOrder: 3,
   },
 ];
 
@@ -213,6 +275,7 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
   const longDescription = [row.longDescription1, row.longDescription2, row.longDescription3]
     .map((s) => s?.trim())
     .filter((s): s is string => Boolean(s));
+  const fallback = defaultMinistries.find((ministry) => ministry.slug === row.slug);
 
   return {
     slug: row.slug,
@@ -223,6 +286,21 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
     description: row.description,
     longDescription: longDescription.length > 0 ? longDescription : [row.description],
     audience: row.audience,
+    category: isMinistryCategory(row.category) ? row.category : fallback?.category ?? categoryForSlug(row.slug),
+    location: isMinistryLocation(row.location) ? row.location : fallback?.location ?? locationForSlug(row.slug),
+    locationLabel: row.locationLabel || undefined,
+    joinLabel: row.joinLabel || fallback?.joinLabel || joinLabelForSlug(row.slug),
+    contactTopic: row.contactTopic || fallback?.contactTopic || "Ministerios o GDI",
+    highlights: row.highlights
+      ? row.highlights.split("|").map((highlight) => highlight.trim()).filter(Boolean)
+      : highlightsForSlug(row.slug),
+    acceptingMembers: row.acceptingMembers?.trim()
+      ? row.acceptingMembers.trim().toUpperCase() === "TRUE"
+      : fallback?.acceptingMembers ?? row.slug !== "avivamiento-en-las-calles",
+    featured: row.featured?.trim()
+      ? row.featured.trim().toUpperCase() === "TRUE"
+      : fallback?.featured ?? false,
+    featuredOrder: Number(row.featuredOrder) || fallback?.featuredOrder,
     isOutreach: row.isOutreach?.trim().toUpperCase() === "TRUE",
     subMinistry: row.subMinistryName
       ? {
@@ -232,6 +310,37 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
         }
       : undefined,
   };
+}
+
+function isMinistryCategory(value: string | undefined): value is Ministry["category"] {
+  return value === "life-stage" || value === "formation" || value === "community" || value === "serve";
+}
+
+function isMinistryLocation(value: string | undefined): value is Ministry["location"] {
+  return value === "auditorium" || value === "homes" || value === "community";
+}
+
+function categoryForSlug(slug: string): Ministry["category"] {
+  if (slug === "ibe" || slug === "escuela-de-vida") return "formation";
+  if (slug === "gdi") return "community";
+  if (slug === "avivamiento-en-las-calles") return "serve";
+  return "life-stage";
+}
+
+function locationForSlug(slug: string): Ministry["location"] {
+  if (slug === "gdi") return "homes";
+  if (slug === "avivamiento-en-las-calles") return "community";
+  return "auditorium";
+}
+
+function joinLabelForSlug(slug: string) {
+  if (slug === "gdi") return "Encontrá un GDI";
+  if (slug === "avivamiento-en-las-calles") return "Conocé cómo colaborar";
+  return "Quiero sumarme";
+}
+
+function highlightsForSlug(slug: string) {
+  return defaultMinistries.find((ministry) => ministry.slug === slug)?.highlights ?? [];
 }
 
 /** Trae los ministerios: usa la hoja "Ministerios" si tiene filas, si no el contenido por defecto. */
@@ -258,22 +367,31 @@ export async function getMinistryBySlug(slug: string): Promise<Ministry | undefi
   return all.find((m) => m.slug === slug);
 }
 
+export type ServiceAudience = "all" | "children" | "teens" | "youth" | "formation" | "service";
+
 export type GeneralService = {
   day: string;
   time: string;
   label: string;
+  isPublic: boolean;
+  audience: ServiceAudience;
   streamed?: boolean;
+  location?: "auditorium" | "homes";
+  locationLabel?: string;
+  calendarEnabled?: boolean;
+  calendarTitle?: string;
+  calendarDurationMinutes?: number;
 };
 
 const defaultGeneralServices: GeneralService[] = [
-  { day: "Martes", time: "20:00 h", label: "Reunión general" },
-  { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración" },
-  { day: "Sábados", time: "10:30 h", label: "Escuela Bíblica (niños)" },
-  { day: "Sábados", time: "19:00 h", label: "Reunión general" },
-  { day: "Sábados", time: "20:30 h", label: "Avivamiento Jóvenes" },
-  { day: "Domingos", time: "10:30 h", label: "Reunión general" },
-  { day: "Domingos", time: "18:00 h", label: "Avivamiento Adolescente" },
-  { day: "Domingos", time: "19:30 h", label: "Reunión general", streamed: true },
+  { day: "Martes", time: "20:00 h", label: "Reunión general", isPublic: true, audience: "all" },
+  { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración", isPublic: true, audience: "all", location: "homes" },
+  { day: "Sábados", time: "10:30 h", label: "Escuela Bíblica (niños)", isPublic: false, audience: "children" },
+  { day: "Sábados", time: "19:00 h", label: "Reunión general", isPublic: true, audience: "all" },
+  { day: "Sábados", time: "20:30 h", label: "Avivamiento Jóvenes", isPublic: false, audience: "youth" },
+  { day: "Domingos", time: "10:30 h", label: "Reunión general", isPublic: true, audience: "all" },
+  { day: "Domingos", time: "18:00 h", label: "Avivamiento Adolescente", isPublic: false, audience: "teens" },
+  { day: "Domingos", time: "19:30 h", label: "Reunión general", isPublic: true, audience: "all", streamed: true },
 ];
 
 export async function getGeneralServices(): Promise<GeneralService[]> {
@@ -283,7 +401,16 @@ export async function getGeneralServices(): Promise<GeneralService[]> {
     day: r.day,
     time: r.time,
     label: r.label,
+    isPublic: r.isPublic?.trim()
+      ? r.isPublic.trim().toUpperCase() === "TRUE"
+      : isPublicGeneralService(r.label),
+    audience: parseServiceAudience(r.audience) ?? inferServiceAudience(r.label),
     streamed: r.streamed?.trim().toUpperCase() === "TRUE",
+    location: r.location?.trim().toLowerCase() === "homes" ? "homes" : "auditorium",
+    locationLabel: r.locationLabel || undefined,
+    calendarEnabled: r.calendarEnabled?.trim().toUpperCase() !== "FALSE",
+    calendarTitle: r.calendarTitle || undefined,
+    calendarDurationMinutes: Number(r.calendarDurationMinutes) || undefined,
   }));
 }
 
@@ -291,7 +418,25 @@ export type SpecialService = {
   name: string;
   schedule: string;
   description: string;
+  isPublic: boolean;
   streamed?: boolean;
+  recurrence: "first-day" | "first-sunday";
+  time?: string;
+  location?: "auditorium" | "homes";
+  locationLabel?: string;
+  calendarEnabled?: boolean;
+  calendarTitle?: string;
+  calendarDurationMinutes?: number;
+  nextDate?: string;
+  nextTime?: string;
+  nextStreamed?: boolean;
+  nextNote?: string;
+  featureOnHome: boolean;
+  featureTitle?: string;
+  featureDate?: string;
+  featureAudience?: string;
+  featureCtaLabel?: string;
+  featureCtaUrl?: string;
 };
 
 const defaultSpecialServices: SpecialService[] = [
@@ -300,14 +445,22 @@ const defaultSpecialServices: SpecialService[] = [
     schedule: "Día 1 de cada mes",
     description:
       "Una reunión especial para ungir con aceite, orar por milagros y buscar juntos la presencia de Dios.",
+    isPublic: true,
     streamed: true,
+    recurrence: "first-day",
+    calendarEnabled: true,
+    featureOnHome: false,
   },
   {
     name: "Santa Cena",
     schedule: "Primer domingo de cada mes",
     description:
       "Dentro del culto dominical conmemoramos la cena del Señor como iglesia, recordando el sacrificio de Jesús.",
+    isPublic: true,
     streamed: true,
+    recurrence: "first-sunday",
+    calendarEnabled: true,
+    featureOnHome: false,
   },
 ];
 
@@ -318,8 +471,50 @@ export async function getSpecialServices(): Promise<SpecialService[]> {
     name: r.name,
     schedule: r.schedule,
     description: r.description,
+    isPublic: r.isPublic?.trim() ? r.isPublic.trim().toUpperCase() === "TRUE" : true,
     streamed: r.streamed?.trim().toUpperCase() === "TRUE",
+    recurrence: r.recurrence?.trim() === "first-sunday" || r.name === "Santa Cena" ? "first-sunday" : "first-day",
+    time: r.time || undefined,
+    location: r.location?.trim().toLowerCase() === "homes" ? "homes" : "auditorium",
+    locationLabel: r.locationLabel || undefined,
+    calendarEnabled: r.calendarEnabled?.trim().toUpperCase() !== "FALSE",
+    calendarTitle: r.calendarTitle || undefined,
+    calendarDurationMinutes: Number(r.calendarDurationMinutes) || undefined,
+    nextDate: r.nextDate?.trim() || undefined,
+    nextTime: r.nextTime?.trim() || undefined,
+    nextStreamed: r.nextStreamed?.trim()
+      ? r.nextStreamed.trim().toUpperCase() === "TRUE"
+      : undefined,
+    nextNote: r.nextNote?.trim() || undefined,
+    featureOnHome: r.featureOnHome?.trim().toUpperCase() === "TRUE",
+    featureTitle: r.featureTitle?.trim() || undefined,
+    featureDate: r.featureDate?.trim() || undefined,
+    featureAudience: r.featureAudience?.trim() || undefined,
+    featureCtaLabel: r.featureCtaLabel?.trim() || undefined,
+    featureCtaUrl: r.featureCtaUrl?.trim() || undefined,
   }));
+}
+
+function isPublicGeneralService(label: string) {
+  const normalizedLabel = label.trim().toLocaleLowerCase("es-AR");
+  return normalizedLabel.includes("reunión general") || normalizedLabel.includes("gdi");
+}
+
+function parseServiceAudience(value?: string): ServiceAudience | undefined {
+  const audience = value?.trim().toLowerCase();
+  return audience === "all" || audience === "children" || audience === "teens" || audience === "youth" || audience === "formation" || audience === "service"
+    ? audience
+    : undefined;
+}
+
+function inferServiceAudience(label: string): ServiceAudience {
+  const normalizedLabel = label.trim().toLocaleLowerCase("es-AR");
+  if (normalizedLabel.includes("niño") || normalizedLabel.includes("escuela bíblica")) return "children";
+  if (normalizedLabel.includes("adolesc")) return "teens";
+  if (normalizedLabel.includes("joven")) return "youth";
+  if (normalizedLabel.includes("ibe") || normalizedLabel.includes("escuela de vida")) return "formation";
+  if (normalizedLabel.includes("calle") || normalizedLabel.includes("solidari")) return "service";
+  return "all";
 }
 
 export const transmissionInfo = {
@@ -331,7 +526,7 @@ export const transmissionInfo = {
     "Transmitimos reuniones generales, Noche de Unción, Santa Cena y encuentros especiales que pueden surgir durante la semana.",
 };
 
-/** Rutas de logos, IDs técnicos y links de tienda: no se editan desde la hoja. */
+/** Rutas de logos e IDs técnicos: no se editan desde la hoja. */
 const churchTechnical = {
   logoLight: "/logo/logo-blanco.png",
   logoDark: "/logo/logo-negro.png",
@@ -340,10 +535,12 @@ const churchTechnical = {
   // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
   // Canal → Configuración avanzada, para activar el embed en vivo automático.
   youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
-  appStore: "https://apps.apple.com/app/radio-manantial/id0000000000",
-  playStore:
-    "https://play.google.com/store/apps/details?id=org.iglesiamanantial.radio",
 };
+
+/** Evita usar/mostrar celdas rotas del Sheet (fórmulas con error, texto suelto, etc). */
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
 
 const defaultChurchText = {
   name: "Ministerio Manantial de Avivamiento",
@@ -366,6 +563,35 @@ const defaultChurchText = {
   prayerMobile: "+54 9 11 2799-4682",
   prayerLandline: "-",
   prayerWhatsappLink: "https://wa.me/5491127994682",
+  historyTitle: "Del cine de barrio a casa de fe",
+  historyText:
+    "Durante años, este edificio reunió vecinos para compartir historias. Hoy sigue siendo un lugar de encuentro: una casa de fe, comunidad y esperanza para Villa Lugano.",
+  vision: "Alcanzar cada generación con el amor y la Palabra de Dios.",
+  mission: "Formar discípulos a través de la adoración, la enseñanza, la comunidad y el servicio.",
+  values: "Fe genuina | Familia | Servicio | Excelencia | Comunidad",
+  communityStatement:
+    "Una fe que se vive en comunidad, sirviendo a las personas y al barrio que nos rodea.",
+  firstVisitIntro:
+    "Te contamos lo esencial para llegar tranquilo: horarios, ubicación y qué vas a encontrar al entrar.",
+  firstVisitArrivalTitle: "Cuando llegues",
+  firstVisitArrivalStep1: "Te recibimos en la entrada.",
+  firstVisitArrivalStep2: "Te ayudamos a encontrar lugar.",
+  firstVisitArrivalStep3: "Podés participar a tu ritmo.",
+  firstVisitWhatsappMessage: "Hola, es mi primera vez y tengo una consulta antes de visitar.",
+  homeHeroKicker: "Manantial de Avivamiento",
+  homeHeroTitle: "Una comunidad de fe en Villa Lugano.",
+  homeHeroText:
+    "Un ministerio cristiano evangélico en el histórico Ex Cine Progreso. Reuniones, comunidad y acompañamiento espiritual para toda la familia.",
+  homeWelcomeTitle: "Una comunidad para crecer acompañado",
+  homeWelcomeText: "Un espacio para venir como estás, conocer personas y crecer acompañado.",
+  homeStats1Value: "7",
+  homeStats1Label: "Áreas ministeriales",
+  homeStats2Value: "24/7",
+  homeStats2Label: "Radio en vivo",
+  homeStats3Value: "+25",
+  homeStats3Label: "Años",
+  homeStats4Value: "1",
+  homeStats4Label: "Comunidad",
 };
 
 export type ChurchInfo = Awaited<ReturnType<typeof getChurchInfo>>;
@@ -384,7 +610,7 @@ export async function getChurchInfo() {
     address: t("address"),
     mapsQuery: t("mapsQuery"),
     phone: t("phone"),
-    email: t("email"),
+    email: isValidEmail(t("email")) ? t("email").trim() : "-",
     radioName: t("radioName"),
     liveServiceSchedule: t("liveServiceSchedule"),
     social: {
@@ -394,6 +620,33 @@ export async function getChurchInfo() {
       tiktok: t("tiktok"),
     },
     whatsappChannelUrl: t("whatsappChannelUrl"),
+    about: {
+      historyTitle: t("historyTitle"),
+      historyText: t("historyText"),
+      vision: t("vision"),
+      mission: t("mission"),
+      values: t("values").split("|").map((value) => value.trim()).filter(Boolean),
+      communityStatement: t("communityStatement"),
+    },
+    firstVisit: {
+      intro: t("firstVisitIntro"),
+      arrivalTitle: t("firstVisitArrivalTitle"),
+      arrivalSteps: [t("firstVisitArrivalStep1"), t("firstVisitArrivalStep2"), t("firstVisitArrivalStep3")],
+      whatsappMessage: t("firstVisitWhatsappMessage"),
+    },
+    home: {
+      heroKicker: t("homeHeroKicker"),
+      heroTitle: t("homeHeroTitle"),
+      heroText: t("homeHeroText"),
+      welcomeTitle: t("homeWelcomeTitle"),
+      welcomeText: t("homeWelcomeText"),
+      stats: [
+        [t("homeStats1Value"), t("homeStats1Label")],
+        [t("homeStats2Value"), t("homeStats2Label")],
+        [t("homeStats3Value"), t("homeStats3Label")],
+        [t("homeStats4Value"), t("homeStats4Label")],
+      ],
+    },
     prayerRequest: {
       intro: t("prayerIntro"),
       mobile: t("prayerMobile"),
@@ -407,6 +660,7 @@ export type PastoralMember = {
   displayName: string;
   role: string;
   image?: string;
+  order?: number;
 };
 
 const defaultPastoralTeam: PastoralMember[] = [
@@ -422,7 +676,68 @@ const defaultPastoralTeam: PastoralMember[] = [
 export async function getPastoralTeam(): Promise<PastoralMember[]> {
   const rows = await getSheetRows(SHEET_TABS.equipoPastoral);
   if (rows.length === 0) return defaultPastoralTeam;
-  return rows.map((r) => ({ displayName: r.displayName, role: r.role }));
+  return rows
+    .map((r, index) => ({
+      displayName: r.displayName,
+      role: r.role,
+      order: Number(r.order) || index + 1,
+    }))
+    .sort((left, right) => (left.order ?? 0) - (right.order ?? 0));
+}
+
+export type FirstVisitItem = {
+  title: string;
+  text: string;
+  order: number;
+};
+
+const defaultFirstVisitItems: FirstVisitItem[] = [
+  {
+    title: "¿Voy a estar solo?",
+    text: "Nuestro equipo de bienvenida te va a recibir en la entrada, y con gusto te acompaña a un lugar y responde cualquier duda.",
+    order: 1,
+  },
+  {
+    title: "¿Y si no creo en nada de esto?",
+    text: "No hay problema. Vení a observar, a escuchar, a hacer preguntas. Nadie te va a obligar a nada: la puerta está abierta para vos tal cual estás.",
+    order: 2,
+  },
+  {
+    title: "¿Cómo me visto?",
+    text: "Como quieras. Vení con la ropa que te haga sentir cómodo, no hace falta nada formal.",
+    order: 3,
+  },
+  {
+    title: "¿Venís con niños o adolescentes?",
+    text: "Los más chicos tienen su propio espacio durante la reunión. Para adolescentes, también contamos con encuentros pensados para su etapa.",
+    order: 4,
+  },
+  {
+    title: "¿Cuánto dura?",
+    text: "Nuestras reuniones generales duran entre una hora y media y dos horas: alabanza, palabra y un momento de oración.",
+    order: 5,
+  },
+  {
+    title: "¿Cómo llego?",
+    text: "Estamos en Av. Riestra 5651, Villa Lugano, en el edificio conocido en el barrio como el Ex Cine Progreso. Hay colectivos y opciones de estacionamiento en la zona.",
+    order: 6,
+  },
+];
+
+export async function getFirstVisitItems(): Promise<FirstVisitItem[]> {
+  const rows = await getSheetRows(SHEET_TABS.primeraVez);
+  if (rows.length === 0) return defaultFirstVisitItems;
+
+  const items = rows
+    .filter((row) => row.title?.trim() && row.text?.trim())
+    .map((row, index) => ({
+      title: row.title.trim(),
+      text: row.text.trim(),
+      order: Number(row.order) || index + 1,
+    }))
+    .sort((left, right) => left.order - right.order);
+
+  return items.length > 0 ? items : defaultFirstVisitItems;
 }
 
 const defaultGivingInfo = {
@@ -442,8 +757,6 @@ const defaultGivingInfo = {
     alias: "EJEMPLO.MANANTIAL",
     cuit: "30-00000000-0",
   },
-  qrNote:
-    "Escaneá el código QR desde la app de tu banco o Mercado Pago para ofrendar al instante.",
   categories: [
     {
       name: "Ofrenda general",
@@ -483,7 +796,6 @@ export async function getGivingInfo() {
       alias: kv.bankAlias || defaultGivingInfo.bankTransfer.alias,
       cuit: kv.bankCuit || defaultGivingInfo.bankTransfer.cuit,
     },
-    qrNote: kv.qrNote || defaultGivingInfo.qrNote,
     categories,
   };
 }

@@ -2,87 +2,80 @@
 
 import Link from "next/link";
 import type { ChurchInfo } from "@/lib/data";
+import type { RadioScheduleItem } from "@/lib/radio-schedule";
+import { RadioPlayButton, RadioStatus } from "./radio-controls";
 import { useRadio } from "./radio-context";
 
 export default function RadioStrip({
   churchInfo,
+  currentProgram,
   className = "",
+  variant = "light",
 }: {
   churchInfo: ChurchInfo;
+  currentProgram?: RadioScheduleItem | null;
   className?: string;
+  variant?: "light" | "dark";
 }) {
-  const { isPlaying, isLoading, hasError, toggle } = useRadio();
+  const { isPlaying, isLoading, hasError } = useRadio();
+  const isDark = variant === "dark";
+  const helperText = hasError
+    ? "No pudimos conectar la señal. Probá nuevamente."
+    : isLoading
+      ? `Conectando con ${churchInfo.radioName}...`
+      : isPlaying
+        ? "La señal continúa mientras recorrés el sitio."
+        : "Música, palabra y compañía para acompañarte donde estés.";
 
   return (
     <div
-      className={`relative overflow-hidden border-y border-white/10 bg-surface/80 ${className}`}
+      className={`relative overflow-hidden border-y ${
+        isDark ? "border-white/15 bg-white/[0.04] text-white" : "border-ink/10 bg-surface/80"
+      } ${className}`}
     >
-      <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-brand to-gold" />
+      <div className={`absolute inset-y-0 left-0 w-1 transition-colors ${isPlaying ? "bg-brand-light" : "bg-brand"}`} />
       <div className="flex flex-col gap-5 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex min-w-0 items-center gap-4">
-          <button
-            onClick={toggle}
-            aria-label={isPlaying ? "Pausar Radio Maranata" : "Escuchar Radio Maranata"}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-white transition hover:bg-brand-light active:scale-95"
-          >
-            {isLoading ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-            ) : isPlaying ? (
-              <PauseIcon />
-            ) : (
-              <PlayIcon />
-            )}
-          </button>
+          <RadioPlayButton tone={isDark ? "dark" : "light"} label="Escuchar Radio Maranata" />
 
           <div className="min-w-0">
+            <p className={`text-[11px] font-semibold uppercase tracking-widest ${isDark ? "text-white/45" : "text-ink/45"}`}>
+              Audio en vivo · 24 h
+            </p>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-display text-xl font-bold uppercase tracking-normal">
+              <p className="font-display text-xl font-semibold tracking-normal">
                 {churchInfo.radioName}
               </p>
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-light">
-                <span className="h-1.5 w-1.5 animate-pulseSlow rounded-full bg-brand-light" />
-                En vivo 24 h
-              </span>
+              <RadioStatus tone={isDark ? "dark" : "light"} />
             </div>
-            <p className="mt-1 text-sm text-white/50">
-              {hasError
-                ? "No pudimos conectar con la radio. Probá nuevamente."
-                : "Alabanza, palabra y compañía desde el auditorio."}
+            <p className={`mt-1 text-sm ${isDark ? "text-white/60" : "text-ink/60"}`}>
+              {helperText}
+            </p>
+            <p className={`mt-3 text-xs font-semibold ${isDark ? "text-white/80" : "text-ink/75"}`}>
+              {isPlaying ? "Pausar radio" : isLoading ? "Conectando señal" : "Escuchar ahora"}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 sm:pl-6">
-          <div className="hidden h-10 items-end gap-1 md:flex" aria-hidden="true">
-            {Array.from({ length: 18 }).map((_, i) => (
-              <span
-                key={i}
-                className="w-1.5 bg-gradient-to-t from-brand to-gold opacity-75"
-                style={{ height: `${18 + ((i * 29) % 78)}%` }}
-              />
-            ))}
-          </div>
-          <Link href="/radio" className="shrink-0 text-xs font-bold uppercase tracking-wide text-white/70 hover:text-white">
-            Abrir radio →
+        <div className="border-t border-white/10 pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+          {currentProgram ? (
+            <p className={`text-sm ${isDark ? "text-white/65" : "text-ink/65"}`}>
+              <span className={`block text-[11px] font-semibold uppercase tracking-widest ${isDark ? "text-white/45" : "text-ink/45"}`}>Ahora en radio</span>
+              <span className="mt-1 block font-medium">{currentProgram.program}</span>
+            </p>
+          ) : (
+            <p className={`text-sm ${isDark ? "text-white/60" : "text-ink/60"}`}>Radio en vivo las 24 horas.</p>
+          )}
+          <Link
+            href="/radio"
+            className={`link-underline mt-3 inline-block text-xs font-semibold ${
+              isDark ? "text-white/70 hover:text-white" : "text-ink/70 hover:text-ink"
+            }`}
+          >
+            Ver programación →
           </Link>
         </div>
       </div>
     </div>
-  );
-}
-
-function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="ml-0.5 h-5 w-5">
-      <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-}
-
-function PauseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-      <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
-    </svg>
   );
 }

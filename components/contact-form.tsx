@@ -1,8 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { ExternalButtonLink } from "./ui/button";
 
-export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
+export default function ContactForm({
+  variant = "dark",
+  whatsappLink,
+  initialTopic,
+  ministry,
+}: {
+  variant?: "dark" | "light";
+  whatsappLink?: string;
+  initialTopic?: string;
+  ministry?: string;
+}) {
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -10,13 +22,23 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
 
   if (submitted) {
     return (
-      <div className={`border-y py-8 text-center ${isLight ? "border-ink/10" : "border-white/10"}`}>
-        <p className="font-display text-2xl font-bold uppercase text-brand">
+      <div className={`border-y py-8 text-center animate-[revealUp_520ms_cubic-bezier(0.22,1,0.36,1)_forwards] ${isLight ? "border-ink/10" : "border-white/10"}`}>
+        <p className="font-display text-2xl font-bold uppercase text-ink">
           ¡Gracias por escribirnos!
         </p>
         <p className={`mt-3 text-sm ${isLight ? "text-ink/60" : "text-white/60"}`}>
-          Recibimos tu mensaje y te vamos a contactar a la brevedad.
+          Recibimos tu mensaje. El equipo correspondiente va a poder responderte mejor.
         </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button type="button" variant="secondary" onClick={() => setSubmitted(false)}>
+            Enviar otro mensaje
+          </Button>
+          {whatsappLink && (
+            <ExternalButtonLink href={whatsappLink} variant="secondary">
+              Escribir por WhatsApp
+            </ExternalButtonLink>
+          )}
+        </div>
       </div>
     );
   }
@@ -24,8 +46,8 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
   const labelClass = `mb-2 block text-xs font-semibold uppercase tracking-wide ${
     isLight ? "text-ink/60" : "text-white/60"
   }`;
-  const inputClass = `w-full border px-4 py-3 text-sm outline-none transition focus:border-brand ${
-    isLight ? "border-ink/15 bg-white text-ink" : "border-white/15 bg-surface2"
+  const inputClass = `w-full border px-4 py-3 text-sm outline-none transition duration-200 focus:-translate-y-0.5 focus:border-brand focus:bg-white/95 ${
+    isLight ? "border-ink/15 bg-white text-ink" : "border-white/15 bg-ink text-white focus:bg-white/5"
   }`;
 
   return (
@@ -45,6 +67,8 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
             body: JSON.stringify({
               name: data.get("name"),
               email: data.get("email"),
+              topic: data.get("topic"),
+              ministry: data.get("ministry"),
               message: data.get("message"),
             }),
           });
@@ -72,6 +96,24 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
         <input required type="email" name="email" className={inputClass} placeholder="tu@email.com" />
       </div>
       <div>
+        <label className={labelClass}>¿Sobre qué querés hablar?</label>
+        <select required name="topic" defaultValue={initialTopic || ""} className={inputClass}>
+          <option value="" disabled>Elegí una opción</option>
+          <option value="Consulta general">Consulta general</option>
+          <option value="Primera visita">Primera visita</option>
+          <option value="Ministerios o GDI">Ministerios o GDI</option>
+          <option value="Pedido de oración">Pedido de oración</option>
+          <option value="Fundación o colaboración">Fundación o colaboración</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      {ministry && (
+        <div className={`border-l-2 border-brand px-4 py-3 text-sm ${isLight ? "bg-mist text-carbon" : "bg-white/5 text-white/80"}`}>
+          Consulta sobre: <span className="font-semibold">{ministry}</span>
+          <input type="hidden" name="ministry" value={ministry} />
+        </div>
+      )}
+      <div>
         <label className={labelClass}>Mensaje</label>
         <textarea
           required
@@ -81,10 +123,19 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
           placeholder="¿En qué te podemos ayudar?"
         />
       </div>
-      {error && <p className="text-sm text-red-400">{error}</p>}
-      <button type="submit" disabled={isSending} className="btn-primary w-full disabled:opacity-60">
-        {isSending ? "Enviando..." : "Enviar mensaje"}
-      </button>
+      {error && <p className="animate-[revealUp_240ms_ease-out_forwards] text-sm text-red-400">{error}</p>}
+      <Button type="submit" disabled={isSending} variant="primary" className="w-full disabled:opacity-60">
+        {isSending ? (
+          <span className="inline-flex items-center gap-2">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white [animation-delay:120ms]" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white [animation-delay:240ms]" />
+            Enviando
+          </span>
+        ) : (
+          "Enviar mensaje"
+        )}
+      </Button>
     </form>
   );
 }

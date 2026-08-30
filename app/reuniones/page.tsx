@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getChurchInfo, getGeneralServices, getSpecialServices } from "@/lib/data";
+import { Badge, BadgeDot, BadgeLink } from "@/components/ui/badge";
+import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
+import WeeklySchedule from "@/components/weekly-schedule";
+import { calendarUrl, formatScheduleDate, getNextGeneralService, getNextPublicGathering, getNextSpecialOccurrence, getServiceLocation } from "@/lib/schedule";
 
 export const metadata: Metadata = {
-  title: "Reuniones y horarios",
+  title: "Agenda",
   description:
     "Conocé los horarios de reunión de la iglesia: reuniones generales, GDI, jóvenes, adolescentes, escuela bíblica y reuniones especiales.",
 };
 
-const days = ["Martes", "Miércoles", "Sábados", "Domingos"];
+export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function ReunionesPage() {
   const [churchInfo, generalServices, specialServices] = await Promise.all([
@@ -16,154 +20,156 @@ export default async function ReunionesPage() {
     getGeneralServices(),
     getSpecialServices(),
   ]);
+  const nextWeeklyService = getNextGeneralService(generalServices.filter((service) => service.isPublic));
+  const nextPublicGathering = getNextPublicGathering(generalServices, specialServices);
+  const specialServicesWithDate = specialServices.map((service) => ({
+    service,
+    occurrence: getNextSpecialOccurrence(service),
+  }));
 
   return (
     <>
       <section className="section py-20 sm:py-24">
-        <p className="eyebrow">Reuniones públicas</p>
+        <p className="eyebrow">Agenda de la iglesia</p>
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
-          Sumate a nuestras reuniones
+          Encontrá tu próximo espacio
         </h1>
-        <p className="mt-6 max-w-2xl text-white/60">
-          Todas nuestras reuniones generales se realizan en el{" "}
-          {churchInfo.auditoriumName}, {churchInfo.address}. Los Grupos de
-          Integración (GDI) también forman parte de nuestras reuniones
-          generales, pero se organizan en distintos hogares — conocé más en la
-          sección de{" "}
-          <Link href="/ministerios/gdi" className="text-brand-light underline underline-offset-4">
-            GDI
-          </Link>
-          .
+        <p className="mt-6 max-w-2xl text-ink/65">
+          Horarios, ubicación y formas de acompañarnos durante la semana.
         </p>
+
+        {nextPublicGathering && (
+          <div className="mt-12 border-y border-ink/15 bg-mist px-5 py-6 sm:px-8 sm:py-8">
+            <p className="eyebrow">Próxima reunión</p>
+            <time className="mt-4 block font-display text-3xl font-bold text-ink sm:text-4xl">
+              {formatScheduleDate(nextPublicGathering.date, nextPublicGathering.time)}
+            </time>
+            <p className="mt-2 font-display text-xl font-semibold text-carbon sm:text-2xl">
+              {nextPublicGathering.label}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-copy">
+              <span>{getServiceLocation(nextPublicGathering)}</span>
+            </div>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {nextPublicGathering.location === "homes" ? (
+                <ButtonLink href="/ministerios/gdi" variant="primary">
+                  Consultar por un GDI
+                </ButtonLink>
+              ) : (
+                <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
+                  Cómo llegar
+                </ExternalButtonLink>
+              )}
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* HORARIOS (fondo claro para mejor lectura) */}
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section">
-          <div className="overflow-hidden border border-ink/10">
-            {days.map((day) => {
-              const items = generalServices.filter((s) => s.day === day);
+          <p className="eyebrow">Agenda semanal</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">
+            Encontrá tu próximo espacio
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-copy">
+            Reuniones abiertas, espacios por edad y actividades de formación durante la semana.
+          </p>
+
+          <div className="mt-8">
+            <WeeklySchedule services={generalServices} initialDay={nextWeeklyService?.service.day || "Domingos"} />
+          </div>
+
+          <div className="mt-10 border-y border-ink/10 py-6 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="font-display text-xl font-semibold text-ink">Grupos GDI</p>
+              <p className="mt-2 max-w-xl text-sm text-copy">Los miércoles nos reunimos en hogares, organizados por edad y sexo.</p>
+            </div>
+            <ButtonLink href="/ministerios/gdi" variant="secondary" className="mt-5 sm:mt-0">
+              Encontrá un GDI
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-mist py-16 text-ink sm:py-20">
+        <div className="section">
+          <p className="eyebrow">Reuniones especiales</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">
+            Momentos importantes del mes
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-copy">
+            Espacios mensuales de oración, consagración y comunión como iglesia.
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2" data-stagger>
+            {specialServicesWithDate.map(({ service, occurrence }) => {
+              const date = occurrence?.date;
+              const usesOverride = occurrence?.isOverride;
+              const time = usesOverride ? service.nextTime || service.time : service.time;
+              const streamed = usesOverride ? service.nextStreamed ?? service.streamed : service.streamed;
+
               return (
-                <div
-                  key={day}
-                  className="grid grid-cols-1 border-b border-ink/10 last:border-0 sm:grid-cols-[180px_1fr]"
-                >
-                  <div className="flex items-center bg-black/5 px-6 py-5 font-display text-2xl font-bold uppercase tracking-normal">
-                    {day}
-                  </div>
-                  <div className="divide-y divide-ink/10">
-                    {items.map((s, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-wrap items-center justify-between gap-2 px-6 py-5"
-                      >
-                        <span className="flex items-center gap-2 font-medium text-ink/80">
-                          {s.label}
-                          {s.streamed && (
-                            <Link
-                              href="/en-vivo"
-                              className="inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-dark"
-                            >
-                              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                              Se transmite por YouTube
-                            </Link>
-                          )}
-                        </span>
-                        <span className="font-display text-xl text-brand">
-                          {s.time}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                <div key={service.name} className="border-t border-ink/15 pt-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h3 className="font-display text-2xl font-semibold text-ink">{service.name}</h3>
+                  {streamed && (
+                    <BadgeLink href="/en-vivo" variant="video">
+                      <BadgeDot tone="brand" />
+                      YouTube
+                    </BadgeLink>
+                  )}
+                </div>
+                {date && <p className="mt-3 font-semibold text-carbon">Próxima: {formatScheduleDate(date, time)}</p>}
+                <p className="mt-2 text-sm text-muted">{service.schedule}</p>
+                {usesOverride && service.nextNote && <p className="mt-2 text-sm text-brand-dark">{service.nextNote}</p>}
+                <p className="mt-4 text-sm leading-relaxed text-copy">{service.description}</p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {date && service.calendarEnabled !== false && (
+                    <ExternalButtonLink
+                      href={calendarUrl({
+                        title: service.calendarTitle || service.name,
+                        date,
+                        time,
+                        location: getServiceLocation(service),
+                        durationMinutes: service.calendarDurationMinutes,
+                      })}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      Agendar
+                    </ExternalButtonLink>
+                  )}
+                  {streamed && (
+                    <ButtonLink href="/en-vivo" variant="secondary" size="sm">
+                      Ver transmisión
+                    </ButtonLink>
+                  )}
+                </div>
                 </div>
               );
             })}
-          </div>
-
-          <div className="mt-16">
-            <p className="eyebrow !text-brand">Reuniones especiales fijas</p>
-            <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-              Momentos importantes del mes
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink/60">
-              Además de nuestras reuniones semanales, cada mes tenemos espacios
-              especiales de oración, consagración y comunión como iglesia.
-            </p>
-            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
-              {specialServices.map((service) => (
-                <div key={service.name} className="border-t border-ink/10 pt-6">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="font-display text-2xl font-bold uppercase tracking-normal">
-                      {service.name}
-                    </h3>
-                    {service.streamed && (
-                      <Link
-                        href="/en-vivo"
-                        className="inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-dark"
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-                        Se transmite por YouTube
-                      </Link>
-                    )}
-                  </div>
-                  <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-brand">
-                    {service.schedule}
-                  </p>
-                  <p className="mt-4 text-sm leading-relaxed text-ink/60">
-                    {service.description}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
 
       <section className="section py-16 sm:py-20">
-        <div className="border-y border-white/10 py-6">
+        <div className="border-y border-ink/10 py-6">
           <p className="eyebrow">Encuentros especiales</p>
-          <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-            Algunas reuniones surgen durante el año
+          <h2 className="mt-3 font-display text-2xl font-semibold tracking-normal">
+            Novedades durante el año
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60">
-            También realizamos semanas de oración, invitados especiales, fines de
-            semana ministeriales y otros encuentros fuera del calendario fijo. Si
-            se transmiten, aparecen automáticamente en la sección En vivo desde
-            nuestro canal de YouTube.
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink/65">
+            Compartimos semanas de oración, invitados especiales y actividades fuera del calendario fijo.
           </p>
-          <Link href="/en-vivo" className="btn-secondary mt-6">
-            Ir a En vivo
-          </Link>
-        </div>
-
-        <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Link href="/primera-vez" className="group">
-            <InfoCard
-              title="¿Es tu primera vez? →"
-              text="Vení tal cual estás. Contamos todo lo que necesitás saber antes de tu primera visita."
-            />
-          </Link>
-          <InfoCard
-            title="Niños y adolescentes"
-            text="Durante las reuniones generales, los más chicos tienen su propio espacio en la Escuela Bíblica."
-          />
-          <InfoCard
-            title="Grupos GDI"
-            text="Se reúnen los miércoles 19:30 h en distintos hogares, organizados por edad y sexo. Contactanos para sumarte a uno cerca tuyo."
-          />
+          <div className="mt-6 flex flex-wrap gap-3">
+            <ExternalButtonLink href={churchInfo.whatsappChannelUrl}>
+              Recibir novedades por WhatsApp
+            </ExternalButtonLink>
+            <ButtonLink href="/en-vivo" variant="secondary">
+              Ver transmisiones
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </>
-  );
-}
-
-function InfoCard({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="border-t border-white/15 pt-5">
-      <h3 className="font-display text-xl font-bold uppercase tracking-normal">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-relaxed text-white/60">{text}</p>
-    </div>
   );
 }

@@ -1,7 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { ChurchInfo, Ministry } from "@/lib/data";
 import { SocialBrandIcon, SocialCircleLink } from "./social-icons";
+import { ExternalButtonLink } from "./ui/button";
+import { InteractiveLink } from "./ui/interactive-link";
 
 export default function Footer({
   churchInfo,
@@ -11,18 +12,18 @@ export default function Footer({
   ministries: Ministry[];
 }) {
   return (
-    <footer className="border-t border-white/10 bg-surface pb-28 pt-16">
+    <footer className="border-t border-white/10 bg-ink pb-28 pt-16 text-white">
       <div className="section grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
             <Image src={churchInfo.logoColor} alt="" width={36} height={36} className="h-9 w-9" />
-            <p className="font-display text-xl font-bold uppercase">{churchInfo.shortName}</p>
+            <p className="font-display text-xl font-semibold">{churchInfo.shortName}</p>
           </div>
-          <p className="mt-3 text-sm text-white/50">{churchInfo.auditoriumName}</p>
-          <p className="mt-4 text-sm leading-relaxed text-white/60">
+          <p className="mt-3 text-sm text-white/60">{churchInfo.auditoriumName}</p>
+          <p className="mt-4 text-sm leading-relaxed text-white/70">
             {churchInfo.address}
           </p>
-          <p className="mt-2 text-xs italic text-white/40">
+          <p className="mt-2 text-xs italic text-white/45">
             {churchInfo.historicNote}
           </p>
           <div className="mt-5 flex gap-3">
@@ -39,9 +40,9 @@ export default function Footer({
           <ul className="mt-4 space-y-2 text-sm text-white/70">
             {ministries.slice(0, 5).map((m) => (
               <li key={m.slug}>
-                <Link href={`/ministerios/${m.slug}`} className="hover:text-brand-light">
+                <InteractiveLink href={`/ministerios/${m.slug}`} className="hover:text-white">
                   {m.name}
-                </Link>
+                </InteractiveLink>
               </li>
             ))}
           </ul>
@@ -50,13 +51,13 @@ export default function Footer({
         <div>
           <p className="eyebrow">Institución</p>
           <ul className="mt-4 space-y-2 text-sm text-white/70">
-            <li><Link href="/primera-vez" className="hover:text-brand-light">¿Es tu primera vez?</Link></li>
-            <li><Link href="/nosotros" className="hover:text-brand-light">Nosotros</Link></li>
-            <li><Link href="/reuniones" className="hover:text-brand-light">Horarios de reunión</Link></li>
-            <li><Link href="/en-vivo" className="hover:text-brand-light">En vivo</Link></li>
-            <li><Link href="/radio" className="hover:text-brand-light">Programación de radio</Link></li>
-            <li><Link href="/contacto" className="hover:text-brand-light">Contacto</Link></li>
-            <li><Link href="/ofrendas" className="hover:text-brand-light">Ofrendar</Link></li>
+            <li><InteractiveLink href="/primera-vez" className="hover:text-white">¿Es tu primera vez?</InteractiveLink></li>
+            <li><InteractiveLink href="/nosotros" className="hover:text-white">Nosotros</InteractiveLink></li>
+            <li><InteractiveLink href="/reuniones" className="hover:text-white">Horarios de reunión</InteractiveLink></li>
+            <li><InteractiveLink href="/en-vivo" className="hover:text-white">En vivo</InteractiveLink></li>
+            <li><InteractiveLink href="/radio" className="hover:text-white">Programación de radio</InteractiveLink></li>
+            <li><InteractiveLink href="/contacto" className="hover:text-white">Contacto</InteractiveLink></li>
+            <li><InteractiveLink href="/ofrendas" className="hover:text-white">Ofrendar</InteractiveLink></li>
           </ul>
         </div>
 
@@ -67,16 +68,17 @@ export default function Footer({
             <li>{churchInfo.prayerRequest.landline} (fijo)</li>
             <li>{churchInfo.email}</li>
           </ul>
-          <a
+          <ExternalButtonLink
             href={churchInfo.prayerRequest.whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary mt-4 !py-2 !px-4 text-xs"
+            variant="secondary"
+            tone="dark"
+            size="sm"
+            className="mt-4"
           >
             <SocialBrandIcon platform="whatsapp" />
             Escribir por WhatsApp
-          </a>
-          <p className="mt-6 text-xs text-white/40">
+          </ExternalButtonLink>
+          <p className="mt-6 text-xs text-white/45">
             © {new Date().getFullYear()} {churchInfo.name}. Todos los derechos reservados.
           </p>
         </div>

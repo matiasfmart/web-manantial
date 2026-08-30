@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { getChurchInfo } from "@/lib/data";
+import { getChurchInfo, getFirstVisitItems, getGeneralServices, getSpecialServices } from "@/lib/data";
+import { getTransmissionStatus } from "@/lib/youtube";
+import { formatScheduleDate, getNextPublicGathering, getServiceLocation } from "@/lib/schedule";
 import { SocialBrandIcon } from "@/components/social-icons";
+import FirstVisitAccordion from "@/components/first-visit-accordion";
+import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
+import { InteractiveLink } from "@/components/ui/interactive-link";
 
 export const metadata: Metadata = {
   title: "Primera vez",
@@ -10,7 +14,17 @@ export const metadata: Metadata = {
 };
 
 export default async function PrimeraVezPage() {
-  const churchInfo = await getChurchInfo();
+  const [churchInfo, firstVisitItems, generalServices, specialServices] = await Promise.all([
+    getChurchInfo(),
+    getFirstVisitItems(),
+    getGeneralServices(),
+    getSpecialServices(),
+  ]);
+  const nextPublicGathering = getNextPublicGathering(generalServices, specialServices);
+  const transmissionStatus = churchInfo.youtubeChannelId
+    ? await getTransmissionStatus(churchInfo.youtubeChannelId)
+    : ({ kind: "unavailable" } as const);
+  const firstVisitWhatsappLink = `${churchInfo.prayerRequest.whatsappLink}?text=${encodeURIComponent(churchInfo.firstVisit.whatsappMessage)}`;
 
   return (
     <>
@@ -19,120 +33,98 @@ export default async function PrimeraVezPage() {
         <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
           ¿Es tu primera vez?
         </h1>
-        <p className="mt-6 max-w-2xl text-white/60">
-          Nos alegra muchísimo que quieras conocernos. Acá te contamos todo lo
-          que necesitás saber antes de tu primera visita a{" "}
-          {churchInfo.auditoriumName}, para que te sientas como en casa desde el
-          primer minuto.
+        <p className="mt-6 max-w-2xl text-ink/65">
+          {churchInfo.firstVisit.intro}
         </p>
 
-        <div className="mt-10 flex flex-wrap gap-4">
-          <a
-            href={`https://www.google.com/maps?q=${encodeURIComponent(churchInfo.mapsQuery)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary"
-          >
-            Cómo llegar
-          </a>
-          <Link href="/reuniones" className="btn-secondary">
-            Ver horarios de reunión
-          </Link>
-        </div>
+        {nextPublicGathering && (
+          <div className="mt-10 border-y border-ink/15 bg-mist px-5 py-6 sm:px-8">
+            <p className="eyebrow">Tu próxima oportunidad para conocernos</p>
+            <time className="mt-4 block font-display text-3xl font-bold text-ink sm:text-4xl">
+              {formatScheduleDate(nextPublicGathering.date, nextPublicGathering.time)}
+            </time>
+            <p className="mt-2 font-display text-xl font-semibold text-carbon">{nextPublicGathering.label}</p>
+            <p className="mt-2 text-sm text-copy">{getServiceLocation(nextPublicGathering)}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              {nextPublicGathering.location === "homes" ? (
+                <ButtonLink href="/ministerios/gdi">
+                  Consultar por un GDI
+                </ButtonLink>
+              ) : (
+                <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
+                  Cómo llegar
+                </ExternalButtonLink>
+              )}
+              <ButtonLink href="/reuniones" variant="secondary">Ver horarios</ButtonLink>
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* QUE ESPERAR (fondo claro para mejor lectura) */}
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section">
-          <p className="eyebrow !text-brand">Qué esperar</p>
+          <p className="eyebrow">Qué esperar al venir</p>
           <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-            Todo lo que necesitás saber
+            Lo importante, sin vueltas
           </h2>
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoCard
-              title="¿Cuánto dura?"
-              text="Nuestras reuniones generales duran entre una hora y media y dos horas: alabanza, palabra y un momento de oración."
-            />
-            <InfoCard
-              title="¿Cómo me visto?"
-              text="Como quieras. Vení con la ropa que te haga sentir cómodo, no hace falta nada formal."
-            />
-            <InfoCard
-              title="Niños y adolescentes"
-              text="Mientras dura el culto, los más chicos tienen su propio espacio en la Escuela Bíblica, con maestros y actividades pensadas para ellos."
-            />
-            <InfoCard
-              title="¿Cómo llego?"
-              text={`Estamos en ${churchInfo.address}, en el edificio conocido en el barrio como el "Ex Cine Progreso". Hay colectivos y opciones de estacionamiento en la zona.`}
-            />
-            <InfoCard
-              title="¿Y si no creo en nada de esto?"
-              text="No hay problema. Vení a observar, a escuchar, a hacer preguntas. Nadie te va a obligar a nada: la puerta está abierta para vos tal cual estás."
-            />
-            <InfoCard
-              title="¿Voy a estar solo?"
-              text="Nuestro equipo de bienvenida te va a recibir en la entrada, y con gusto te acompaña a un lugar y responde cualquier duda."
-            />
+          <div className="mt-8 grid grid-cols-1 divide-y divide-line border-y border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {churchInfo.firstVisit.arrivalSteps.map((step, index) => (
+              <div key={step} className="py-5 sm:px-5 sm:py-0">
+                <span className="font-display text-lg font-bold text-brand-dark">0{index + 1}</span>
+                <p className="mt-2 text-sm font-medium leading-relaxed text-carbon">{step}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="eyebrow mt-12">Preguntas frecuentes</p>
+          <FirstVisitAccordion items={firstVisitItems} />
+          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm">
+            <InteractiveLink href="/ministerios/escuela-biblica" className="text-brand-dark">Conocé Escuela Bíblica</InteractiveLink>
+            <InteractiveLink href="/ministerios/avivamiento-jovenes" className="text-brand-dark">Conocé Avivamiento Jóvenes</InteractiveLink>
           </div>
         </div>
       </section>
 
       <section className="section py-16 sm:py-20">
-        {/* EN VIVO PRIMERO */}
-        <div className="flex flex-col items-start gap-4 border-y border-white/10 py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-start gap-4 border-y border-ink/10 py-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="eyebrow">¿Preferís mirar antes de venir?</p>
             <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-              Mirá una reunión en vivo o grabada
+              Conocé una reunión desde casa
             </h2>
-            <p className="mt-2 max-w-lg text-sm text-white/60">
-              Podés conocernos primero desde tu casa, viendo la última reunión o
-              acompañándonos cuando transmitimos por YouTube.
+            <p className="mt-2 max-w-lg text-sm text-ink/65">
+              Mirá la última transmisión disponible o acompañanos cuando estemos en vivo.
             </p>
           </div>
-          <Link href="/en-vivo" className="btn-secondary shrink-0">
-            Ir a En vivo
-          </Link>
+          <ButtonLink href="/en-vivo" variant={transmissionStatus.kind === "live" ? "onair" : "secondary"} className="shrink-0">
+            Ver una reunión
+          </ButtonLink>
         </div>
 
-        {/* CONTACTO DIRECTO */}
-        <div className="mt-10 border-y border-white/10 py-6">
+        <div className="mt-10 border-y border-ink/10 py-6">
           <p className="eyebrow">¿Tenés dudas?</p>
           <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-            Escribinos, con gusto te ayudamos
+            ¿Todavía tenés una consulta?
           </h2>
-          <p className="mt-2 max-w-lg text-sm text-white/60">
+          <p className="mt-2 max-w-lg text-sm text-ink/65">
             Contanos cualquier duda antes de tu visita: dónde estacionar, cómo
             llegar en colectivo, o lo que necesites.
           </p>
           <div className="mt-6 flex flex-wrap gap-4">
-            <a
-              href={churchInfo.prayerRequest.whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-primary !py-2.5 !px-5 text-xs"
+            <ExternalButtonLink
+              href={firstVisitWhatsappLink}
+              size="sm"
             >
               <SocialBrandIcon platform="whatsapp" />
               Escribir por WhatsApp
-            </a>
-            <Link href="/contacto" className="btn-secondary !py-2.5 !px-5 text-xs">
+            </ExternalButtonLink>
+            <ButtonLink href="/contacto?topic=Primera%20visita" variant="secondary" size="sm">
               Ir a Contacto
-            </Link>
+            </ButtonLink>
           </div>
         </div>
       </section>
     </>
-  );
-}
-
-function InfoCard({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="border-t border-ink/15 pt-5">
-      <h3 className="font-display text-lg font-bold uppercase tracking-normal text-brand">
-        {title}
-      </h3>
-      <p className="mt-3 text-sm leading-relaxed text-ink/60">{text}</p>
-    </div>
   );
 }
 

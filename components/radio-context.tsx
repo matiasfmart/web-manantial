@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -45,6 +46,7 @@ export function RadioProvider({
 
     setIsLoading(true);
     setHasError(false);
+    audio.volume = volume;
     audio
       .play()
       .then(() => {
@@ -56,7 +58,7 @@ export function RadioProvider({
         setIsLoading(false);
         setIsPlaying(false);
       });
-  }, [isPlaying]);
+  }, [isPlaying, volume]);
 
   const setVolume = useCallback((v: number) => {
     setVolumeState(v);
@@ -68,6 +70,10 @@ export function RadioProvider({
     [isPlaying, isLoading, hasError, toggle, volume, setVolume]
   );
 
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume;
+  }, [volume]);
+
   return (
     <RadioContext.Provider value={value}>
       {children}
@@ -76,7 +82,11 @@ export function RadioProvider({
         preload="none"
         src={streamUrl}
         onWaiting={() => setIsLoading(true)}
-        onPlaying={() => setIsLoading(false)}
+        onPlaying={() => {
+          setIsLoading(false);
+          setIsPlaying(true);
+        }}
+        onPause={() => setIsPlaying(false)}
         onError={() => {
           setHasError(true);
           setIsPlaying(false);

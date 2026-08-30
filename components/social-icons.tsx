@@ -1,3 +1,5 @@
+import { ExternalButtonLink } from "./ui/button";
+
 type SocialPlatform = "whatsapp" | "instagram" | "youtube" | "facebook" | "tiktok";
 
 export function SocialBrandIcon({
@@ -61,10 +63,12 @@ export function SocialCircleLink({
   href,
   label,
   platform,
+  variant = "dark",
 }: {
   href: string;
   label: string;
   platform: SocialPlatform;
+  variant?: "dark" | "light";
 }) {
   return (
     <a
@@ -73,7 +77,9 @@ export function SocialCircleLink({
       rel="noopener noreferrer"
       aria-label={label}
       title={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-brand hover:text-brand-light"
+      className={`flex h-9 w-9 items-center justify-center rounded-full border transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand ${
+        variant === "light" ? "border-ink/15 text-ink/65" : "border-white/15 text-white/70"
+      }`}
     >
       <SocialBrandIcon platform={platform} />
     </a>
@@ -92,18 +98,9 @@ export function SocialTextLink({
   variant?: "dark" | "light";
 }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={
-        variant === "light"
-          ? "inline-flex items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-ink transition hover:border-ink/40 hover:bg-ink/5"
-          : "btn-secondary !py-2.5 !px-5 text-xs"
-      }
-    >
+    <ExternalButtonLink href={href} variant="secondary" tone={variant} size="sm">
       <SocialBrandIcon platform={platform} />
       {label}
-    </a>
+    </ExternalButtonLink>
   );
 }

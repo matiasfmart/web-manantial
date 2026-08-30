@@ -8,29 +8,40 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#05070c",
-        surface: "#0a0e17",
-        surface2: "#111827",
+        ink: "#101314",
+        carbon: "#252a2b",
+        copy: "#505958",
+        muted: "#767d7a",
+        line: "#d5d8d2",
+        canvas: "#f4f4f0",
+        surface: "#e7e8e3",
+        surface2: "#d5d8d2",
+        mist: "#e7eff0",
         brand: {
-          DEFAULT: "#215bd6",
-          light: "#5c8bf0",
-          dark: "#0e2e73",
+          DEFAULT: "#4f6f78",
+          light: "#8da6ad",
+          dark: "#304c54",
+        },
+        onair: {
+          DEFAULT: "#a33a32",
+          light: "#f3e8e6",
+          dark: "#6f2722",
         },
         gold: {
-          DEFAULT: "#e2891f",
-          light: "#f2b661",
-          dark: "#8a4c0c",
+          DEFAULT: "#b88748",
+          light: "#c9a36e",
+          dark: "#876130",
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "sans-serif"],
-        body: ["var(--font-body)", "sans-serif"],
+        display: ["var(--font-sans)", "sans-serif"],
+        body: ["var(--font-sans)", "sans-serif"],
       },
       backgroundImage: {
         "radial-fade":
-          "radial-gradient(120% 120% at 50% 0%, rgba(33,91,214,0.22) 0%, rgba(5,7,12,0) 60%)",
+          "radial-gradient(120% 120% at 50% 0%, rgba(79,111,120,0.18) 0%, rgba(244,244,240,0) 60%)",
         "hero-grid":
-          "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+          "linear-gradient(rgba(32,37,38,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(32,37,38,0.07) 1px, transparent 1px)",
       },
       animation: {
         pulseSlow: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",

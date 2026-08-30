@@ -11,11 +11,14 @@ export default function MinistryCard({
   variant?: "dark" | "light";
 }) {
   const isLight = variant === "light";
+  const location = ministry.locationLabel || (
+    ministry.location === "homes" ? "En hogares" : ministry.location === "community" ? "En la comunidad" : "Auditorio"
+  );
 
   return (
     <Link
       href={`/ministerios/${ministry.slug}`}
-      className={`group flex h-full flex-col border-t pt-4 transition hover:border-brand/50 ${
+      className={`group flex h-full flex-col border-t pt-4 transition duration-300 hover:-translate-y-1 hover:border-ink/40 ${
         isLight ? "border-ink/15" : "border-white/15"
       }`}
     >
@@ -25,10 +28,10 @@ export default function MinistryCard({
           alt={ministry.name}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover opacity-85 transition duration-500 group-hover:scale-[1.03]"
+          className="object-cover opacity-85 transition duration-700 group-hover:scale-[1.04]"
         />
         <div
-          className={`absolute inset-0 bg-gradient-to-t ${ministry.color} opacity-30 mix-blend-multiply`}
+          className={`absolute inset-0 bg-gradient-to-t ${ministry.color} opacity-15 mix-blend-multiply`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
         <div
@@ -40,13 +43,13 @@ export default function MinistryCard({
 
       <div className="flex flex-1 flex-col py-5">
         <h3
-          className={`font-display text-xl font-bold uppercase tracking-normal ${
+          className={`font-display font-display-emphasis text-xl font-bold uppercase tracking-normal ${
             isLight ? "text-ink" : "text-white"
           }`}
         >
           {ministry.name}
         </h3>
-        <p className={`mt-1 text-sm font-medium ${isLight ? "text-brand" : "text-brand-light"}`}>
+        <p className={`mt-1 text-sm font-medium ${isLight ? "text-copy" : "text-white/65"}`}>
           {ministry.tagline}
         </p>
         <p className={`mt-3 flex-1 text-sm leading-relaxed ${isLight ? "text-ink/60" : "text-white/60"}`}>
@@ -57,12 +60,13 @@ export default function MinistryCard({
             isLight ? "border-ink/10" : "border-white/10"
           }`}
         >
-          <span className={`font-semibold uppercase tracking-wide ${isLight ? "text-ink/70" : "text-white/70"}`}>
-            {ministry.schedule}
-          </span>
+          <div className={isLight ? "text-ink/70" : "text-white/70"}>
+            <span className="block font-semibold uppercase tracking-wide">{ministry.schedule}</span>
+            <span className="mt-1 block text-[11px]">{location}</span>
+          </div>
           <span
             className={`opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 ${
-              isLight ? "text-brand" : "text-brand-light"
+              isLight ? "text-ink" : "text-white"
             }`}
           >
             Ver más →

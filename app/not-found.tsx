@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
@@ -7,17 +7,17 @@ export default function NotFound() {
       <h1 className="mt-4 font-display text-6xl font-black uppercase tracking-normal">
         Página no encontrada
       </h1>
-      <p className="mt-4 max-w-md text-white/60">
+      <p className="mt-4 max-w-md text-ink/65">
         Parece que este camino no existe. Volvé al inicio o escuchá nuestra
         radio mientras tanto.
       </p>
       <div className="mt-8 flex gap-4">
-        <Link href="/" className="btn-primary">
+        <ButtonLink href="/" variant="primary">
           Ir al inicio
-        </Link>
-        <Link href="/radio" className="btn-secondary">
+        </ButtonLink>
+        <ButtonLink href="/radio" variant="secondary">
           Escuchar radio
-        </Link>
+        </ButtonLink>
       </div>
     </section>
   );

@@ -1,193 +1,145 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { getChurchInfo, getSpecialServices, transmissionInfo } from "@/lib/data";
+import { getChurchInfo, getGeneralServices, getSpecialServices } from "@/lib/data";
+import { formatScheduleDate, getNextGeneralService, getNextSpecialOccurrence } from "@/lib/schedule";
 import { getTransmissionStatus } from "@/lib/youtube";
-import BigPlayer from "@/components/big-player";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
-import { SocialTextLink } from "@/components/social-icons";
+import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "En vivo",
-  description:
-    "Escuchá Radio Maranata las 24 horas y mirá las transmisiones en vivo de Ministerio Manantial de Avivamiento por YouTube.",
+  description: "Mirá las transmisiones en vivo y las últimas reuniones de Ministerio Manantial de Avivamiento por YouTube.",
+};
+
+type UpcomingTransmission = {
+  title: string;
+  detail: string;
+  startsAt: number;
 };
 
 export default async function EnVivoPage() {
-  const [churchInfo, specialServices] = await Promise.all([getChurchInfo(), getSpecialServices()]);
+  const [churchInfo, generalServices, specialServices] = await Promise.all([
+    getChurchInfo(),
+    getGeneralServices(),
+    getSpecialServices(),
+  ]);
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
-
-  const radioBlock = (
-    <div className="mt-16">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-brand" />
-            </span>
-            <p className="eyebrow">Audio 24 horas</p>
-          </div>
-          <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal sm:text-3xl">
-            {churchInfo.radioName}
-          </h2>
-        </div>
-        <Link href="/radio" className="text-sm font-semibold text-brand-light underline underline-offset-4">
-          Ver programación completa
-        </Link>
-      </div>
-
-      <BigPlayer churchInfo={churchInfo} />
-
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="border-t border-white/10 pt-4">
-          <p className="font-display text-lg font-bold uppercase tracking-normal">
-            Siempre encendida
-          </p>
-          <p className="mt-2 text-sm text-white/55">
-            Alabanza, palabra y compañía durante todo el día.
-          </p>
-        </div>
-        <div className="border-t border-white/10 pt-4">
-          <p className="font-display text-lg font-bold uppercase tracking-normal">
-            Desde el auditorio
-          </p>
-          <p className="mt-2 text-sm text-white/55">
-            Una señal pensada para acompañar a la iglesia y a cada familia.
-          </p>
-        </div>
-        <div className="border-t border-white/10 pt-4">
-          <p className="font-display text-lg font-bold uppercase tracking-normal">
-            En la app
-          </p>
-          <p className="mt-2 text-sm text-white/55">
-            Preparada para escucharse también desde iOS y Android.
-          </p>
-        </div>
-      </div>
-    </div>
+  const nextGeneralTransmission = getNextGeneralService(
+    generalServices.filter((service) => service.streamed)
   );
+  const nextSpecialTransmissions = specialServices
+    .filter((service) => service.nextStreamed ?? service.streamed)
+    .map((service) => {
+      const occurrence = getNextSpecialOccurrence(service);
+      if (!occurrence) return null;
 
-  const cultoBlock = (
-    <div className="mt-16">
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <h2 className="font-display text-2xl font-bold uppercase tracking-normal">
-          {transmissionInfo.title}
-        </h2>
-        <CultoBadge status={transmissionStatus} />
-      </div>
+      return {
+        title: service.name,
+        detail: service.nextTime ?? service.time
+          ? formatScheduleDate(occurrence.date, service.nextTime ?? service.time)
+          : `${formatScheduleDate(occurrence.date)} · ${service.schedule}`,
+        startsAt: toBuenosAiresTimestamp(occurrence.date, service.nextTime ?? service.time),
+      } satisfies UpcomingTransmission;
+    })
+    .filter((service): service is UpcomingTransmission => Boolean(service));
+  const upcomingTransmissions = [
+    ...(nextGeneralTransmission
+      ? [{
+          title: nextGeneralTransmission.service.label,
+          detail: formatScheduleDate(nextGeneralTransmission.date, nextGeneralTransmission.service.time),
+          startsAt: toBuenosAiresTimestamp(nextGeneralTransmission.date, nextGeneralTransmission.service.time),
+        } satisfies UpcomingTransmission]
+      : []),
+    ...nextSpecialTransmissions,
+  ]
+    .sort((left, right) => left.startsAt - right.startsAt)
+    .slice(0, 3);
+  const nextTransmission = upcomingTransmissions[0];
 
-      <div className="overflow-hidden border-y border-white/10">
-        <CultoPlayer status={transmissionStatus} />
-        <div className="flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8">
-          <p className="max-w-lg text-sm text-white/60">
-            {transmissionStatus.kind === "live"
-              ? "Esta transmisión viene directamente desde nuestro canal de YouTube."
-              : "Cuando no estamos transmitiendo, este espacio muestra la última reunión disponible del canal. Si YouTube no devuelve un video válido, evitamos mostrar un reproductor roto."}
-          </p>
-          <a
-            href={churchInfo.social.youtube}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary shrink-0"
-          >
-            Ver canal de YouTube
-          </a>
-        </div>
-      </div>
-    </div>
-  );
+  const state = transmissionStatus.kind === "live"
+    ? {
+        eyebrow: "En vivo ahora",
+        title: transmissionStatus.title || "Estamos transmitiendo en vivo.",
+        description: "Estás mirando una reunión transmitida desde Manantial de Avivamiento.",
+        tone: "dark",
+      }
+    : transmissionStatus.kind === "latest"
+      ? {
+          eyebrow: "Última reunión",
+          title: "La última reunión, disponible ahora.",
+          description: "Mirá la transmisión más reciente de Manantial de Avivamiento.",
+          tone: "light",
+        }
+      : {
+          eyebrow: "Próxima transmisión",
+          title: "Volvemos en la próxima reunión.",
+          description: "No hay una transmisión activa ahora. Te esperamos en el próximo encuentro o en nuestro canal de YouTube.",
+          tone: "light",
+        };
+  const isLive = state.tone === "dark";
 
   return (
     <>
-      <section className="section py-20 sm:py-24">
-        <p className="eyebrow">Ahora mismo</p>
-        <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
-          Todo lo que transmitimos en vivo
-        </h1>
-        <p className="mt-6 max-w-2xl text-white/60">
-          Nuestra radio suena las 24 horas del día y, además, transmitimos por
-          YouTube nuestras reuniones generales, noches especiales y encuentros
-          que pueden surgir durante la semana.
-        </p>
+      <section className={isLive ? "bg-ink py-16 text-white sm:py-20" : "bg-canvas py-16 text-ink sm:py-20"}>
+        <div className="section">
+          <div className="max-w-3xl">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className={isLive ? "eyebrow !text-white/60" : "eyebrow"}>{state.eyebrow}</p>
+              <CultoBadge status={transmissionStatus} />
+            </div>
+            <h1 className="mt-5 font-display font-display-emphasis text-5xl font-semibold tracking-normal sm:text-6xl">
+              {state.title}
+            </h1>
+            <p className={isLive ? "mt-5 max-w-2xl text-white/65" : "mt-5 max-w-2xl text-ink/65"}>
+              {state.description}
+            </p>
+          </div>
 
-        {transmissionStatus.kind === "live" ? (
-          <>
-            {cultoBlock}
-            {radioBlock}
-          </>
-        ) : (
-          <>
-            {radioBlock}
-            {cultoBlock}
-          </>
-        )}
+          <div className={isLive ? "mt-10 border-y border-white/15 py-6 sm:py-8" : "mt-10 border-y border-ink/10 py-6 sm:py-8"}>
+            <CultoPlayer status={transmissionStatus} />
+          </div>
+
+          <div className="mt-7 flex flex-wrap gap-4">
+            <ExternalButtonLink href={churchInfo.social.youtube} variant={isLive ? "onair" : "secondary"} tone={isLive ? "dark" : "light"}>
+              Ver canal de YouTube
+            </ExternalButtonLink>
+            <ButtonLink href="/reuniones" variant="secondary" tone={isLive ? "dark" : "light"}>
+              Ver horarios
+            </ButtonLink>
+          </div>
+        </div>
       </section>
 
-      {/* TAMBIEN TRANSMITIMOS (fondo claro: info complementaria de fácil lectura) */}
       <section className="bg-white py-16 text-ink sm:py-20">
         <div className="section">
-          <p className="eyebrow !text-brand">También transmitimos</p>
-          <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-            Reuniones fijas y encuentros especiales
+          <p className="eyebrow">Próximas transmisiones</p>
+          <h2 className="mt-4 font-display text-3xl font-semibold tracking-normal sm:text-4xl">
+            {nextTransmission ? "Cuándo volvemos a encontrarnos" : "Seguinos para próximos anuncios"}
           </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink/60">
-            {transmissionInfo.description} Cuando el canal esté en vivo, esta
-            página prioriza automáticamente la transmisión actual.
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-copy">
+            {nextTransmission
+              ? "Estas reuniones están previstas para transmitirse por YouTube. Los horarios pueden actualizarse desde la agenda de la iglesia."
+              : "Los próximos encuentros transmitidos se anuncian en nuestro canal de YouTube y en la agenda de la iglesia."}
           </p>
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="border-t border-ink/10 pt-5">
-              <p className="font-display text-lg font-bold uppercase tracking-normal">
-                Reunión general
-              </p>
-              <p className="mt-2 text-sm font-semibold text-brand">
-                {churchInfo.liveServiceSchedule}
-              </p>
-              <p className="mt-3 text-sm text-ink/60">
-                Transmisión habitual de la reunión dominical.
-              </p>
-            </div>
-            {specialServices.map((service) => (
-              <div key={service.name} className="border-t border-ink/10 pt-5">
-                <p className="font-display text-lg font-bold uppercase tracking-normal">
-                  {service.name}
-                </p>
-                <p className="mt-2 text-sm font-semibold text-brand">
-                  {service.schedule}
-                </p>
-                <p className="mt-3 text-sm text-ink/60">{service.description}</p>
-              </div>
-            ))}
-          </div>
 
-          {/* REDES */}
-          <div className="mt-16 border-y border-ink/10 py-6">
-            <p className="eyebrow !text-brand">Seguinos</p>
-            <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-              No te pierdas nada
-            </h2>
-            <p className="mt-3 max-w-lg text-sm text-ink/60">
-              Sumate a nuestras redes para enterarte de horarios especiales,
-              avisos y contenido de la semana.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-4">
-              <SocialTextLink href={churchInfo.whatsappChannelUrl} label="Canal de WhatsApp" platform="whatsapp" variant="light" />
-              <SocialTextLink href={churchInfo.social.instagram} label="Instagram" platform="instagram" variant="light" />
-              <SocialTextLink href={churchInfo.social.youtube} label="YouTube" platform="youtube" variant="light" />
-              <SocialTextLink href={churchInfo.social.facebook} label="Facebook" platform="facebook" variant="light" />
-              <SocialTextLink href={churchInfo.social.tiktok} label="TikTok" platform="tiktok" variant="light" />
+          {upcomingTransmissions.length > 0 && (
+            <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3" data-stagger>
+              {upcomingTransmissions.map((transmission) => (
+                <div key={`${transmission.title}-${transmission.startsAt}`} className="border-t border-ink/10 pt-5">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-brand-dark">YouTube</p>
+                  <p className="mt-3 font-display text-xl font-semibold text-ink">{transmission.title}</p>
+                  <p className="mt-2 text-sm font-medium text-copy">{transmission.detail}</p>
+                </div>
+              ))}
             </div>
-          </div>
+          )}
 
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/radio" className="text-sm font-semibold text-brand underline underline-offset-4">
-              Ver programación completa de la radio
-            </Link>
-            <Link href="/reuniones" className="text-sm font-semibold text-brand underline underline-offset-4">
-              Ver todos los horarios de reunión
-            </Link>
+          <div className="mt-10 border-t border-ink/10 pt-6">
+            <ButtonLink href="/reuniones" variant="secondary">Ver agenda completa</ButtonLink>
           </div>
         </div>
       </section>
@@ -195,3 +147,13 @@ export default async function EnVivoPage() {
   );
 }
 
+function toBuenosAiresTimestamp(
+  date: { year: number; month: number; day: number },
+  time?: string
+) {
+  const match = time?.match(/(\d{1,2}):(\d{2})/);
+  const hours = match ? Number(match[1]) : 23;
+  const minutes = match ? Number(match[2]) : 59;
+
+  return Date.UTC(date.year, date.month - 1, date.day, hours + 3, minutes);
+}

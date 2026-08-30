@@ -8,7 +8,7 @@ Sitio web institucional para la iglesia, construido con **Next.js 14 (App Router
 - **Nosotros**: historia, visión, misión y liderazgo.
 - **Ministerios**: las 7 áreas de la iglesia, cada una con página propia.
 - **Reuniones**: horario semanal completo (cultos generales y GDI).
-- **Radio en vivo**: reproductor de streaming, programación y enlaces a apps móviles.
+- **Radio en vivo**: reproductor de streaming y programación.
 - **Contacto**: formulario y mapa de ubicación.
 
 ## Datos a personalizar antes de producción
@@ -23,11 +23,14 @@ Lo que sí sigue siendo parte del código (no editable desde la hoja):
 
 - `churchInfo.radioStreamUrl`: reemplazar por la URL real del stream de audio (icecast/shoutcast/HLS).
 - `churchInfo.youtubeChannelId`: completar con el ID del canal (YouTube Studio → Configuración → Canal → Configuración avanzada) para activar el embed en vivo automático en `/en-vivo`. Mientras esté vacío, se usa el link `.../live`, que YouTube redirige solo a la transmisión en curso.
-- `churchInfo.appStore` / `churchInfo.playStore`: enlaces reales a las tiendas cuando la app esté publicada.
 - Imágenes de ministerios, logos y fotos del equipo pastoral (ver sección de imágenes abajo): se administran en el código, no desde la hoja.
-- `components/contact-form.tsx`: el formulario actualmente no envía el mensaje a ningún backend. Conectar a un servicio de email (Resend, Formspree, etc.) o a un endpoint propio antes de producción.
+- `RESEND_API_KEY` y `RESEND_FROM_EMAIL`: variables privadas necesarias para que el formulario de contacto envíe correos mediante Resend.
 
 ## Backoffice sin código (Google Sheets)
+
+Para la operación diaria de la planilla, consultá la [guía operativa de Google
+Sheets](docs/GUIA-OPERATIVA-GOOGLE-SHEETS.md). Este README conserva la
+referencia técnica de la integración.
 
 El sitio puede leer sus textos desde un Google Sheet público (solo lectura), sin
 necesidad de API keys ni de tocar código. Mientras no se configure, se usan los
@@ -40,11 +43,12 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 
 | Hoja | Columnas | Para qué es |
 |---|---|---|
-| `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, WhatsApp, datos de oración |
-| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription` | Texto de cada uno de los 7 ministerios |
-| `Reuniones` | `day`, `time`, `label`, `streamed` | Horario semanal general |
-| `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed` | Noche de Unción, Santa Cena, etc. |
-| `EquipoPastoral` | `displayName`, `role` | Pastora principal, matrimonios, evangelista |
+| `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, oración y textos institucionales |
+| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers`, `featured`, `featuredOrder` | Texto, orientación, CTA y destacados de cada uno de los 7 ministerios |
+| `Reuniones` | `day`, `time`, `label`, `isPublic`, `audience`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Agenda semanal general y actividades por audiencia |
+| `ReunionesEspeciales` | `name`, `schedule`, `description`, `isPublic`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote`, `featureOnHome`, `featureTitle`, `featureDate`, `featureAudience`, `featureCtaLabel`, `featureCtaUrl` | Noche de Unción, Santa Cena y eventos excepcionales |
+| `PrimeraVez` | `order`, `title`, `text` | Preguntas frecuentes de la página para visitantes nuevos |
+| `EquipoPastoral` | `displayName`, `role`, `order` | Pastora principal, matrimonios, evangelista y orden de aparición |
 | `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
 | `OfrendasCategorias` | `name`, `description` | "Ofrenda general", "Diezmo", etc. |
 | `ProgramacionRadio` | `time`, `program`, `host` | Grilla horaria de Radio Maranata |
@@ -56,6 +60,67 @@ uno de estos (son los que ya usan las fotos y colores del sitio):
 simplemente no se genera.
 
 En las columnas `streamed` / `isOutreach` usá el texto `TRUE` o `FALSE`.
+
+Para `Ministerios`, `category` organiza la página en `life-stage`, `formation`,
+`community` o `serve`. `location` puede ser `auditorium`, `homes` o
+`community`; `locationLabel` permite reemplazar el texto mostrado. `joinLabel`
+personaliza el CTA, `contactTopic` define el motivo que llega preseleccionado a
+Contacto y `acceptingMembers` admite `TRUE` o `FALSE`. En `highlights`, separá
+cada punto con `|`, por ejemplo: `Alabanza | Palabra práctica | Comunidad`.
+Todas estas columnas son opcionales y usan valores adecuados por defecto si se
+dejan vacías.
+
+En `Ministerios`, usá `featured=TRUE` para mostrar un ministerio en Inicio y
+`featuredOrder` para definir su posición. Inicio muestra hasta tres destacados;
+si no hay ninguno marcado, muestra los primeros tres disponibles.
+
+Para los textos de la página `Nosotros`, agregá en `DatosIglesia` las claves
+opcionales `historyTitle`, `historyText`, `vision`, `mission`, `values` y
+`communityStatement`. En `values`, separá cada valor con `|`, por ejemplo:
+`Fe genuina | Familia | Servicio | Excelencia | Comunidad`. En
+`EquipoPastoral`, `order` es un número opcional para decidir el orden visible
+del equipo. Las imágenes pastorales siguen siendo archivos estáticos dentro de
+`public/images/pastoral`, para no exponer paths de imágenes en la hoja.
+
+Para la página `Primera vez`, `DatosIglesia` admite las claves opcionales
+`firstVisitIntro`, `firstVisitArrivalTitle`, `firstVisitArrivalStep1`,
+`firstVisitArrivalStep2`, `firstVisitArrivalStep3` y
+`firstVisitWhatsappMessage`. En la hoja `PrimeraVez`, `order` define el orden
+de las preguntas; la primera fila es la que aparece abierta inicialmente. Si
+esa hoja está vacía, se usan las preguntas y el orden por defecto del sitio.
+
+Para Inicio, `DatosIglesia` admite `homeHeroKicker`, `homeHeroTitle`,
+`homeHeroText`, `homeWelcomeTitle`, `homeWelcomeText`, `homeStats1Value`,
+`homeStats1Label`, `homeStats2Value`, `homeStats2Label`, `homeStats3Value`,
+`homeStats3Label`, `homeStats4Value` y `homeStats4Label`. Estos campos editan
+el hero, el mensaje de bienvenida y los cuatro datos breves de la portada.
+
+Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
+usa `auditorium`. Usá `isPublic=TRUE` para que una reunión aparezca como
+próxima reunión en Inicio; `FALSE` la reserva para actividades de un grupo
+específico. Si la columna se deja vacía, Inicio incluye automáticamente las
+filas cuyo nombre contiene `Reunión general` o `GDI`. Para
+la columna `audience`, usá `all`, `children`, `teens`, `youth`, `formation` o
+`service`; estos valores alimentan los filtros de la Agenda. Para
+`ReunionesEspeciales`, `isPublic` también admite `TRUE` o `FALSE` y
+`recurrence` puede ser
+`first-day` o `first-sunday`; sin valor, Santa Cena usa `first-sunday` y las
+demás reuniones `first-day`. `calendarEnabled` admite `TRUE` o `FALSE`, y las
+columnas de calendario son opcionales: el sitio conserva valores por defecto
+si no se completan.
+
+Para destacar un único evento excepcional en Inicio, completá una fila de
+`ReunionesEspeciales` con `featureOnHome=TRUE`. Podés personalizar el texto
+con `featureTitle`, indicar la fecha puntual con `featureDate` (`YYYY-MM-DD`),
+mostrar una audiencia con `featureAudience` y definir la acción mediante
+`featureCtaLabel` y `featureCtaUrl`. Si hay más de una fila marcada, el sitio
+muestra solamente la próxima; los eventos pasados no se muestran.
+
+Si una reunión especial cambia de fecha, cargá `nextDate` con formato
+`YYYY-MM-DD`. Mientras esa fecha sea actual o futura, reemplaza la recurrencia
+habitual. `nextTime`, `nextStreamed` y `nextNote` son opcionales y se aplican
+solo a esa próxima fecha; al pasar la fecha o vaciar `nextDate`, el sitio vuelve
+automáticamente a la regla de `recurrence`.
 
 En `DatosIglesia`, cada fila es un dato suelto, por ejemplo:
 
