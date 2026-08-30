@@ -168,21 +168,6 @@ body {
   animation: softBreathe 4.8s ease-in-out infinite;
 }
 
-details::details-content {
-  block-size: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition:
-    block-size 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 220ms ease;
-  transition-behavior: allow-discrete;
-}
-
-details[open]::details-content {
-  block-size: auto;
-  opacity: 1;
-}
-
 @layer components {
   .section {
     @apply mx-auto w-full max-w-7xl px-5 sm:px-7 lg:px-10;
@@ -201,11 +186,11 @@ details[open]::details-content {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-sm font-medium tracking-wide text-ink transition hover:border-ink hover:bg-ink hover:text-white active:scale-95;
+    @apply relative inline-flex items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-sm font-medium tracking-wide text-ink transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:border-ink/55 hover:text-ink hover:after:scale-x-100 active:translate-y-0 active:scale-[0.98];
   }
 
   .btn-secondary-dark {
-    @apply inline-flex items-center justify-center gap-2 border border-white/30 bg-transparent px-5 py-2.5 text-sm font-medium text-white transition hover:border-white hover:bg-white hover:text-ink active:scale-95;
+    @apply relative inline-flex items-center justify-center gap-2 border border-white/30 bg-transparent px-5 py-2.5 text-sm font-medium text-white transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-500 after:ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-px hover:border-white/70 hover:text-white hover:after:scale-x-100 active:translate-y-0 active:scale-[0.98];
   }
 }
 
@@ -220,11 +205,9 @@ details[open]::details-content {
   }
 
   [data-reveal],
-  [data-stagger] > *,
-  details::details-content {
+  [data-stagger] > * {
     opacity: 1 !important;
     transform: none !important;
-    block-size: auto !important;
   }
 
   .hero-image-slow,

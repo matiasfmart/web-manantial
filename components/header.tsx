@@ -62,7 +62,7 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/en-vivo"
-            className="inline-flex items-center gap-2 border border-ink/20 bg-transparent px-4 py-2 text-xs font-medium tracking-wide text-ink transition hover:border-ink hover:bg-ink hover:text-white active:scale-95"
+            className="btn-secondary !px-4 !py-2 text-xs"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
@@ -148,7 +148,7 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
               <Link
                 href="/en-vivo"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 border border-white/20 bg-transparent px-4 py-3 text-sm font-semibold uppercase tracking-wide text-white active:scale-95"
+                className="btn-secondary-dark px-4 py-3 text-sm"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />

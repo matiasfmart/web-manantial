@@ -102,7 +102,7 @@ export function SocialTextLink({
       rel="noopener noreferrer"
       className={
         variant === "light"
-          ? "inline-flex items-center justify-center gap-2 border border-ink/20 bg-transparent px-5 py-2.5 text-xs font-semibold text-ink transition hover:border-ink hover:bg-ink hover:text-white active:scale-95"
+          ? "btn-secondary !py-2.5 !px-5 text-xs"
           : "btn-secondary !py-2.5 !px-5 text-xs"
       }
     >

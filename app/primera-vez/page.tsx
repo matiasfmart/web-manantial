@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getChurchInfo } from "@/lib/data";
 import { SocialBrandIcon } from "@/components/social-icons";
+import FirstVisitAccordion from "@/components/first-visit-accordion";
 
 export const metadata: Metadata = {
   title: "Primera vez",
@@ -11,6 +12,32 @@ export const metadata: Metadata = {
 
 export default async function PrimeraVezPage() {
   const churchInfo = await getChurchInfo();
+  const firstVisitItems = [
+    {
+      title: "¿Cuánto dura?",
+      text: "Nuestras reuniones generales duran entre una hora y media y dos horas: alabanza, palabra y un momento de oración.",
+    },
+    {
+      title: "¿Cómo me visto?",
+      text: "Como quieras. Vení con la ropa que te haga sentir cómodo, no hace falta nada formal.",
+    },
+    {
+      title: "Niños y adolescentes",
+      text: "Mientras dura el culto, los más chicos tienen su propio espacio en la Escuela Bíblica, con maestros y actividades pensadas para ellos.",
+    },
+    {
+      title: "¿Cómo llego?",
+      text: `Estamos en ${churchInfo.address}, en el edificio conocido en el barrio como el "Ex Cine Progreso". Hay colectivos y opciones de estacionamiento en la zona.`,
+    },
+    {
+      title: "¿Y si no creo en nada de esto?",
+      text: "No hay problema. Vení a observar, a escuchar, a hacer preguntas. Nadie te va a obligar a nada: la puerta está abierta para vos tal cual estás.",
+    },
+    {
+      title: "¿Voy a estar solo?",
+      text: "Nuestro equipo de bienvenida te va a recibir en la entrada, y con gusto te acompaña a un lugar y responde cualquier duda.",
+    },
+  ];
 
   return (
     <>
@@ -45,32 +72,7 @@ export default async function PrimeraVezPage() {
           <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
             Lo importante, sin vueltas
           </h2>
-          <div className="mt-8 divide-y divide-line border-y border-line">
-            <InfoItem
-              title="¿Cuánto dura?"
-              text="Nuestras reuniones generales duran entre una hora y media y dos horas: alabanza, palabra y un momento de oración."
-            />
-            <InfoItem
-              title="¿Cómo me visto?"
-              text="Como quieras. Vení con la ropa que te haga sentir cómodo, no hace falta nada formal."
-            />
-            <InfoItem
-              title="Niños y adolescentes"
-              text="Mientras dura el culto, los más chicos tienen su propio espacio en la Escuela Bíblica, con maestros y actividades pensadas para ellos."
-            />
-            <InfoItem
-              title="¿Cómo llego?"
-              text={`Estamos en ${churchInfo.address}, en el edificio conocido en el barrio como el "Ex Cine Progreso". Hay colectivos y opciones de estacionamiento en la zona.`}
-            />
-            <InfoItem
-              title="¿Y si no creo en nada de esto?"
-              text="No hay problema. Vení a observar, a escuchar, a hacer preguntas. Nadie te va a obligar a nada: la puerta está abierta para vos tal cual estás."
-            />
-            <InfoItem
-              title="¿Voy a estar solo?"
-              text="Nuestro equipo de bienvenida te va a recibir en la entrada, y con gusto te acompaña a un lugar y responde cualquier duda."
-            />
-          </div>
+          <FirstVisitAccordion items={firstVisitItems} />
         </div>
       </section>
 
@@ -119,18 +121,6 @@ export default async function PrimeraVezPage() {
         </div>
       </section>
     </>
-  );
-}
-
-function InfoItem({ title, text }: { title: string; text: string }) {
-  return (
-    <details className="group py-5 transition-colors open:bg-white/45 sm:px-3">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-semibold text-ink">
-        {title}
-        <span className="text-xl font-normal text-muted transition group-open:rotate-45">+</span>
-      </summary>
-      <p className="mt-3 text-sm leading-relaxed text-copy">{text}</p>
-    </details>
   );
 }
 
