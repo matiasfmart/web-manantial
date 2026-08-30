@@ -21,7 +21,7 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
     if (liveRes.ok) {
       const html = await liveRes.text();
       const liveVideoId = extractLiveVideoId(html);
-      if (liveVideoId && (await isEmbeddableVideo(liveVideoId))) {
+      if (liveVideoId) {
         return {
           kind: "live",
           videoId: liveVideoId,
