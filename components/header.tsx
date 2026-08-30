@@ -8,6 +8,7 @@ import type { ChurchInfo } from "@/lib/data";
 import { SocialBrandIcon } from "./social-icons";
 import { BadgeDot } from "./ui/badge";
 import { ButtonLink } from "./ui/button";
+import { InteractiveLink } from "./ui/interactive-link";
 
 const links = [
   { href: "/", label: "Inicio" },
@@ -49,15 +50,15 @@ export default function Header({ churchInfo }: { churchInfo: ChurchInfo }) {
 
         <nav className="hidden items-center gap-6 lg:flex">
           {links.map((link) => (
-            <Link
+            <InteractiveLink
               key={link.href}
               href={link.href}
-              className={`link-underline text-sm font-medium tracking-wide transition hover:text-brand ${
+              className={`text-sm font-medium tracking-wide transition hover:text-brand ${
                 pathname === link.href ? "link-underline-active text-brand" : "text-ink/65"
               }`}
             >
               {link.label}
-            </Link>
+            </InteractiveLink>
           ))}
         </nav>
 

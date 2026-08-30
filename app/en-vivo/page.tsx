@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getChurchInfo, getSpecialServices, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
 import BigPlayer from "@/components/big-player";
@@ -96,7 +95,7 @@ export default async function EnVivoPage() {
         </div>
         <ExternalInteractiveLink
           href={churchInfo.social.youtube}
-          className="link-underline text-sm font-semibold text-ink/75 hover:text-ink"
+          className="text-sm font-semibold text-ink/75 hover:text-ink"
         >
           Abrir YouTube
         </ExternalInteractiveLink>

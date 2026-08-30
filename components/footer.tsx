@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { ChurchInfo, Ministry } from "@/lib/data";
 import { SocialBrandIcon, SocialCircleLink } from "./social-icons";
 import { ExternalButtonLink } from "./ui/button";
+import { InteractiveLink } from "./ui/interactive-link";
 
 export default function Footer({
   churchInfo,
@@ -40,9 +40,9 @@ export default function Footer({
           <ul className="mt-4 space-y-2 text-sm text-white/70">
             {ministries.slice(0, 5).map((m) => (
               <li key={m.slug}>
-                <Link href={`/ministerios/${m.slug}`} className="link-underline hover:text-white">
+                <InteractiveLink href={`/ministerios/${m.slug}`} className="hover:text-white">
                   {m.name}
-                </Link>
+                </InteractiveLink>
               </li>
             ))}
           </ul>
@@ -51,13 +51,13 @@ export default function Footer({
         <div>
           <p className="eyebrow">Institución</p>
           <ul className="mt-4 space-y-2 text-sm text-white/70">
-            <li><Link href="/primera-vez" className="link-underline hover:text-white">¿Es tu primera vez?</Link></li>
-            <li><Link href="/nosotros" className="link-underline hover:text-white">Nosotros</Link></li>
-            <li><Link href="/reuniones" className="link-underline hover:text-white">Horarios de reunión</Link></li>
-            <li><Link href="/en-vivo" className="link-underline hover:text-white">En vivo</Link></li>
-            <li><Link href="/radio" className="link-underline hover:text-white">Programación de radio</Link></li>
-            <li><Link href="/contacto" className="link-underline hover:text-white">Contacto</Link></li>
-            <li><Link href="/ofrendas" className="link-underline hover:text-white">Ofrendar</Link></li>
+            <li><InteractiveLink href="/primera-vez" className="hover:text-white">¿Es tu primera vez?</InteractiveLink></li>
+            <li><InteractiveLink href="/nosotros" className="hover:text-white">Nosotros</InteractiveLink></li>
+            <li><InteractiveLink href="/reuniones" className="hover:text-white">Horarios de reunión</InteractiveLink></li>
+            <li><InteractiveLink href="/en-vivo" className="hover:text-white">En vivo</InteractiveLink></li>
+            <li><InteractiveLink href="/radio" className="hover:text-white">Programación de radio</InteractiveLink></li>
+            <li><InteractiveLink href="/contacto" className="hover:text-white">Contacto</InteractiveLink></li>
+            <li><InteractiveLink href="/ofrendas" className="hover:text-white">Ofrendar</InteractiveLink></li>
           </ul>
         </div>
 

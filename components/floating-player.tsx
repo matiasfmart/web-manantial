@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ChurchInfo } from "@/lib/data";
 import { useRadio } from "./radio-context";
 import { AudioBars, RadioPlayButton } from "./radio-controls";
+import { InteractiveLink } from "./ui/interactive-link";
 
 export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
   const { isPlaying, isLoading, hasError } = useRadio();
@@ -46,12 +47,12 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
             </p>
           </div>
         </div>
-        <Link
+        <InteractiveLink
           href="/radio"
-          className="link-underline shrink-0 border-l border-white/10 pl-4 text-xs font-semibold uppercase tracking-wide text-white/70 transition hover:text-white"
+          className="shrink-0 border-l border-white/10 pl-4 text-xs font-semibold uppercase tracking-wide text-white/70 transition hover:text-white"
         >
           Abrir radio →
-        </Link>
+        </InteractiveLink>
       </div>
     </div>
   );
