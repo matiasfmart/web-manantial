@@ -28,6 +28,10 @@ Lo que sí sigue siendo parte del código (no editable desde la hoja):
 
 ## Backoffice sin código (Google Sheets)
 
+Para la operación diaria de la planilla, consultá la [guía operativa de Google
+Sheets](docs/GUIA-OPERATIVA-GOOGLE-SHEETS.md). Este README conserva la
+referencia técnica de la integración.
+
 El sitio puede leer sus textos desde un Google Sheet público (solo lectura), sin
 necesidad de API keys ni de tocar código. Mientras no se configure, se usan los
 valores por defecto embebidos en `lib/data.ts`.

@@ -257,7 +257,7 @@ body {
   }
 
   .stream-cta-dark {
-    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 border border-onair/60 bg-transparent px-5 py-2.5 text-sm font-semibold text-white transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:bg-onair-light after:content-[''] hover:-translate-y-px hover:border-onair-light hover:text-white active:translate-y-0 active:scale-[0.98];
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 border border-onair/60 bg-transparent px-5 py-2.5 text-sm font-semibold text-white transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:bg-onair after:content-[''] hover:-translate-y-px hover:border-onair-light hover:text-white active:translate-y-0 active:scale-[0.98];
   }
 
   .stream-badge {
