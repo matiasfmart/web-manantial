@@ -120,7 +120,7 @@ export default function Header({
 
   return (
     <header className={`sticky top-0 z-50 border-b bg-[#f7f7f4] text-ink transition-[border-color,background-color] duration-[220ms] ${scrolled ? "border-ink/20" : "border-ink/10"}`}>
-      <div className={`section flex h-16 items-center justify-between gap-3 py-2 transition-[height] duration-[220ms] ${scrolled ? "lg:h-16" : "lg:h-[68px]"}`}>
+      <div className={`section flex h-16 items-center gap-3 py-2 transition-[height] duration-[220ms] ${scrolled ? "xl:h-16" : "xl:h-[68px]"}`}>
         <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" onClick={() => setOpen(false)}>
           <Image
             src={churchInfo.logoColor}
@@ -136,7 +136,7 @@ export default function Header({
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="ml-auto hidden items-center gap-6 xl:flex">
           {links.map((link) => (
             <InteractiveLink
               key={link.href}
@@ -150,29 +150,7 @@ export default function Header({
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <InteractiveLink
-            href={firstVisit.href}
-            className="whitespace-nowrap text-sm font-semibold text-brand-dark hover:text-ink"
-          >
-            {firstVisit.label} <span className="text-ink/45">{firstVisit.prompt}</span>
-          </InteractiveLink>
-          {transmissionStatus.kind === "live" ? (
-            <ButtonLink href="/en-vivo" variant="onair" size="sm">
-              <BadgeDot tone="onair" pulse />
-              En vivo
-            </ButtonLink>
-          ) : (
-            <ButtonLink href="/en-vivo" variant="secondary" size="sm">
-              {transmissionStatus.kind === "latest" ? "Última reunión" : "YouTube"}
-            </ButtonLink>
-          )}
-          <ButtonLink href="/ofrendas" variant="primary" size="sm">
-            Ofrendar
-          </ButtonLink>
-        </div>
-
-        <div className="flex shrink-0 items-center lg:hidden">
+        <div className="ml-auto flex shrink-0 items-center xl:hidden">
           <button
           ref={menuButtonRef}
           className="relative flex h-11 w-11 items-center justify-center border border-ink/20 bg-transparent transition duration-200 hover:border-ink/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:scale-[0.98]"
@@ -201,8 +179,34 @@ export default function Header({
         </div>
       </div>
 
+      <div className="hidden border-t border-ink/10 bg-mist xl:block">
+        <div className="section flex min-h-10 items-center justify-between gap-6 py-1.5">
+          <InteractiveLink
+            href={firstVisit.href}
+            className="whitespace-nowrap text-xs font-semibold text-brand-dark hover:text-ink"
+          >
+            {firstVisit.label} <span className="text-ink/45">{firstVisit.prompt}</span>
+          </InteractiveLink>
+          <div className="flex items-center gap-3">
+            {transmissionStatus.kind === "live" ? (
+              <ButtonLink href="/en-vivo" variant="onair" size="sm">
+                <BadgeDot tone="onair" pulse />
+                En vivo
+              </ButtonLink>
+            ) : (
+              <ButtonLink href="/en-vivo" variant="secondary" size="sm">
+                {transmissionStatus.kind === "latest" ? "Última reunión" : "YouTube"}
+              </ButtonLink>
+            )}
+            <ButtonLink href="/ofrendas" variant="primary" size="sm">
+              Ofrendar
+            </ButtonLink>
+          </div>
+        </div>
+      </div>
+
       {isMenuMounted && (
-        <nav ref={menuRef} id="mobile-navigation" aria-label="Navegación principal" className={`fixed left-0 top-16 z-40 h-[calc(100svh-4rem)] w-screen overflow-y-auto border-t border-white/10 bg-ink lg:hidden ${isClosing ? "animate-[panelOut_240ms_cubic-bezier(0.22,1,0.36,1)_forwards]" : "animate-[panelIn_320ms_cubic-bezier(0.22,1,0.36,1)]"}`}>
+        <nav ref={menuRef} id="mobile-navigation" aria-label="Navegación principal" className={`fixed left-0 top-16 z-40 h-[calc(100svh-4rem)] w-screen overflow-y-auto border-t border-white/10 bg-ink xl:hidden ${isClosing ? "animate-[panelOut_240ms_cubic-bezier(0.22,1,0.36,1)_forwards]" : "animate-[panelIn_320ms_cubic-bezier(0.22,1,0.36,1)]"}`}>
           <div className="section flex min-h-full flex-col py-6">
             <div className="border-b border-white/10 pb-6">
               <p className="font-display text-2xl font-black uppercase tracking-normal">
