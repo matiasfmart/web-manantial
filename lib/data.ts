@@ -537,6 +537,11 @@ const churchTechnical = {
   youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
 };
 
+/** Evita usar/mostrar celdas rotas del Sheet (fórmulas con error, texto suelto, etc). */
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 const defaultChurchText = {
   name: "Ministerio Manantial de Avivamiento",
   shortName: "Manantial de Avivamiento",
@@ -605,7 +610,7 @@ export async function getChurchInfo() {
     address: t("address"),
     mapsQuery: t("mapsQuery"),
     phone: t("phone"),
-    email: t("email"),
+    email: isValidEmail(t("email")) ? t("email").trim() : "-",
     radioName: t("radioName"),
     liveServiceSchedule: t("liveServiceSchedule"),
     social: {
