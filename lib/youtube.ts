@@ -105,6 +105,30 @@ async function isLiveVideo(videoId: string) {
     if (!response.ok) return false;
 
     const html = await response.text();
+    const apiKey = html.match(/"INNERTUBE_API_KEY":"([^"]+)"/)?.[1];
+    const clientVersion = html.match(/"INNERTUBE_CLIENT_VERSION":"([^"]+)"/)?.[1];
+    if (apiKey && clientVersion) {
+      const playerResponse = await fetch(
+        `https://www.youtube.com/youtubei/v1/player?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "user-agent": "Mozilla/5.0",
+          },
+          body: JSON.stringify({
+            videoId,
+            context: { client: { clientName: "WEB", clientVersion } },
+          }),
+          cache: "no-store",
+        }
+      );
+      if (playerResponse.ok) {
+        const player = await playerResponse.json() as { videoDetails?: { isLiveContent?: boolean } };
+        if (player.videoDetails?.isLiveContent) return true;
+      }
+    }
+
     const videoDetails = new RegExp(
       `"videoDetails":\\{"videoId":"${escapeRegExp(videoId)}"[\\s\\S]{0,2000}?"isLive":true`
     );
