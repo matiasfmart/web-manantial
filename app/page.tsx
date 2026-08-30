@@ -168,7 +168,7 @@ export default async function HomePage() {
         <div className="section">
           <div className="flex items-center justify-between gap-4">
             <p className="eyebrow">Durante la semana</p>
-            <InteractiveLink href="/reuniones" className="text-xs font-semibold text-brand-dark">Ver agenda completa</InteractiveLink>
+            <InteractiveLink href="/reuniones" className="text-xs font-semibold text-brand-dark">Ver agenda y actividades</InteractiveLink>
           </div>
           <div className="marquee-mask mt-4 overflow-hidden">
             <div className="marquee-track flex animate-marquee gap-10 whitespace-nowrap text-sm font-medium text-ink/65">
@@ -179,11 +179,6 @@ export default async function HomePage() {
               </span>
             ))}
             </div>
-          </div>
-          <div className="mt-5 border-t border-ink/10 pt-4">
-            <InteractiveLink href="/reuniones" className="text-sm font-semibold text-ink/70 hover:text-ink">
-              ¿Buscás una actividad para tu edad o interés? Ver agenda completa
-            </InteractiveLink>
           </div>
         </div>
       </section>
