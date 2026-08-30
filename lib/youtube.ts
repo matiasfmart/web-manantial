@@ -15,7 +15,7 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
   try {
     const liveRes = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
       headers: { "user-agent": "Mozilla/5.0" },
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
 
     if (liveRes.ok) {

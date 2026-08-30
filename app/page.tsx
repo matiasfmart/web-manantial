@@ -11,6 +11,8 @@ import AnimatedCounter from "@/components/animated-counter";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import { ExternalInteractiveLink, InteractiveLink } from "@/components/ui/interactive-link";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [churchInfo, generalServices, ministries, radioSchedule, specialServices] = await Promise.all([
     getChurchInfo(),

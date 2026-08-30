@@ -6,7 +6,7 @@ import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "En vivo",
