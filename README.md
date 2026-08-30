@@ -42,8 +42,8 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 |---|---|---|
 | `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, WhatsApp, datos de oración |
 | `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription` | Texto de cada uno de los 7 ministerios |
-| `Reuniones` | `day`, `time`, `label`, `streamed` | Horario semanal general |
-| `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed` | Noche de Unción, Santa Cena, etc. |
+| `Reuniones` | `day`, `time`, `label`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Horario semanal general |
+| `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote` | Noche de Unción, Santa Cena, etc. |
 | `EquipoPastoral` | `displayName`, `role` | Pastora principal, matrimonios, evangelista |
 | `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
 | `OfrendasCategorias` | `name`, `description` | "Ofrenda general", "Diezmo", etc. |
@@ -56,6 +56,19 @@ uno de estos (son los que ya usan las fotos y colores del sitio):
 simplemente no se genera.
 
 En las columnas `streamed` / `isOutreach` usá el texto `TRUE` o `FALSE`.
+
+Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
+usa `auditorium`. Para `ReunionesEspeciales`, `recurrence` puede ser
+`first-day` o `first-sunday`; sin valor, Santa Cena usa `first-sunday` y las
+demás reuniones `first-day`. `calendarEnabled` admite `TRUE` o `FALSE`, y las
+columnas de calendario son opcionales: el sitio conserva valores por defecto
+si no se completan.
+
+Si una reunión especial cambia de fecha, cargá `nextDate` con formato
+`YYYY-MM-DD`. Mientras esa fecha sea actual o futura, reemplaza la recurrencia
+habitual. `nextTime`, `nextStreamed` y `nextNote` son opcionales y se aplican
+solo a esa próxima fecha; al pasar la fecha o vaciar `nextDate`, el sitio vuelve
+automáticamente a la regla de `recurrence`.
 
 En `DatosIglesia`, cada fila es un dato suelto, por ejemplo:
 

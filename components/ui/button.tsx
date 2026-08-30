@@ -110,3 +110,26 @@ export function ExternalButtonLink({
     </a>
   );
 }
+
+export function AnchorButtonLink({
+  href,
+  children,
+  variant = "primary",
+  tone = "light",
+  size = "md",
+  className,
+  ...props
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: ButtonVariant;
+  tone?: ButtonTone;
+  size?: ButtonSize;
+  className?: string;
+} & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">) {
+  return (
+    <a href={href} className={buttonClassName({ variant, tone, size, className })} {...props}>
+      {children}
+    </a>
+  );
+}

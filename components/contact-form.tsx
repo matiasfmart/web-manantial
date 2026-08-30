@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { ExternalButtonLink } from "./ui/button";
 
-export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "light" }) {
+export default function ContactForm({
+  variant = "dark",
+  whatsappLink,
+}: {
+  variant?: "dark" | "light";
+  whatsappLink?: string;
+}) {
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,8 +23,18 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
           ¡Gracias por escribirnos!
         </p>
         <p className={`mt-3 text-sm ${isLight ? "text-ink/60" : "text-white/60"}`}>
-          Recibimos tu mensaje y te vamos a contactar a la brevedad.
+          Recibimos tu mensaje. El equipo correspondiente va a poder responderte mejor.
         </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button type="button" variant="secondary" onClick={() => setSubmitted(false)}>
+            Enviar otro mensaje
+          </Button>
+          {whatsappLink && (
+            <ExternalButtonLink href={whatsappLink} variant="secondary">
+              Escribir por WhatsApp
+            </ExternalButtonLink>
+          )}
+        </div>
       </div>
     );
   }
@@ -46,6 +63,7 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
             body: JSON.stringify({
               name: data.get("name"),
               email: data.get("email"),
+              topic: data.get("topic"),
               message: data.get("message"),
             }),
           });
@@ -71,6 +89,18 @@ export default function ContactForm({ variant = "dark" }: { variant?: "dark" | "
       <div>
         <label className={labelClass}>Email</label>
         <input required type="email" name="email" className={inputClass} placeholder="tu@email.com" />
+      </div>
+      <div>
+        <label className={labelClass}>¿Sobre qué querés hablar?</label>
+        <select required name="topic" defaultValue="" className={inputClass}>
+          <option value="" disabled>Elegí una opción</option>
+          <option value="Consulta general">Consulta general</option>
+          <option value="Primera visita">Primera visita</option>
+          <option value="Ministerios o GDI">Ministerios o GDI</option>
+          <option value="Pedido de oración">Pedido de oración</option>
+          <option value="Fundación o colaboración">Fundación o colaboración</option>
+          <option value="Otro">Otro</option>
+        </select>
       </div>
       <div>
         <label className={labelClass}>Mensaje</label>

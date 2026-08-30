@@ -263,11 +263,16 @@ export type GeneralService = {
   time: string;
   label: string;
   streamed?: boolean;
+  location?: "auditorium" | "homes";
+  locationLabel?: string;
+  calendarEnabled?: boolean;
+  calendarTitle?: string;
+  calendarDurationMinutes?: number;
 };
 
 const defaultGeneralServices: GeneralService[] = [
   { day: "Martes", time: "20:00 h", label: "Reunión general" },
-  { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración" },
+  { day: "Miércoles", time: "19:30 h", label: "GDI — Grupos de Integración", location: "homes" },
   { day: "Sábados", time: "10:30 h", label: "Escuela Bíblica (niños)" },
   { day: "Sábados", time: "19:00 h", label: "Reunión general" },
   { day: "Sábados", time: "20:30 h", label: "Avivamiento Jóvenes" },
@@ -284,6 +289,11 @@ export async function getGeneralServices(): Promise<GeneralService[]> {
     time: r.time,
     label: r.label,
     streamed: r.streamed?.trim().toUpperCase() === "TRUE",
+    location: r.location?.trim().toLowerCase() === "homes" ? "homes" : "auditorium",
+    locationLabel: r.locationLabel || undefined,
+    calendarEnabled: r.calendarEnabled?.trim().toUpperCase() !== "FALSE",
+    calendarTitle: r.calendarTitle || undefined,
+    calendarDurationMinutes: Number(r.calendarDurationMinutes) || undefined,
   }));
 }
 
@@ -292,6 +302,17 @@ export type SpecialService = {
   schedule: string;
   description: string;
   streamed?: boolean;
+  recurrence: "first-day" | "first-sunday";
+  time?: string;
+  location?: "auditorium" | "homes";
+  locationLabel?: string;
+  calendarEnabled?: boolean;
+  calendarTitle?: string;
+  calendarDurationMinutes?: number;
+  nextDate?: string;
+  nextTime?: string;
+  nextStreamed?: boolean;
+  nextNote?: string;
 };
 
 const defaultSpecialServices: SpecialService[] = [
@@ -301,6 +322,8 @@ const defaultSpecialServices: SpecialService[] = [
     description:
       "Una reunión especial para ungir con aceite, orar por milagros y buscar juntos la presencia de Dios.",
     streamed: true,
+    recurrence: "first-day",
+    calendarEnabled: true,
   },
   {
     name: "Santa Cena",
@@ -308,6 +331,8 @@ const defaultSpecialServices: SpecialService[] = [
     description:
       "Dentro del culto dominical conmemoramos la cena del Señor como iglesia, recordando el sacrificio de Jesús.",
     streamed: true,
+    recurrence: "first-sunday",
+    calendarEnabled: true,
   },
 ];
 
@@ -319,6 +344,19 @@ export async function getSpecialServices(): Promise<SpecialService[]> {
     schedule: r.schedule,
     description: r.description,
     streamed: r.streamed?.trim().toUpperCase() === "TRUE",
+    recurrence: r.recurrence?.trim() === "first-sunday" || r.name === "Santa Cena" ? "first-sunday" : "first-day",
+    time: r.time || undefined,
+    location: r.location?.trim().toLowerCase() === "homes" ? "homes" : "auditorium",
+    locationLabel: r.locationLabel || undefined,
+    calendarEnabled: r.calendarEnabled?.trim().toUpperCase() !== "FALSE",
+    calendarTitle: r.calendarTitle || undefined,
+    calendarDurationMinutes: Number(r.calendarDurationMinutes) || undefined,
+    nextDate: r.nextDate?.trim() || undefined,
+    nextTime: r.nextTime?.trim() || undefined,
+    nextStreamed: r.nextStreamed?.trim()
+      ? r.nextStreamed.trim().toUpperCase() === "TRUE"
+      : undefined,
+    nextNote: r.nextNote?.trim() || undefined,
   }));
 }
 

@@ -14,9 +14,10 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const name = typeof body?.name === "string" ? body.name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
+  const topic = typeof body?.topic === "string" ? body.topic.trim() : "";
   const message = typeof body?.message === "string" ? body.message.trim() : "";
 
-  if (!name || !email || !message) {
+  if (!name || !email || !topic || !message) {
     return NextResponse.json({ error: "Completá todos los campos." }, { status: 400 });
   }
 
@@ -42,8 +43,8 @@ export async function POST(request: Request) {
         from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
         to,
         reply_to: email,
-        subject: `Nuevo mensaje de contacto — ${name}`,
-        text: `Nombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`,
+            subject: `[${topic}] Nuevo mensaje de contacto — ${name}`,
+            text: `Motivo: ${topic}\nNombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`,
       }),
     });
 
