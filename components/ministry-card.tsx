@@ -11,6 +11,9 @@ export default function MinistryCard({
   variant?: "dark" | "light";
 }) {
   const isLight = variant === "light";
+  const location = ministry.locationLabel || (
+    ministry.location === "homes" ? "En hogares" : ministry.location === "community" ? "En la comunidad" : "Auditorio"
+  );
 
   return (
     <Link
@@ -28,7 +31,7 @@ export default function MinistryCard({
           className="object-cover opacity-85 transition duration-700 group-hover:scale-[1.04]"
         />
         <div
-          className={`absolute inset-0 bg-gradient-to-t ${ministry.color} opacity-30 mix-blend-multiply`}
+          className={`absolute inset-0 bg-gradient-to-t ${ministry.color} opacity-15 mix-blend-multiply`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
         <div
@@ -57,9 +60,10 @@ export default function MinistryCard({
             isLight ? "border-ink/10" : "border-white/10"
           }`}
         >
-          <span className={`font-semibold uppercase tracking-wide ${isLight ? "text-ink/70" : "text-white/70"}`}>
-            {ministry.schedule}
-          </span>
+          <div className={isLight ? "text-ink/70" : "text-white/70"}>
+            <span className="block font-semibold uppercase tracking-wide">{ministry.schedule}</span>
+            <span className="mt-1 block text-[11px]">{location}</span>
+          </div>
           <span
             className={`opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 ${
               isLight ? "text-ink" : "text-white"

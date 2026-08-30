@@ -15,6 +15,7 @@ export async function POST(request: Request) {
   const name = typeof body?.name === "string" ? body.name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
   const topic = typeof body?.topic === "string" ? body.topic.trim() : "";
+  const ministry = typeof body?.ministry === "string" ? body.ministry.trim() : "";
   const message = typeof body?.message === "string" ? body.message.trim() : "";
 
   if (!name || !email || !topic || !message) {
@@ -43,8 +44,8 @@ export async function POST(request: Request) {
         from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
         to,
         reply_to: email,
-            subject: `[${topic}] Nuevo mensaje de contacto — ${name}`,
-            text: `Motivo: ${topic}\nNombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`,
+            subject: `[${topic}${ministry ? ` · ${ministry}` : ""}] Nuevo mensaje de contacto — ${name}`,
+            text: `Motivo: ${topic}${ministry ? `\nMinisterio: ${ministry}` : ""}\nNombre: ${name}\nEmail: ${email}\n\nMensaje:\n${message}`,
       }),
     });
 

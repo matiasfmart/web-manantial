@@ -7,9 +7,13 @@ import { ExternalButtonLink } from "./ui/button";
 export default function ContactForm({
   variant = "dark",
   whatsappLink,
+  initialTopic,
+  ministry,
 }: {
   variant?: "dark" | "light";
   whatsappLink?: string;
+  initialTopic?: string;
+  ministry?: string;
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -64,6 +68,7 @@ export default function ContactForm({
               name: data.get("name"),
               email: data.get("email"),
               topic: data.get("topic"),
+              ministry: data.get("ministry"),
               message: data.get("message"),
             }),
           });
@@ -92,7 +97,7 @@ export default function ContactForm({
       </div>
       <div>
         <label className={labelClass}>¿Sobre qué querés hablar?</label>
-        <select required name="topic" defaultValue="" className={inputClass}>
+        <select required name="topic" defaultValue={initialTopic || ""} className={inputClass}>
           <option value="" disabled>Elegí una opción</option>
           <option value="Consulta general">Consulta general</option>
           <option value="Primera visita">Primera visita</option>
@@ -102,6 +107,12 @@ export default function ContactForm({
           <option value="Otro">Otro</option>
         </select>
       </div>
+      {ministry && (
+        <div className={`border-l-2 border-brand px-4 py-3 text-sm ${isLight ? "bg-mist text-carbon" : "bg-white/5 text-white/80"}`}>
+          Consulta sobre: <span className="font-semibold">{ministry}</span>
+          <input type="hidden" name="ministry" value={ministry} />
+        </div>
+      )}
       <div>
         <label className={labelClass}>Mensaje</label>
         <textarea

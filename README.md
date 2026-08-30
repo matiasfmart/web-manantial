@@ -25,7 +25,7 @@ Lo que sí sigue siendo parte del código (no editable desde la hoja):
 - `churchInfo.youtubeChannelId`: completar con el ID del canal (YouTube Studio → Configuración → Canal → Configuración avanzada) para activar el embed en vivo automático en `/en-vivo`. Mientras esté vacío, se usa el link `.../live`, que YouTube redirige solo a la transmisión en curso.
 - `churchInfo.appStore` / `churchInfo.playStore`: enlaces reales a las tiendas cuando la app esté publicada.
 - Imágenes de ministerios, logos y fotos del equipo pastoral (ver sección de imágenes abajo): se administran en el código, no desde la hoja.
-- `components/contact-form.tsx`: el formulario actualmente no envía el mensaje a ningún backend. Conectar a un servicio de email (Resend, Formspree, etc.) o a un endpoint propio antes de producción.
+- `RESEND_API_KEY` y `RESEND_FROM_EMAIL`: variables privadas necesarias para que el formulario de contacto envíe correos mediante Resend.
 
 ## Backoffice sin código (Google Sheets)
 
@@ -41,7 +41,7 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 | Hoja | Columnas | Para qué es |
 |---|---|---|
 | `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, WhatsApp, datos de oración |
-| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription` | Texto de cada uno de los 7 ministerios |
+| `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers` | Texto, orientación y CTA de cada uno de los 7 ministerios |
 | `Reuniones` | `day`, `time`, `label`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Horario semanal general |
 | `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote` | Noche de Unción, Santa Cena, etc. |
 | `EquipoPastoral` | `displayName`, `role` | Pastora principal, matrimonios, evangelista |
@@ -56,6 +56,15 @@ uno de estos (son los que ya usan las fotos y colores del sitio):
 simplemente no se genera.
 
 En las columnas `streamed` / `isOutreach` usá el texto `TRUE` o `FALSE`.
+
+Para `Ministerios`, `category` organiza la página en `life-stage`, `formation`,
+`community` o `serve`. `location` puede ser `auditorium`, `homes` o
+`community`; `locationLabel` permite reemplazar el texto mostrado. `joinLabel`
+personaliza el CTA, `contactTopic` define el motivo que llega preseleccionado a
+Contacto y `acceptingMembers` admite `TRUE` o `FALSE`. En `highlights`, separá
+cada punto con `|`, por ejemplo: `Alabanza | Palabra práctica | Comunidad`.
+Todas estas columnas son opcionales y usan valores adecuados por defecto si se
+dejan vacías.
 
 Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
 usa `auditorium`. Para `ReunionesEspeciales`, `recurrence` puede ser

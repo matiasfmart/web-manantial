@@ -10,8 +10,13 @@ export const metadata: Metadata = {
     "Contactate con Ministerio Manantial de Avivamiento en Villa Lugano, CABA. Escribinos o visitanos en nuestro auditorio.",
 };
 
-export default async function ContactoPage() {
+export default async function ContactoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ topic?: string; ministry?: string }>;
+}) {
   const churchInfo = await getChurchInfo();
+  const query = await searchParams;
   const hasPhone = Boolean(churchInfo.phone && churchInfo.phone !== "-");
   const hasEmail = Boolean(churchInfo.email && churchInfo.email !== "-");
 
@@ -48,7 +53,12 @@ export default async function ContactoPage() {
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-copy">
             Dejanos tu mensaje y el equipo correspondiente va a poder responderte mejor.
           </p>
-          <ContactForm variant="light" whatsappLink={churchInfo.prayerRequest.whatsappLink} />
+          <ContactForm
+            variant="light"
+            whatsappLink={churchInfo.prayerRequest.whatsappLink}
+            initialTopic={query.topic}
+            ministry={query.ministry}
+          />
         </div>
       </section>
 

@@ -21,6 +21,13 @@ export type Ministry = {
   description: string;
   longDescription: string[];
   audience: string;
+  category: "life-stage" | "formation" | "community" | "serve";
+  location: "auditorium" | "homes" | "community";
+  locationLabel?: string;
+  joinLabel: string;
+  contactTopic: string;
+  highlights: string[];
+  acceptingMembers: boolean;
   color: string;
   icon: string;
   image: string;
@@ -107,6 +114,12 @@ const defaultMinistries: MinistryText[] = [
       "Además de la reunión semanal, organizamos retiros, campamentos, noches temáticas y actividades de servicio para que cada joven descubra su propósito.",
     ],
     audience: "Jóvenes y adolescentes",
+    category: "life-stage",
+    location: "auditorium",
+    joinLabel: "Quiero sumarme a Jóvenes",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Alabanza", "Palabra práctica", "Comunidad", "Actividades durante el año"],
+    acceptingMembers: true,
     subMinistry: {
       name: "Avivamiento Adolescente",
       schedule: "Domingos 18:00 h",
@@ -129,6 +142,12 @@ const defaultMinistries: MinistryText[] = [
       "Si sos parte de este hermoso grupo o querés invitar a un familiar, contactanos para confirmar la fecha del próximo encuentro.",
     ],
     audience: "Adultos mayores",
+    category: "life-stage",
+    location: "auditorium",
+    joinLabel: "Quiero conocer Años Dorados",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Comunión", "Palabra", "Testimonios", "Compañerismo"],
+    acceptingMembers: true,
   },
   {
     slug: "ibe",
@@ -143,6 +162,12 @@ const defaultMinistries: MinistryText[] = [
       "Es el camino ideal para quienes sienten un llamado a servir con mayor profundidad doctrinal y ministerial, con materias, docentes y un plan de estudios oficial.",
     ],
     audience: "Jóvenes y adultos con llamado ministerial",
+    category: "formation",
+    location: "auditorium",
+    joinLabel: "Quiero consultar por I.B.E.",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Formación teológica", "Clases presenciales", "Plan oficial", "Docentes preparados"],
+    acceptingMembers: true,
   },
   {
     slug: "escuela-de-vida",
@@ -157,6 +182,12 @@ const defaultMinistries: MinistryText[] = [
       "Ideal si te acercaste hace poco a la iglesia y querés entender qué creemos y por qué, en un ambiente cálido y sin tecnicismos.",
     ],
     audience: "Nuevos creyentes",
+    category: "formation",
+    location: "auditorium",
+    joinLabel: "Quiero conocer Escuela de Vida",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Fundamentos de fe", "Acompañamiento", "Enseñanza práctica", "Primeros pasos"],
+    acceptingMembers: true,
   },
   {
     slug: "escuela-biblica",
@@ -171,6 +202,12 @@ const defaultMinistries: MinistryText[] = [
       "Cada clase está organizada por edades, con materiales didácticos propios y actividades especiales durante el año.",
     ],
     audience: "Niños y preadolescentes",
+    category: "life-stage",
+    location: "auditorium",
+    joinLabel: "Quiero conocer Escuela Bíblica",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Maestros capacitados", "Aprendizaje bíblico", "Actividades", "Espacio seguro"],
+    acceptingMembers: true,
   },
   {
     slug: "avivamiento-en-las-calles",
@@ -185,6 +222,12 @@ const defaultMinistries: MinistryText[] = [
       "Dentro de este equipo funciona 'El Buen Samaritano', dedicado a la asistencia social.",
     ],
     audience: "Trabajo comunitario y evangelístico",
+    category: "serve",
+    location: "community",
+    joinLabel: "Conocé cómo colaborar",
+    contactTopic: "Fundación o colaboración",
+    highlights: ["Evangelismo", "Oración", "Ayuda concreta", "El Buen Samaritano"],
+    acceptingMembers: false,
     isOutreach: true,
     subMinistry: {
       name: "El Buen Samaritano",
@@ -206,6 +249,12 @@ const defaultMinistries: MinistryText[] = [
       "Los GDI también son considerados parte de las reuniones generales de la iglesia. Si querés sumarte a una célula cerca de tu casa, contactanos y te conectamos con un grupo.",
     ],
     audience: "Toda la congregación, por edad y sexo",
+    category: "community",
+    location: "homes",
+    joinLabel: "Encontrá un GDI",
+    contactTopic: "Ministerios o GDI",
+    highlights: ["Grupos pequeños", "Palabra", "Contención", "Comunidad"],
+    acceptingMembers: true,
   },
 ];
 
@@ -213,6 +262,7 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
   const longDescription = [row.longDescription1, row.longDescription2, row.longDescription3]
     .map((s) => s?.trim())
     .filter((s): s is string => Boolean(s));
+  const fallback = defaultMinistries.find((ministry) => ministry.slug === row.slug);
 
   return {
     slug: row.slug,
@@ -223,6 +273,17 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
     description: row.description,
     longDescription: longDescription.length > 0 ? longDescription : [row.description],
     audience: row.audience,
+    category: isMinistryCategory(row.category) ? row.category : fallback?.category ?? categoryForSlug(row.slug),
+    location: isMinistryLocation(row.location) ? row.location : fallback?.location ?? locationForSlug(row.slug),
+    locationLabel: row.locationLabel || undefined,
+    joinLabel: row.joinLabel || fallback?.joinLabel || joinLabelForSlug(row.slug),
+    contactTopic: row.contactTopic || fallback?.contactTopic || "Ministerios o GDI",
+    highlights: row.highlights
+      ? row.highlights.split("|").map((highlight) => highlight.trim()).filter(Boolean)
+      : highlightsForSlug(row.slug),
+    acceptingMembers: row.acceptingMembers?.trim()
+      ? row.acceptingMembers.trim().toUpperCase() === "TRUE"
+      : fallback?.acceptingMembers ?? row.slug !== "avivamiento-en-las-calles",
     isOutreach: row.isOutreach?.trim().toUpperCase() === "TRUE",
     subMinistry: row.subMinistryName
       ? {
@@ -232,6 +293,37 @@ function rowToMinistry(row: Record<string, string>): MinistryText {
         }
       : undefined,
   };
+}
+
+function isMinistryCategory(value: string | undefined): value is Ministry["category"] {
+  return value === "life-stage" || value === "formation" || value === "community" || value === "serve";
+}
+
+function isMinistryLocation(value: string | undefined): value is Ministry["location"] {
+  return value === "auditorium" || value === "homes" || value === "community";
+}
+
+function categoryForSlug(slug: string): Ministry["category"] {
+  if (slug === "ibe" || slug === "escuela-de-vida") return "formation";
+  if (slug === "gdi") return "community";
+  if (slug === "avivamiento-en-las-calles") return "serve";
+  return "life-stage";
+}
+
+function locationForSlug(slug: string): Ministry["location"] {
+  if (slug === "gdi") return "homes";
+  if (slug === "avivamiento-en-las-calles") return "community";
+  return "auditorium";
+}
+
+function joinLabelForSlug(slug: string) {
+  if (slug === "gdi") return "Encontrá un GDI";
+  if (slug === "avivamiento-en-las-calles") return "Conocé cómo colaborar";
+  return "Quiero sumarme";
+}
+
+function highlightsForSlug(slug: string) {
+  return defaultMinistries.find((ministry) => ministry.slug === slug)?.highlights ?? [];
 }
 
 /** Trae los ministerios: usa la hoja "Ministerios" si tiene filas, si no el contenido por defecto. */
