@@ -1,4 +1,5 @@
 import { getSheetRows, rowsToKeyValue } from "./sheets";
+import type { RadioScheduleItem, RadioScheduleDay } from "./radio-schedule";
 
 /** Nombres exactos de las hojas (tabs) dentro del Google Sheet. */
 const SHEET_TABS = {
@@ -800,19 +801,28 @@ export async function getGivingInfo() {
   };
 }
 
-const defaultRadioSchedule = [
-  { time: "06:00 – 09:00", program: "Buen Día Manantial", host: "Equipo de radio" },
-  { time: "09:00 – 12:00", program: "Alabanza sin fin", host: "Automatizado" },
-  { time: "12:00 – 14:00", program: "Palabra al mediodía", host: "Pastor invitado" },
-  { time: "14:00 – 18:00", program: "Música para tu tarde", host: "Automatizado" },
-  { time: "18:00 – 20:00", program: "Voces Jóvenes", host: "Avivamiento Jóvenes" },
-  { time: "20:00 – 23:00", program: "Noche de Alabanza", host: "Equipo de radio" },
-  { time: "23:00 – 06:00", program: "Adoración Nocturna", host: "Automatizado" },
+const defaultRadioSchedule: RadioScheduleItem[] = [
+  { day: "Todos", time: "06:00 – 09:00", program: "Buen Día Manantial", host: "Equipo de radio" },
+  { day: "Todos", time: "09:00 – 12:00", program: "Alabanza sin fin", host: "Automatizado" },
+  { day: "Todos", time: "12:00 – 14:00", program: "Palabra al mediodía", host: "Pastor invitado" },
+  { day: "Todos", time: "14:00 – 18:00", program: "Música para tu tarde", host: "Automatizado" },
+  { day: "Todos", time: "18:00 – 20:00", program: "Voces Jóvenes", host: "Avivamiento Jóvenes" },
+  { day: "Todos", time: "20:00 – 23:00", program: "Noche de Alabanza", host: "Equipo de radio" },
+  { day: "Todos", time: "23:00 – 06:00", program: "Adoración Nocturna", host: "Automatizado" },
 ];
 
-export async function getRadioSchedule() {
+export async function getRadioSchedule(): Promise<RadioScheduleItem[]> {
   const rows = await getSheetRows(SHEET_TABS.programacionRadio);
   if (rows.length === 0) return defaultRadioSchedule;
-  return rows.map((r) => ({ time: r.time, program: r.program, host: r.host }));
+  return rows.map((r) => ({
+    day: isRadioScheduleDay(r.day) ? r.day : "Todos",
+    time: r.time,
+    program: r.program,
+    host: r.host,
+  }));
+}
+
+function isRadioScheduleDay(value: string | undefined): value is RadioScheduleDay {
+  return ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábados", "Domingos", "Todos"].includes(value?.trim() ?? "");
 }
 

@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import { getChurchInfo, getRadioSchedule } from "@/lib/data";
+import { getBuenosAiresRadioDay, getCurrentRadioProgram } from "@/lib/radio-schedule";
 import BigPlayer from "@/components/big-player";
+import RadioScheduleTabs from "@/components/radio-schedule-tabs";
 
 export const metadata: Metadata = {
   title: "Radio en vivo",
   description:
-    "Escuchá Radio Maranata en vivo, las 24 horas. Descargá también nuestra aplicación móvil para iOS y Android.",
+    "Escuchá Radio Maranata en vivo, las 24 horas, y conocé su programación semanal.",
 };
 
 export default async function RadioPage() {
   const [churchInfo, radioSchedule] = await Promise.all([getChurchInfo(), getRadioSchedule()]);
+  const currentDay = getBuenosAiresRadioDay();
+  const currentProgram = getCurrentRadioProgram(radioSchedule);
 
   return (
     <>
@@ -33,22 +37,12 @@ export default async function RadioPage() {
         <div className="section">
           <p className="eyebrow">Programación</p>
           <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
-            Así suena nuestro día
+            Así suena nuestra semana
           </h2>
-          <div className="mt-8 overflow-hidden border border-ink/10" data-stagger>
-            {radioSchedule.map((item, i) => (
-              <div
-                key={i}
-                className="flex flex-wrap items-center justify-between gap-2 border-b border-ink/10 px-6 py-5 transition-colors last:border-0 odd:bg-black/5 hover:bg-mist/70"
-              >
-                <span className="font-display text-lg text-ink">
-                  {item.time}
-                </span>
-                <span className="font-semibold text-ink/90">{item.program}</span>
-                <span className="text-sm text-ink/40">{item.host}</span>
-              </div>
-            ))}
-          </div>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-copy">
+            Elegí un día para conocer la programación. El bloque marcado como Ahora corresponde al horario vigente en Buenos Aires.
+          </p>
+          <RadioScheduleTabs schedule={radioSchedule} initialDay={currentDay} currentProgram={currentProgram} />
         </div>
       </section>
 
