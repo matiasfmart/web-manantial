@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getChurchInfo, getPastoralTeam } from "@/lib/data";
-import { ButtonLink } from "@/components/ui/button";
+import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
+import { InteractiveLink } from "@/components/ui/interactive-link";
 
 export const metadata: Metadata = {
   title: "Nosotros",
@@ -18,38 +19,51 @@ export default async function NosotrosPage() {
         <div className="section relative">
           <p className="eyebrow">Nuestra historia</p>
           <h1 className="mt-4 max-w-2xl font-display text-5xl font-black uppercase tracking-normal sm:text-6xl">
-            Del cine de barrio a casa de fe
+            {churchInfo.about.historyTitle}
           </h1>
           <p className="mt-6 max-w-2xl text-ink/65">
-            {churchInfo.name} funciona en el histórico edificio conocido por
-            todo Villa Lugano como el {churchInfo.historicNote.replace(/^Conocido en el barrio de Lugano como el /, "")}.
-            Un espacio que antes reunía vecinos para ver películas, hoy los
-            reúne para encontrarse con Dios.
+            {churchInfo.about.historyText}
           </p>
+          <div className="mt-8 border-y border-ink/15 py-5">
+            <p className="font-display text-lg font-semibold text-ink">{churchInfo.auditoriumName}</p>
+            <p className="mt-1 text-sm text-copy">{churchInfo.address}</p>
+            <ExternalButtonLink
+              href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}
+              variant="secondary"
+              size="sm"
+              className="mt-5"
+            >
+              Cómo llegar
+            </ExternalButtonLink>
+          </div>
         </div>
       </section>
 
-      <section className="section grid grid-cols-1 gap-6 py-16 sm:py-20 lg:grid-cols-3" data-stagger>
-        <ValueCard
-          title="Visión"
-          text="Ser una iglesia que alcanza cada generación, dentro y fuera de sus paredes, con el amor y la Palabra de Dios."
-        />
-        <ValueCard
-          title="Misión"
-          text="Formar discípulos comprometidos con Cristo a través de la adoración, la enseñanza bíblica, la comunidad y el servicio."
-        />
-        <ValueCard
-          title="Valores"
-          text="Fe genuina, familia, excelencia, servicio a la comunidad y una adoración que trasciende las cuatro paredes del auditorio."
-        />
+      <section className="bg-white py-16 text-ink sm:py-20">
+        <div className="section">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Lo que nos mueve</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">Fe que se vive en comunidad</h2>
+            <p className="mt-4 leading-relaxed text-copy">{churchInfo.about.communityStatement}</p>
+          </div>
+          <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1fr_1.2fr]" data-stagger>
+            <Principle title="Visión" text={churchInfo.about.vision} />
+            <Principle title="Misión" text={churchInfo.about.mission} />
+            <div className="border-t border-ink/15 pt-6">
+              <h3 className="font-display text-2xl font-semibold text-ink">Valores</h3>
+              <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium text-carbon">
+                {churchInfo.about.values.map((value) => <li key={value}>{value}</li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* PASTORADO */}
-      <section className="bg-white py-20 text-ink">
+      <section className="py-16 text-ink sm:py-20">
         <div className="section">
           <div className="max-w-2xl">
             <p className="eyebrow">Acompañamiento pastoral</p>
-            <h2 className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">
               Personas que sirven y acompañan
             </h2>
             <p className="mt-4 text-ink/60">
@@ -62,7 +76,7 @@ export default async function NosotrosPage() {
             {pastoralTeam.map((member) => (
               <div
                 key={member.displayName}
-                className="group flex items-center gap-4 border-t border-ink/10 bg-white py-4 transition hover:border-ink/35 sm:px-4"
+                className="group flex items-center gap-4 border-t border-ink/10 py-4 transition hover:border-ink/35 sm:px-4"
               >
                 <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden bg-ink sm:h-28 sm:w-28">
                   {member.image ? (
@@ -101,16 +115,23 @@ export default async function NosotrosPage() {
         </div>
       </section>
 
-      <section className="section py-16 text-center">
-        <ButtonLink href="/contacto" variant="primary">
-          Quiero saber más
-        </ButtonLink>
+      <section className="bg-ink py-16 text-white sm:py-20">
+        <div className="section max-w-3xl text-center">
+          <p className="eyebrow !text-white/55">Conocenos en persona</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">Te esperamos en el auditorio</h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/65">Conocé la comunidad, participá de una reunión y encontrá un espacio para crecer junto a otros.</p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <ButtonLink href="/reuniones" variant="primary" tone="dark">Ver horarios de reunión</ButtonLink>
+            <ButtonLink href="/ministerios" variant="secondary" tone="dark">Conocé los ministerios</ButtonLink>
+          </div>
+          <InteractiveLink href="/contacto" className="mt-6 inline-block text-sm text-white/70 hover:text-white">Cómo llegar al auditorio</InteractiveLink>
+        </div>
       </section>
     </>
   );
 }
 
-function ValueCard({ title, text }: { title: string; text: string }) {
+function Principle({ title, text }: { title: string; text: string }) {
   return (
     <div className="border-t border-ink/15 pt-6">
       <h3 className="font-display text-2xl font-semibold tracking-normal text-ink">

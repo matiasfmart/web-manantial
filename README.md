@@ -40,11 +40,11 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 
 | Hoja | Columnas | Para qué es |
 |---|---|---|
-| `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, WhatsApp, datos de oración |
+| `DatosIglesia` | `key`, `value` | Nombre de la iglesia, dirección, teléfonos, redes, oración y textos institucionales |
 | `Ministerios` | `slug`, `name`, `tagline`, `schedule`, `scheduleNote`, `description`, `longDescription1`, `longDescription2`, `longDescription3`, `audience`, `isOutreach`, `subMinistryName`, `subMinistrySchedule`, `subMinistryDescription`, `category`, `location`, `locationLabel`, `joinLabel`, `contactTopic`, `highlights`, `acceptingMembers` | Texto, orientación y CTA de cada uno de los 7 ministerios |
 | `Reuniones` | `day`, `time`, `label`, `streamed`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes` | Horario semanal general |
 | `ReunionesEspeciales` | `name`, `schedule`, `description`, `streamed`, `recurrence`, `time`, `location`, `locationLabel`, `calendarEnabled`, `calendarTitle`, `calendarDurationMinutes`, `nextDate`, `nextTime`, `nextStreamed`, `nextNote` | Noche de Unción, Santa Cena, etc. |
-| `EquipoPastoral` | `displayName`, `role` | Pastora principal, matrimonios, evangelista |
+| `EquipoPastoral` | `displayName`, `role`, `order` | Pastora principal, matrimonios, evangelista y orden de aparición |
 | `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
 | `OfrendasCategorias` | `name`, `description` | "Ofrenda general", "Diezmo", etc. |
 | `ProgramacionRadio` | `time`, `program`, `host` | Grilla horaria de Radio Maranata |
@@ -65,6 +65,14 @@ Contacto y `acceptingMembers` admite `TRUE` o `FALSE`. En `highlights`, separá
 cada punto con `|`, por ejemplo: `Alabanza | Palabra práctica | Comunidad`.
 Todas estas columnas son opcionales y usan valores adecuados por defecto si se
 dejan vacías.
+
+Para los textos de la página `Nosotros`, agregá en `DatosIglesia` las claves
+opcionales `historyTitle`, `historyText`, `vision`, `mission`, `values` y
+`communityStatement`. En `values`, separá cada valor con `|`, por ejemplo:
+`Fe genuina | Familia | Servicio | Excelencia | Comunidad`. En
+`EquipoPastoral`, `order` es un número opcional para decidir el orden visible
+del equipo. Las imágenes pastorales siguen siendo archivos estáticos dentro de
+`public/images/pastoral`, para no exponer paths de imágenes en la hoja.
 
 Para `Reuniones`, `location` puede ser `auditorium` o `homes`; sin valor, se
 usa `auditorium`. Para `ReunionesEspeciales`, `recurrence` puede ser

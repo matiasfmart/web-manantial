@@ -496,6 +496,14 @@ const defaultChurchText = {
   prayerMobile: "+54 9 11 2799-4682",
   prayerLandline: "-",
   prayerWhatsappLink: "https://wa.me/5491127994682",
+  historyTitle: "Del cine de barrio a casa de fe",
+  historyText:
+    "Durante años, este edificio reunió vecinos para compartir historias. Hoy sigue siendo un lugar de encuentro: una casa de fe, comunidad y esperanza para Villa Lugano.",
+  vision: "Alcanzar cada generación con el amor y la Palabra de Dios.",
+  mission: "Formar discípulos a través de la adoración, la enseñanza, la comunidad y el servicio.",
+  values: "Fe genuina | Familia | Servicio | Excelencia | Comunidad",
+  communityStatement:
+    "Una fe que se vive en comunidad, sirviendo a las personas y al barrio que nos rodea.",
 };
 
 export type ChurchInfo = Awaited<ReturnType<typeof getChurchInfo>>;
@@ -524,6 +532,14 @@ export async function getChurchInfo() {
       tiktok: t("tiktok"),
     },
     whatsappChannelUrl: t("whatsappChannelUrl"),
+    about: {
+      historyTitle: t("historyTitle"),
+      historyText: t("historyText"),
+      vision: t("vision"),
+      mission: t("mission"),
+      values: t("values").split("|").map((value) => value.trim()).filter(Boolean),
+      communityStatement: t("communityStatement"),
+    },
     prayerRequest: {
       intro: t("prayerIntro"),
       mobile: t("prayerMobile"),
@@ -537,6 +553,7 @@ export type PastoralMember = {
   displayName: string;
   role: string;
   image?: string;
+  order?: number;
 };
 
 const defaultPastoralTeam: PastoralMember[] = [
@@ -552,7 +569,13 @@ const defaultPastoralTeam: PastoralMember[] = [
 export async function getPastoralTeam(): Promise<PastoralMember[]> {
   const rows = await getSheetRows(SHEET_TABS.equipoPastoral);
   if (rows.length === 0) return defaultPastoralTeam;
-  return rows.map((r) => ({ displayName: r.displayName, role: r.role }));
+  return rows
+    .map((r, index) => ({
+      displayName: r.displayName,
+      role: r.role,
+      order: Number(r.order) || index + 1,
+    }))
+    .sort((left, right) => (left.order ?? 0) - (right.order ?? 0));
 }
 
 const defaultGivingInfo = {
