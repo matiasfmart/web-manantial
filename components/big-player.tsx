@@ -13,7 +13,7 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
           <div className="flex items-center justify-center gap-2 sm:justify-start">
             <RadioStatus idleLabel="Presioná play para escuchar" />
           </div>
-          <p className="mt-3 font-display text-3xl font-bold uppercase tracking-normal sm:text-4xl">
+          <p className="mt-3 font-display font-display-emphasis text-3xl font-bold uppercase tracking-normal sm:text-4xl">
             {churchInfo.radioName}
           </p>
           <p className="mt-2 text-sm text-ink/60">

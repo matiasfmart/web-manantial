@@ -442,8 +442,6 @@ const defaultGivingInfo = {
     alias: "EJEMPLO.MANANTIAL",
     cuit: "30-00000000-0",
   },
-  qrNote:
-    "Escaneá el código QR desde la app de tu banco o Mercado Pago para ofrendar al instante.",
   categories: [
     {
       name: "Ofrenda general",
@@ -483,7 +481,6 @@ export async function getGivingInfo() {
       alias: kv.bankAlias || defaultGivingInfo.bankTransfer.alias,
       cuit: kv.bankCuit || defaultGivingInfo.bankTransfer.cuit,
     },
-    qrNote: kv.qrNote || defaultGivingInfo.qrNote,
     categories,
   };
 }

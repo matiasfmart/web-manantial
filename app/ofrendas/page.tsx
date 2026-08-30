@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getChurchInfo, getGivingInfo } from "@/lib/data";
+import BankTransferDetails from "@/components/bank-transfer-details";
 import { ExternalButtonLink } from "@/components/ui/button";
 import { ExternalInteractiveLink } from "@/components/ui/interactive-link";
 
@@ -11,9 +12,6 @@ export const metadata: Metadata = {
 
 export default async function OfrendasPage() {
   const [churchInfo, givingInfo] = await Promise.all([getChurchInfo(), getGivingInfo()]);
-  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=10&color=05070c&bgcolor=ffffff&data=${encodeURIComponent(
-    givingInfo.mercadoPago.link
-  )}`;
 
   return (
     <>
@@ -28,30 +26,19 @@ export default async function OfrendasPage() {
         </p>
       </section>
 
-      {/* METODOS DE PAGO (fondo claro: más confianza y legibilidad) */}
       <section className="bg-white py-16 text-ink sm:py-20">
-        <div className="section grid grid-cols-1 gap-10 lg:grid-cols-[340px_1fr]">
-          <aside className="border-y border-ink/10 py-6 lg:sticky lg:top-24 lg:h-fit" data-reveal>
-            <p className="eyebrow">QR</p>
-            <h2 className="mt-3 font-display text-2xl font-bold uppercase tracking-normal">
-              Escaneá y ofrendá
+        <div className="section">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Métodos disponibles</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold tracking-normal sm:text-4xl">
+              Elegí cómo querés ofrendar
             </h2>
-            <div className="mt-6 w-fit border border-ink/10 p-3 transition hover:-translate-y-1 hover:border-brand/35">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={qrSrc}
-                alt="Código QR para ofrendar por Mercado Pago"
-                width={220}
-                height={220}
-                className="h-[220px] w-[220px]"
-              />
-            </div>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-ink/50">
-              {givingInfo.qrNote}
+            <p className="mt-4 text-sm leading-relaxed text-copy">
+              Elegí la opción que te resulte más cómoda. Ambos medios se procesan de forma segura.
             </p>
-          </aside>
+          </div>
 
-          <div className="space-y-10" data-stagger>
+          <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12" data-stagger>
             <section className="border-t border-ink/10 pt-6">
               <div className="grid grid-cols-[44px_1fr] gap-4">
                 <div className="flex h-11 w-11 items-center justify-center bg-ink text-white">
@@ -65,12 +52,8 @@ export default async function OfrendasPage() {
                     Mercado Pago
                   </h2>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink/60">
-                    La forma más rápida de ofrendar desde tu celular, en cuotas o
-                    con saldo en cuenta.
+                    Ofrendá desde tu celular con saldo, tarjeta o cuenta vinculada.
                   </p>
-                  <div className="mt-6 border-y border-ink/10 py-4 text-sm">
-                    <Row label="Alias" value={givingInfo.mercadoPago.alias} />
-                  </div>
                   <ExternalButtonLink
                     href={givingInfo.mercadoPago.link}
                     className="mt-6"
@@ -93,14 +76,10 @@ export default async function OfrendasPage() {
                     Transferencia bancaria
                   </h2>
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink/60">
-                    Ideal para diezmos y ofrendas desde tu banco o billetera virtual.
+                    Usá estos datos desde tu banco o billetera virtual.
                   </p>
-                  <div className="mt-6 divide-y divide-ink/10 border-y border-ink/10 text-sm">
-                    <Row label="Banco" value={givingInfo.bankTransfer.bank} />
-                    <Row label="Titular" value={givingInfo.bankTransfer.holder} />
-                    <Row label="CBU" value={givingInfo.bankTransfer.cbu} />
-                    <Row label="Alias" value={givingInfo.bankTransfer.alias} />
-                    <Row label="CUIT" value={givingInfo.bankTransfer.cuit} />
+                  <div className="mt-6">
+                    <BankTransferDetails details={givingInfo.bankTransfer} />
                   </div>
                 </div>
               </div>
@@ -134,14 +113,5 @@ export default async function OfrendasPage() {
         </p>
       </section>
     </>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col gap-1 py-3 transition-colors hover:bg-mist/60 sm:flex-row sm:items-center sm:justify-between">
-      <span className="text-ink/40">{label}</span>
-      <span className="break-all font-semibold text-ink/85 sm:text-right">{value}</span>
-    </div>
   );
 }

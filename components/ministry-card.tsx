@@ -40,7 +40,7 @@ export default function MinistryCard({
 
       <div className="flex flex-1 flex-col py-5">
         <h3
-          className={`font-display text-xl font-bold uppercase tracking-normal ${
+          className={`font-display font-display-emphasis text-xl font-bold uppercase tracking-normal ${
             isLight ? "text-ink" : "text-white"
           }`}
         >

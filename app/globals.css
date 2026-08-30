@@ -51,9 +51,22 @@ body {
 @keyframes panelIn {
   from {
     clip-path: inset(0 0 100% 0);
+    opacity: 0;
   }
   to {
     clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+@keyframes panelOut {
+  from {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
   }
 }
 
@@ -224,11 +237,11 @@ body {
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-carbon active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 bg-ink px-5 py-2.5 text-sm font-bold text-white transition hover:bg-carbon active:scale-95;
   }
 
   .btn-primary-dark {
-    @apply inline-flex items-center justify-center gap-2 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-white/85 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 bg-white px-5 py-2.5 text-sm font-bold text-ink transition hover:bg-white/85 active:scale-95;
   }
 
   .btn-secondary {
@@ -319,5 +332,12 @@ body {
 .font-display.font-extrabold,
 .font-display.font-bold {
   font-weight: 600;
+}
+
+.font-display-emphasis,
+h1.font-display.font-black,
+h1.font-display.font-extrabold,
+h1.font-display.font-bold {
+  font-weight: 700;
 }
 

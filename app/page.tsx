@@ -66,7 +66,7 @@ export default async function HomePage() {
 
         <div className="section relative z-10 py-32">
           <p className="eyebrow !text-white/60 opacity-0 animate-[revealUp_560ms_cubic-bezier(0.22,1,0.36,1)_120ms_forwards]">Villa Lugano · Buenos Aires</p>
-          <h1 className="mt-6 max-w-4xl opacity-0 animate-[revealUp_660ms_cubic-bezier(0.22,1,0.36,1)_260ms_forwards] font-display text-6xl font-semibold leading-[0.98] tracking-normal text-white sm:text-7xl lg:text-8xl">
+          <h1 className="mt-6 max-w-4xl opacity-0 animate-[revealUp_660ms_cubic-bezier(0.22,1,0.36,1)_260ms_forwards] font-display font-display-emphasis text-6xl font-semibold leading-[0.98] tracking-normal text-white sm:text-7xl lg:text-8xl">
             Una comunidad de fe en Villa Lugano.
           </h1>
           <p className="mt-8 max-w-xl opacity-0 animate-[revealUp_620ms_cubic-bezier(0.22,1,0.36,1)_420ms_forwards] text-lg leading-relaxed text-white/70">
@@ -121,7 +121,7 @@ export default async function HomePage() {
                 ["1", "Familia"],
               ].map(([n, l]) => (
                 <div key={l}>
-                  <p className="font-display text-4xl font-semibold text-brand-dark"><AnimatedCounter value={n} /></p>
+                  <p className="font-display font-display-emphasis text-4xl font-semibold text-brand-dark"><AnimatedCounter value={n} /></p>
                   <p className="mt-1 text-xs uppercase tracking-wide text-ink/50">{l}</p>
                 </div>
               ))}
