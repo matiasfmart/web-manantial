@@ -12,6 +12,9 @@ export type TransmissionStatus =
  * devuelve unavailable para no renderizar iframes rotos.
  */
 export async function getTransmissionStatus(channelId: string): Promise<TransmissionStatus> {
+  const officialLive = await getOfficialLiveTransmission(channelId);
+  if (officialLive) return officialLive;
+
   try {
     const liveRes = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
       headers: { "user-agent": "Mozilla/5.0" },
@@ -61,6 +64,45 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
   }
 
   return { kind: "unavailable" };
+}
+
+async function getOfficialLiveTransmission(channelId: string) {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const params = new URLSearchParams({
+      part: "snippet",
+      channelId,
+      eventType: "live",
+      type: "video",
+      maxResults: "1",
+      key: apiKey,
+    });
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?${params.toString()}`,
+      { cache: "no-store" }
+    );
+    if (!response.ok) {
+      console.error("[YouTube] official live check responded", response.status);
+      return null;
+    }
+
+    const data = await response.json() as {
+      items?: Array<{ id?: { videoId?: string }; snippet?: { title?: string } }>;
+    };
+    const video = data.items?.[0];
+    if (!video?.id?.videoId) return null;
+
+    return {
+      kind: "live" as const,
+      videoId: video.id.videoId,
+      title: video.snippet?.title ?? null,
+    };
+  } catch (error) {
+    console.error("[YouTube] official live check error:", error);
+    return null;
+  }
 }
 
 function extractLiveVideoId(html: string) {
