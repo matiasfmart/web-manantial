@@ -13,7 +13,7 @@ import type { TransmissionStatus } from "@/lib/youtube";
 
 const links = [
   { href: "/", label: "Inicio" },
-  { href: "/reuniones", label: "Reuniones" },
+  { href: "/reuniones", label: "Agenda" },
   { href: "/ministerios", label: "Ministerios" },
   { href: "/radio", label: "Radio" },
   { href: "/nosotros", label: "Nosotros" },
@@ -119,8 +119,8 @@ export default function Header({
   const isMenuMounted = open || isClosing;
 
   return (
-    <header className={`sticky top-0 z-50 border-b bg-[#f7f7f4] text-ink transition-[border-color,background-color] duration-[220ms] ${scrolled ? "border-ink/20" : "border-ink/10"}`}>
-      <div className={`section flex h-16 items-center gap-3 py-2 transition-[height] duration-[220ms] ${scrolled ? "xl:h-16" : "xl:h-[68px]"}`}>
+    <header className={`sticky top-0 z-50 border-b bg-[#f7f7f4] text-ink transition-[border-color,background-color] duration-[220ms] ${scrolled ? "border-ink/15" : "border-ink/10"}`}>
+      <div className="section flex h-16 items-center gap-3 py-2">
         <Link href="/" className="flex min-w-0 shrink-0 items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" onClick={() => setOpen(false)}>
           <Image
             src={churchInfo.logoColor}
@@ -128,27 +128,35 @@ export default function Header({
             width={40}
             height={40}
             priority
-            className={`transition-[width,height] duration-[220ms] ${scrolled ? "h-9 w-9 sm:h-10 sm:w-10" : "h-10 w-10 sm:h-11 sm:w-11"}`}
+            className="h-10 w-10 transition-[width,height] duration-[220ms] sm:h-11 sm:w-11 xl:h-9 xl:w-9"
           />
-          <span className="block min-w-0 font-display font-display-emphasis text-[12px] font-semibold leading-[1.1] tracking-normal text-ink min-[360px]:text-sm sm:text-base">
-            <span className="block lg:hidden">Manantial de<br />Avivamiento</span>
-            <span className="hidden truncate lg:block">{churchInfo.name}</span>
+          <span className="block min-w-0 font-display font-display-emphasis text-[12px] font-semibold leading-[1.1] tracking-normal text-ink min-[360px]:text-sm sm:text-base xl:text-[15px]">
+            <span className="block xl:hidden">Manantial de<br />Avivamiento</span>
+            <span className="hidden truncate xl:block">{churchInfo.shortName}</span>
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-6 xl:flex">
-          {links.map((link) => (
-            <InteractiveLink
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium tracking-wide transition hover:text-brand ${
-                pathname === link.href ? "link-underline-active text-brand" : "text-ink/65"
-              }`}
-            >
-              {link.label}
-            </InteractiveLink>
-          ))}
-        </nav>
+        <div className="ml-auto hidden items-center gap-3 xl:flex">
+          <InteractiveLink
+            href={firstVisit.href}
+            className="whitespace-nowrap text-sm font-semibold text-brand-dark hover:text-ink"
+          >
+            {firstVisit.label} <span className="text-ink/45">{firstVisit.prompt}</span>
+          </InteractiveLink>
+          {transmissionStatus.kind === "live" ? (
+            <ButtonLink href="/en-vivo" variant="onair" size="sm" className="!min-h-8">
+              <BadgeDot tone="onair" pulse />
+              En vivo
+            </ButtonLink>
+          ) : (
+            <ButtonLink href="/en-vivo" variant="secondary" size="sm" className="!min-h-8">
+              {transmissionStatus.kind === "latest" ? "Última reunión" : "YouTube"}
+            </ButtonLink>
+          )}
+          <ButtonLink href="/ofrendas" variant="primary" size="sm" className="!min-h-8">
+            Ofrendar
+          </ButtonLink>
+        </div>
 
         <div className="ml-auto flex shrink-0 items-center xl:hidden">
           <button
@@ -179,29 +187,19 @@ export default function Header({
         </div>
       </div>
 
-      <div className="hidden border-t border-ink/10 bg-mist xl:block">
-        <div className="section flex min-h-10 items-center justify-between gap-6 py-1.5">
-          <InteractiveLink
-            href={firstVisit.href}
-            className="whitespace-nowrap text-xs font-semibold text-brand-dark hover:text-ink"
-          >
-            {firstVisit.label} <span className="text-ink/45">{firstVisit.prompt}</span>
-          </InteractiveLink>
-          <div className="flex items-center gap-3">
-            {transmissionStatus.kind === "live" ? (
-              <ButtonLink href="/en-vivo" variant="onair" size="sm">
-                <BadgeDot tone="onair" pulse />
-                En vivo
-              </ButtonLink>
-            ) : (
-              <ButtonLink href="/en-vivo" variant="secondary" size="sm">
-                {transmissionStatus.kind === "latest" ? "Última reunión" : "YouTube"}
-              </ButtonLink>
-            )}
-            <ButtonLink href="/ofrendas" variant="primary" size="sm">
-              Ofrendar
-            </ButtonLink>
-          </div>
+      <div className={`hidden border-y bg-white transition-colors duration-[200ms] xl:block ${scrolled ? "border-ink/15" : "border-ink/10"}`}>
+        <div className="section flex h-10 items-center gap-7">
+          {links.map((link) => (
+            <InteractiveLink
+              key={link.href}
+              href={link.href}
+              className={`text-sm font-medium tracking-wide transition-colors duration-[200ms] hover:text-brand ${
+                pathname === link.href ? "link-underline-active text-brand" : scrolled ? "text-ink/75" : "text-ink/60"
+              }`}
+            >
+              {link.label}
+            </InteractiveLink>
+          ))}
         </div>
       </div>
 

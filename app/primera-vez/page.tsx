@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { getChurchInfo, getFirstVisitItems, getGeneralServices } from "@/lib/data";
+import { getChurchInfo, getFirstVisitItems, getGeneralServices, getSpecialServices } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
-import { formatScheduleDate, getNextGeneralService } from "@/lib/schedule";
+import { formatScheduleDate, getNextPublicGathering, getServiceLocation } from "@/lib/schedule";
 import { SocialBrandIcon } from "@/components/social-icons";
 import FirstVisitAccordion from "@/components/first-visit-accordion";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
@@ -14,14 +14,13 @@ export const metadata: Metadata = {
 };
 
 export default async function PrimeraVezPage() {
-  const [churchInfo, firstVisitItems, generalServices] = await Promise.all([
+  const [churchInfo, firstVisitItems, generalServices, specialServices] = await Promise.all([
     getChurchInfo(),
     getFirstVisitItems(),
     getGeneralServices(),
+    getSpecialServices(),
   ]);
-  const nextGeneralService = getNextGeneralService(
-    generalServices.filter((service) => service.location !== "homes")
-  );
+  const nextPublicGathering = getNextPublicGathering(generalServices, specialServices);
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
     : ({ kind: "unavailable" } as const);
@@ -38,18 +37,24 @@ export default async function PrimeraVezPage() {
           {churchInfo.firstVisit.intro}
         </p>
 
-        {nextGeneralService && (
+        {nextPublicGathering && (
           <div className="mt-10 border-y border-ink/15 bg-mist px-5 py-6 sm:px-8">
             <p className="eyebrow">Tu próxima oportunidad para conocernos</p>
             <time className="mt-4 block font-display text-3xl font-bold text-ink sm:text-4xl">
-              {formatScheduleDate(nextGeneralService.date, nextGeneralService.service.time)}
+              {formatScheduleDate(nextPublicGathering.date, nextPublicGathering.time)}
             </time>
-            <p className="mt-2 font-display text-xl font-semibold text-carbon">{nextGeneralService.service.label}</p>
-            <p className="mt-2 text-sm text-copy">{churchInfo.auditoriumName}</p>
+            <p className="mt-2 font-display text-xl font-semibold text-carbon">{nextPublicGathering.label}</p>
+            <p className="mt-2 text-sm text-copy">{getServiceLocation(nextPublicGathering)}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
-                Cómo llegar
-              </ExternalButtonLink>
+              {nextPublicGathering.location === "homes" ? (
+                <ButtonLink href="/ministerios/gdi">
+                  Consultar por un GDI
+                </ButtonLink>
+              ) : (
+                <ExternalButtonLink href={`https://maps.google.com/?q=${encodeURIComponent(churchInfo.mapsQuery)}`}>
+                  Cómo llegar
+                </ExternalButtonLink>
+              )}
               <ButtonLink href="/reuniones" variant="secondary">Ver horarios</ButtonLink>
             </div>
           </div>
