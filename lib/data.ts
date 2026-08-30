@@ -478,7 +478,7 @@ export const transmissionInfo = {
     "Transmitimos reuniones generales, Noche de Unción, Santa Cena y encuentros especiales que pueden surgir durante la semana.",
 };
 
-/** Rutas de logos, IDs técnicos y links de tienda: no se editan desde la hoja. */
+/** Rutas de logos e IDs técnicos: no se editan desde la hoja. */
 const churchTechnical = {
   logoLight: "/logo/logo-blanco.png",
   logoDark: "/logo/logo-negro.png",
@@ -487,9 +487,6 @@ const churchTechnical = {
   // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
   // Canal → Configuración avanzada, para activar el embed en vivo automático.
   youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
-  appStore: "https://apps.apple.com/app/radio-manantial/id0000000000",
-  playStore:
-    "https://play.google.com/store/apps/details?id=org.iglesiamanantial.radio",
 };
 
 const defaultChurchText = {

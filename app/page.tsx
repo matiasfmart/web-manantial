@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { getChurchInfo, getGeneralServices, getMinistries, transmissionInfo } from "@/lib/data";
+import { getChurchInfo, getGeneralServices, getMinistries, getRadioSchedule, transmissionInfo } from "@/lib/data";
 import { getTransmissionStatus } from "@/lib/youtube";
 import { formatScheduleDate, getNextGeneralService } from "@/lib/schedule";
+import { getCurrentRadioProgram } from "@/lib/radio-schedule";
 import MinistryCard from "@/components/ministry-card";
 import CultoBadge from "@/components/culto-badge";
 import CultoPlayer from "@/components/culto-player";
@@ -11,10 +12,11 @@ import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import { ExternalInteractiveLink, InteractiveLink } from "@/components/ui/interactive-link";
 
 export default async function HomePage() {
-  const [churchInfo, generalServices, ministries] = await Promise.all([
+  const [churchInfo, generalServices, ministries, radioSchedule] = await Promise.all([
     getChurchInfo(),
     getGeneralServices(),
     getMinistries(),
+    getRadioSchedule(),
   ]);
   const transmissionStatus = churchInfo.youtubeChannelId
     ? await getTransmissionStatus(churchInfo.youtubeChannelId)
@@ -29,6 +31,8 @@ export default async function HomePage() {
   const ministriesForHome = (featuredMinistries.length > 0 ? featuredMinistries : ministries)
     .sort((left, right) => (left.featuredOrder ?? Number.MAX_SAFE_INTEGER) - (right.featuredOrder ?? Number.MAX_SAFE_INTEGER))
     .slice(0, 3);
+  const currentRadioProgram = getCurrentRadioProgram(radioSchedule);
+  const radioCard = <RadioStrip churchInfo={churchInfo} currentProgram={currentRadioProgram} variant="dark" />;
 
   const youtubeCard = (
     <div className="border-y border-white/15 py-6 text-white">
@@ -194,11 +198,11 @@ export default async function HomePage() {
             {transmissionStatus.kind === "live" ? (
               <>
                 <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Video</p>{youtubeCard}</div>
-                <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Audio 24 h</p><RadioStrip churchInfo={churchInfo} variant="dark" /></div>
+                {radioCard}
               </>
             ) : (
               <>
-                <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Audio 24 h</p><RadioStrip churchInfo={churchInfo} variant="dark" /></div>
+                {radioCard}
                 <div><p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">Video</p>{youtubeCard}</div>
               </>
             )}

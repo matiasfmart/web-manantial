@@ -41,9 +41,10 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
 
     if (feedRes.ok) {
       const xml = await feedRes.text();
-      const videoId = xml.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1] ?? null;
-      const title = decodeXml(xml.match(/<media:title>(.*?)<\/media:title>/)?.[1] ?? null);
-      const publishedAt = xml.match(/<published>(.*?)<\/published>/)?.[1] ?? null;
+      const entry = xml.match(/<entry>([\s\S]*?)<\/entry>/)?.[1] ?? null;
+      const videoId = entry?.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1] ?? null;
+      const title = decodeXml(entry?.match(/<media:title>(.*?)<\/media:title>/)?.[1] ?? null);
+      const publishedAt = entry?.match(/<published>(.*?)<\/published>/)?.[1] ?? null;
 
       if (videoId && (await isEmbeddableVideo(videoId))) {
         return { kind: "latest", videoId, title, publishedAt };

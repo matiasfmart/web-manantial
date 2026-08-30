@@ -33,7 +33,8 @@ export function RadioPlayButton({
     <button
       onClick={toggle}
       aria-label={isPlaying ? "Pausar radio" : label}
-      className={`play-control ${isPlaying ? "is-playing" : ""} relative flex shrink-0 items-center justify-center rounded-full transition hover:scale-105 active:scale-95 ${playButtonSize[size]} ${
+      disabled={isLoading}
+      className={`play-control ${isPlaying ? "is-playing" : ""} relative flex shrink-0 items-center justify-center rounded-full transition hover:scale-105 active:scale-95 disabled:cursor-wait disabled:opacity-80 ${playButtonSize[size]} ${
         isDark ? "bg-white text-ink hover:bg-white/85" : "bg-ink text-white hover:bg-carbon"
       }`}
     >
@@ -65,7 +66,7 @@ export function RadioStatus({
 }) {
   const { isPlaying, isLoading, hasError } = useRadio();
   const isDark = tone === "dark";
-  const label = hasError ? "No se pudo conectar" : isLoading ? "Conectando..." : isPlaying ? "En vivo ahora" : idleLabel;
+  const label = hasError ? "No pudimos conectar" : isLoading ? "Conectando..." : isPlaying ? "Escuchando ahora" : idleLabel;
 
   return (
     <span

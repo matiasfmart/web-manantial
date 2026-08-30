@@ -8,7 +8,7 @@ Sitio web institucional para la iglesia, construido con **Next.js 14 (App Router
 - **Nosotros**: historia, visión, misión y liderazgo.
 - **Ministerios**: las 7 áreas de la iglesia, cada una con página propia.
 - **Reuniones**: horario semanal completo (cultos generales y GDI).
-- **Radio en vivo**: reproductor de streaming, programación y enlaces a apps móviles.
+- **Radio en vivo**: reproductor de streaming y programación.
 - **Contacto**: formulario y mapa de ubicación.
 
 ## Datos a personalizar antes de producción
@@ -23,7 +23,6 @@ Lo que sí sigue siendo parte del código (no editable desde la hoja):
 
 - `churchInfo.radioStreamUrl`: reemplazar por la URL real del stream de audio (icecast/shoutcast/HLS).
 - `churchInfo.youtubeChannelId`: completar con el ID del canal (YouTube Studio → Configuración → Canal → Configuración avanzada) para activar el embed en vivo automático en `/en-vivo`. Mientras esté vacío, se usa el link `.../live`, que YouTube redirige solo a la transmisión en curso.
-- `churchInfo.appStore` / `churchInfo.playStore`: enlaces reales a las tiendas cuando la app esté publicada.
 - Imágenes de ministerios, logos y fotos del equipo pastoral (ver sección de imágenes abajo): se administran en el código, no desde la hoja.
 - `RESEND_API_KEY` y `RESEND_FROM_EMAIL`: variables privadas necesarias para que el formulario de contacto envíe correos mediante Resend.
 

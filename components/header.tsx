@@ -15,6 +15,7 @@ const links = [
   { href: "/nosotros", label: "Nosotros" },
   { href: "/ministerios", label: "Ministerios" },
   { href: "/reuniones", label: "Reuniones" },
+  { href: "/radio", label: "Radio" },
   { href: "/contacto", label: "Contacto" },
 ];
 
