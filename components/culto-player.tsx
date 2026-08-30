@@ -24,7 +24,7 @@ export default async function CultoPlayer({
       <div className="motion-scale-in aspect-video w-full overflow-hidden bg-surface2">
         <iframe
           className="h-full w-full"
-          src={`https://www.youtube.com/embed/${transmissionStatus.videoId}`}
+          src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?autoplay=1`}
           title={transmissionStatus.title ?? "Transmisión en vivo — Ministerio Manantial de Avivamiento"}
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
