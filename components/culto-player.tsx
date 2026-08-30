@@ -20,11 +20,13 @@ export default async function CultoPlayer({
       : { kind: "unavailable" as const });
 
   if (transmissionStatus.kind === "live") {
+    const playerParams = compact ? "autoplay=1&mute=1&playsinline=1" : "autoplay=1";
+
     return (
       <div className="motion-scale-in aspect-video w-full overflow-hidden bg-surface2">
         <iframe
           className="h-full w-full"
-          src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?autoplay=1`}
+          src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?${playerParams}`}
           title={transmissionStatus.title ?? "Transmisión en vivo — Ministerio Manantial de Avivamiento"}
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
