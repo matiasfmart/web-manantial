@@ -1,7 +1,10 @@
 export type TransmissionStatus =
   | { kind: "live"; videoId: string; title: string | null }
   | { kind: "latest"; videoId: string; title: string | null; publishedAt: string | null }
-  | { kind: "unavailable" };
+  | {
+      kind: "unavailable";
+      fallbackVideo?: { videoId: string; title: string | null; thumbnailUrl: string };
+    };
 
 type OfficialLiveCheck = {
   status: Extract<TransmissionStatus, { kind: "live" }> | null;
@@ -62,6 +65,15 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
         if (await isEmbeddableVideo(videoId)) {
           return { kind: "latest", videoId, title, publishedAt };
         }
+
+        return {
+          kind: "unavailable",
+          fallbackVideo: {
+            videoId,
+            title,
+            thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          },
+        };
       }
     }
   } catch (err) {

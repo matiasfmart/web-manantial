@@ -64,28 +64,37 @@ export default async function CultoPlayer({
     );
   }
 
+  const fallbackVideo = transmissionStatus.fallbackVideo;
+
   return (
     <a
-      href={`${churchInfo.social.youtube}/live`}
+      href={fallbackVideo ? `https://www.youtube.com/watch?v=${fallbackVideo.videoId}` : `${churchInfo.social.youtube}/live`}
       target="_blank"
       rel="noopener noreferrer"
-      className={`motion-scale-in group flex aspect-video w-full flex-col items-center justify-center gap-4 border border-ink/10 bg-surface2 px-6 text-center transition hover:border-brand/35 hover:bg-mist ${
+      className={`motion-scale-in group relative flex aspect-video w-full flex-col items-center justify-center gap-4 overflow-hidden border border-ink/10 bg-surface2 px-6 text-center transition hover:border-brand/35 hover:bg-mist ${
         compact ? "gap-2" : ""
       }`}
     >
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white transition duration-300 group-hover:scale-105 group-hover:bg-brand-dark">
+      {fallbackVideo && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-center opacity-30 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-40"
+          style={{ backgroundImage: `url(${fallbackVideo.thumbnailUrl})` }}
+        />
+      )}
+      <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white transition duration-300 group-hover:scale-105 group-hover:bg-brand-dark">
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
           <path d="M8 5v14l11-7z" />
         </svg>
       </span>
-      <span className="max-w-xs text-sm font-semibold text-ink">
-        No hay una transmisión activa ahora
+      <span className="relative max-w-xs text-sm font-semibold text-ink">
+        {fallbackVideo?.title || "No hay una transmisión activa ahora"}
       </span>
-      <span className="max-w-sm text-xs leading-relaxed text-copy">
-        Podés abrir el canal para ver próximas emisiones o reuniones recientes.
+      <span className="relative max-w-sm text-xs leading-relaxed text-copy">
+        {fallbackVideo ? "Este video está disponible en YouTube." : "Podés abrir el canal para ver próximas emisiones o reuniones recientes."}
       </span>
-      <span className="link-underline text-xs font-semibold text-ink/70">
-        Ir al canal →
+      <span className="relative link-underline text-xs font-semibold text-ink/70">
+        {fallbackVideo ? "Ver en YouTube →" : "Ir al canal →"}
       </span>
     </a>
   );
