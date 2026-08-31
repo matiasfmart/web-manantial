@@ -17,9 +17,6 @@ type OfficialLiveCheck = {
  * devuelve unavailable para no renderizar iframes rotos.
  */
 export async function getTransmissionStatus(channelId: string): Promise<TransmissionStatus> {
-  const officialLive = await getOfficialLiveTransmission(channelId);
-  if (officialLive.status) return officialLive.status;
-
   try {
     const liveRes = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
       headers: { "user-agent": "Mozilla/5.0" },
@@ -44,7 +41,7 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
   try {
     const feedRes = await fetch(
       `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-      { next: { revalidate: 300 } }
+      { next: { revalidate: 60 } }
     );
 
     if (feedRes.ok) {
@@ -55,6 +52,9 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
       const publishedAt = entry?.match(/<published>(.*?)<\/published>/)?.[1] ?? null;
 
       if (videoId) {
+        const officialLive = await getOfficialLiveTransmission(videoId, title);
+        if (officialLive.status) return officialLive.status;
+
         if (await isLiveVideo(videoId)) {
           return { kind: "live", videoId, title };
         }
@@ -72,7 +72,18 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
 }
 
 export async function getTransmissionDiagnostic(channelId: string) {
-  const officialLive = await getOfficialLiveTransmission(channelId);
+  const feedRes = await fetch(
+    `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
+    { cache: "no-store" }
+  );
+  const xml = feedRes.ok ? await feedRes.text() : "";
+  const entry = xml.match(/<entry>([\s\S]*?)<\/entry>/)?.[1] ?? null;
+  const videoId = entry?.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1] ?? null;
+  const title = decodeXml(entry?.match(/<media:title>(.*?)<\/media:title>/)?.[1] ?? null);
+  const officialLive = videoId
+    ? await getOfficialLiveTransmission(videoId, title)
+    : { status: null, diagnostic: "no-live-result" } satisfies OfficialLiveCheck;
+
   return {
     apiKeyConfigured: Boolean(process.env.YOUTUBE_API_KEY),
     officialLiveCheck: officialLive.diagnostic,
@@ -80,22 +91,19 @@ export async function getTransmissionDiagnostic(channelId: string) {
   };
 }
 
-async function getOfficialLiveTransmission(channelId: string) {
+async function getOfficialLiveTransmission(videoId: string, title: string | null) {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) return { status: null, diagnostic: "api-key-missing" } satisfies OfficialLiveCheck;
 
   try {
     const params = new URLSearchParams({
-      part: "snippet",
-      channelId,
-      eventType: "live",
-      type: "video",
-      maxResults: "1",
+      part: "liveStreamingDetails",
+      id: videoId,
       key: apiKey,
     });
     const response = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?${params.toString()}`,
-      { cache: "no-store" }
+      `https://www.googleapis.com/youtube/v3/videos?${params.toString()}`,
+      { next: { revalidate: 60 } }
     );
     if (!response.ok) {
       console.error("[YouTube] official live check responded", response.status);
@@ -103,18 +111,18 @@ async function getOfficialLiveTransmission(channelId: string) {
     }
 
     const data = await response.json() as {
-      items?: Array<{ id?: { videoId?: string }; snippet?: { title?: string } }>;
+      items?: Array<{ liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string } }>;
     };
     const video = data.items?.[0];
-    if (!video?.id?.videoId) {
+    if (!video?.liveStreamingDetails?.actualStartTime || video.liveStreamingDetails.actualEndTime) {
       return { status: null, diagnostic: "no-live-result" } satisfies OfficialLiveCheck;
     }
 
     return {
       status: {
         kind: "live" as const,
-        videoId: video.id.videoId,
-        title: video.snippet?.title ?? null,
+        videoId,
+        title,
       },
       diagnostic: "live-found",
     } satisfies OfficialLiveCheck;
