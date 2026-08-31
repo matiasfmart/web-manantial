@@ -3,6 +3,11 @@ export type TransmissionStatus =
   | { kind: "latest"; videoId: string; title: string | null; publishedAt: string | null }
   | { kind: "unavailable" };
 
+type OfficialLiveCheck = {
+  status: Extract<TransmissionStatus, { kind: "live" }> | null;
+  diagnostic: "api-key-missing" | "live-found" | "no-live-result" | `http-${number}` | "request-failed";
+};
+
 /**
  * Determina si el canal está transmitiendo ahora mismo y, si no,
  * devuelve el último video publicado.
@@ -13,7 +18,7 @@ export type TransmissionStatus =
  */
 export async function getTransmissionStatus(channelId: string): Promise<TransmissionStatus> {
   const officialLive = await getOfficialLiveTransmission(channelId);
-  if (officialLive) return officialLive;
+  if (officialLive.status) return officialLive.status;
 
   try {
     const liveRes = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
@@ -66,9 +71,18 @@ export async function getTransmissionStatus(channelId: string): Promise<Transmis
   return { kind: "unavailable" };
 }
 
+export async function getTransmissionDiagnostic(channelId: string) {
+  const officialLive = await getOfficialLiveTransmission(channelId);
+  return {
+    apiKeyConfigured: Boolean(process.env.YOUTUBE_API_KEY),
+    officialLiveCheck: officialLive.diagnostic,
+    officialLiveVideoId: officialLive.status?.videoId ?? null,
+  };
+}
+
 async function getOfficialLiveTransmission(channelId: string) {
   const apiKey = process.env.YOUTUBE_API_KEY;
-  if (!apiKey) return null;
+  if (!apiKey) return { status: null, diagnostic: "api-key-missing" } satisfies OfficialLiveCheck;
 
   try {
     const params = new URLSearchParams({
@@ -85,23 +99,28 @@ async function getOfficialLiveTransmission(channelId: string) {
     );
     if (!response.ok) {
       console.error("[YouTube] official live check responded", response.status);
-      return null;
+      return { status: null, diagnostic: `http-${response.status}` } satisfies OfficialLiveCheck;
     }
 
     const data = await response.json() as {
       items?: Array<{ id?: { videoId?: string }; snippet?: { title?: string } }>;
     };
     const video = data.items?.[0];
-    if (!video?.id?.videoId) return null;
+    if (!video?.id?.videoId) {
+      return { status: null, diagnostic: "no-live-result" } satisfies OfficialLiveCheck;
+    }
 
     return {
-      kind: "live" as const,
-      videoId: video.id.videoId,
-      title: video.snippet?.title ?? null,
-    };
+      status: {
+        kind: "live" as const,
+        videoId: video.id.videoId,
+        title: video.snippet?.title ?? null,
+      },
+      diagnostic: "live-found",
+    } satisfies OfficialLiveCheck;
   } catch (error) {
     console.error("[YouTube] official live check error:", error);
-    return null;
+    return { status: null, diagnostic: "request-failed" } satisfies OfficialLiveCheck;
   }
 }
 
