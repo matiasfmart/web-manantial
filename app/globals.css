@@ -257,20 +257,18 @@ body {
   }
 
   .stream-cta-dark {
-    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 border border-onair/60 bg-transparent px-5 py-2.5 text-sm font-semibold text-white transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:bg-onair after:content-[''] hover:-translate-y-px hover:border-onair-light hover:text-white active:translate-y-0 active:scale-[0.98];
+    @apply inline-flex items-center justify-center gap-2 border border-onair bg-onair-dark px-5 py-2.5 text-sm font-semibold text-onair-light transition duration-200 hover:-translate-y-px hover:bg-onair hover:text-onair-light active:translate-y-0 active:scale-[0.98];
   }
 
   .stream-badge {
     @apply relative overflow-hidden inline-flex items-center gap-1.5 border border-onair/35 bg-transparent px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-onair-dark transition hover:border-onair/70 hover:text-onair;
   }
 
-  .stream-cta::after,
-  .stream-cta-dark::after {
+  .stream-cta::after {
     animation: onAirScan 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
-  .stream-cta:hover::after,
-  .stream-cta-dark:hover::after {
+  .stream-cta:hover::after {
     animation-duration: 1.8s;
   }
 }

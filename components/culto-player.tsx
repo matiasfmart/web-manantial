@@ -23,7 +23,7 @@ export default async function CultoPlayer({
     const playerParams = compact ? "autoplay=1&mute=1&playsinline=1" : "autoplay=1";
 
     return (
-      <div className="motion-scale-in aspect-video w-full overflow-hidden bg-surface2">
+      <div className="motion-scale-in aspect-video w-full overflow-hidden bg-ink">
         <iframe
           className="h-full w-full"
           src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?${playerParams}`}

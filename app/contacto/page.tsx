@@ -108,7 +108,7 @@ export default async function ContactoPage({
           <div className="mt-10 overflow-hidden border border-ink/10">
             <iframe
               title="Mapa del auditorio"
-              className="h-72 w-full grayscale"
+              className="h-72 w-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               src={`https://www.google.com/maps?q=${encodeURIComponent(churchInfo.mapsQuery)}&output=embed`}
