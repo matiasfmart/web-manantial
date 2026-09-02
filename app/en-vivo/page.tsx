@@ -89,7 +89,7 @@ export default async function EnVivoPage() {
           <div className="max-w-3xl">
             <div className="flex flex-wrap items-center gap-3">
               <p className={isLive ? "eyebrow !text-white/60" : "eyebrow"}>{state.eyebrow}</p>
-              <CultoBadge status={transmissionStatus} />
+              <CultoBadge status={transmissionStatus} tone={isLive ? "dark" : "light"} />
             </div>
             <h1 className="mt-5 font-display font-display-emphasis text-5xl font-semibold tracking-normal sm:text-6xl">
               {state.title}

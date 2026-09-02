@@ -253,22 +253,28 @@ body {
   }
 
   .stream-cta {
-    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 border border-onair/45 bg-transparent px-4 py-2 text-xs font-semibold text-onair-dark transition duration-300 after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:bg-onair after:content-[''] hover:-translate-y-px hover:border-onair hover:text-onair active:translate-y-0 active:scale-[0.98];
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 border border-onair/45 bg-transparent px-5 py-2.5 text-sm font-semibold text-onair-dark transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:bg-onair after:content-[''] hover:-translate-y-px hover:border-onair hover:text-onair active:translate-y-0 active:scale-[0.98];
   }
 
   .stream-cta-dark {
-    @apply inline-flex items-center justify-center gap-2 border border-onair bg-onair-dark px-5 py-2.5 text-sm font-semibold text-onair-light transition duration-200 hover:-translate-y-px hover:bg-onair hover:text-onair-light active:translate-y-0 active:scale-[0.98];
+    @apply relative overflow-hidden inline-flex items-center justify-center gap-2 border border-onair/65 bg-transparent px-5 py-2.5 text-sm font-semibold text-onair-light transition duration-300 after:absolute after:inset-x-4 after:bottom-1.5 after:h-px after:origin-left after:bg-onair-light after:content-[''] hover:-translate-y-px hover:border-onair-light hover:text-onair-light active:translate-y-0 active:scale-[0.98];
   }
 
   .stream-badge {
     @apply relative overflow-hidden inline-flex items-center gap-1.5 border border-onair/35 bg-transparent px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-onair-dark transition hover:border-onair/70 hover:text-onair;
   }
 
-  .stream-cta::after {
+  .stream-badge-dark {
+    @apply relative overflow-hidden inline-flex items-center gap-1.5 border border-onair/55 bg-transparent px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-onair-light transition hover:border-onair-light hover:text-onair-light;
+  }
+
+  .stream-cta::after,
+  .stream-cta-dark::after {
     animation: onAirScan 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
-  .stream-cta:hover::after {
+  .stream-cta:hover::after,
+  .stream-cta-dark:hover::after {
     animation-duration: 1.8s;
   }
 }
