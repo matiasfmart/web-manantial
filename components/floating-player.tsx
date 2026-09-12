@@ -18,7 +18,8 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
         : "Radio online";
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-white/15 bg-[#171a1b] animate-[revealUp_520ms_cubic-bezier(0.22,1,0.36,1)_450ms_forwards]">
+    <div className="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-white/15 bg-[#171a1b] animate-[revealUp_680ms_cubic-bezier(0.22,1,0.36,1)_500ms_forwards]">
+      <div className={`absolute inset-y-0 left-0 w-1 transition-colors ${isPlaying ? "bg-brand-light" : "bg-brand"}`} />
       <div className="section flex items-center justify-between gap-3 py-2">
         <div className="flex min-w-0 items-center gap-2.5">
           <RadioPlayButton tone="dark" size="sm" />

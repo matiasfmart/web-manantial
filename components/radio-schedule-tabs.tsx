@@ -45,6 +45,7 @@ export default function RadioScheduleTabs({
         {items.length > 0 ? (
           items.map((item) => {
             const isCurrent = selectedDay === initialDay && currentProgram?.time === item.time && currentProgram.program === item.program;
+            const isAutomated = item.host.trim().toLowerCase() === "automatizado";
 
             return (
               <div
@@ -57,7 +58,15 @@ export default function RadioScheduleTabs({
                 <div className="min-w-[12rem] flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold text-ink/90">{item.program}</span>
-                    {isCurrent && <span className="border border-brand/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-dark">Ahora</span>}
+                    {isCurrent && (
+                      <span className="inline-flex items-center gap-1.5 border border-brand/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-dark">
+                        <span className="h-1.5 w-1.5 animate-pulseSlow rounded-full bg-brand" />
+                        Ahora
+                      </span>
+                    )}
+                    {!isAutomated && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-ink/40">En vivo</span>
+                    )}
                   </div>
                 </div>
                 <span className="text-sm text-ink/45">{item.host}</span>

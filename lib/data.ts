@@ -553,6 +553,7 @@ const defaultChurchText = {
   phone: "+54 11 2799-4682",
   email: "-",
   radioName: "Radio Maranata",
+  radioDialFm: "89.3 FM",
   liveServiceSchedule: "Domingos 19:30 h",
   instagram: "https://www.instagram.com/manantialavivamiento/",
   youtube: "https://www.youtube.com/@ManantialdeAvivamiento",
@@ -613,6 +614,7 @@ export async function getChurchInfo() {
     phone: t("phone"),
     email: isValidEmail(t("email")) ? t("email").trim() : "-",
     radioName: t("radioName"),
+    radioDialFm: t("radioDialFm"),
     liveServiceSchedule: t("liveServiceSchedule"),
     social: {
       instagram: t("instagram"),

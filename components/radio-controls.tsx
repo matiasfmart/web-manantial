@@ -34,8 +34,12 @@ export function RadioPlayButton({
       onClick={toggle}
       aria-label={isPlaying ? "Pausar radio" : label}
       disabled={isLoading}
-      className={`play-control ${isPlaying ? "is-playing" : ""} relative flex shrink-0 items-center justify-center rounded-full transition hover:scale-105 active:scale-95 disabled:cursor-wait disabled:opacity-80 ${playButtonSize[size]} ${
-        isDark ? "bg-white text-ink hover:bg-white/85" : "bg-ink text-white hover:bg-carbon"
+      className={`play-control ${isPlaying ? "is-playing play-control-glow" : ""} relative flex shrink-0 items-center justify-center rounded-full transition hover:scale-105 active:scale-95 disabled:cursor-wait disabled:opacity-80 ${playButtonSize[size]} ${
+        isPlaying
+          ? "bg-brand text-white hover:bg-brand-dark"
+          : isDark
+            ? "bg-white text-ink hover:bg-white/85"
+            : "bg-ink text-white hover:bg-carbon"
       }`}
     >
       <span className="relative z-10">
@@ -70,12 +74,12 @@ export function RadioStatus({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider ${
+      className={`inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider transition-colors duration-300 ${
         hasError ? "text-red-400" : isDark ? "text-white/70" : "text-ink/65"
       }`}
     >
       <span
-        className={`h-1.5 w-1.5 rounded-full ${
+        className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
           hasError
             ? "bg-red-400"
             : isLoading
@@ -100,7 +104,7 @@ export function AudioBars({
   tone?: RadioTone;
   size?: "sm" | "md";
 }) {
-  const barClass = tone === "dark" ? "bg-white/70" : "bg-brand";
+  const barClass = tone === "dark" ? "bg-brand-light" : "bg-brand";
   const height = size === "sm" ? "h-3" : "h-4";
   const width = size === "sm" ? "w-0.5" : "w-1";
 
