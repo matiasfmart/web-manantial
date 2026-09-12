@@ -139,14 +139,14 @@ body {
 
 @keyframes invitePulse {
   0% {
-    transform: scale(0.92);
+    transform: scale(0.9);
     opacity: 0;
   }
-  30% {
-    opacity: 0.22;
+  25% {
+    opacity: 0.6;
   }
   100% {
-    transform: scale(1.28);
+    transform: scale(1.35);
     opacity: 0;
   }
 }
@@ -221,7 +221,7 @@ body {
   content: "";
   position: absolute;
   inset: -8px;
-  border: 1px solid rgba(79, 111, 120, 0.55);
+  border: 2px solid rgba(79, 111, 120, 0.7);
   border-radius: 999px;
   opacity: 0;
   pointer-events: none;
@@ -232,7 +232,7 @@ body {
 }
 
 .play-control:not(.is-playing)::after {
-  animation: invitePulse 3.6s ease-in-out infinite;
+  animation: invitePulse 2.6s ease-in-out infinite;
 }
 
 .play-control-glow {
