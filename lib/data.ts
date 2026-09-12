@@ -532,7 +532,7 @@ const churchTechnical = {
   logoLight: "/logo/logo-blanco.png",
   logoDark: "/logo/logo-negro.png",
   logoColor: "/logo/logo-color.png",
-  radioStreamUrl: "https://stream.example.com/radio-manantial.mp3",
+  radioStreamUrl: "https://stream.zeno.fm/wxal9ufxpolvv",
   // Completá el ID del canal (empieza con "UC...") en YouTube Studio → Configuración →
   // Canal → Configuración avanzada, para activar el embed en vivo automático.
   youtubeChannelId: "UCBsH_17YGsnfglxEm0Z96Xw",
