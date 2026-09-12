@@ -51,7 +51,7 @@ export default async function RootLayout({
   return (
     <html lang="es-AR" data-scroll-behavior="smooth" className={sansFont.variable}>
       <body className="font-body antialiased">
-        <RadioProvider streamUrl={churchInfo.radioStreamUrl}>
+        <RadioProvider streamUrl={churchInfo.radioStreamUrl} stationName={churchInfo.radioName}>
           <MotionProvider />
           <Header churchInfo={churchInfo} />
           <main className="min-h-screen">{children}</main>

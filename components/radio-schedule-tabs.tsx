@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  getBuenosAiresRadioDay,
+  getCurrentRadioProgram,
   getScheduleForRadioDay,
   radioScheduleDays,
   type RadioScheduleDay,
   type RadioScheduleItem,
 } from "@/lib/radio-schedule";
+
+const LIVE_REFRESH_MS = 60_000;
 
 export default function RadioScheduleTabs({
   schedule,
@@ -19,6 +23,19 @@ export default function RadioScheduleTabs({
 }) {
   const [selectedDay, setSelectedDay] = useState<RadioScheduleDay>(initialDay);
   const items = getScheduleForRadioDay(schedule, selectedDay);
+
+  // Recalcula "Ahora" en el cliente para que no quede desactualizado si la
+  // página queda abierta más allá del horario con el que se generó el server-render.
+  const [liveNow, setLiveNow] = useState<Date | null>(null);
+  useEffect(() => {
+    const update = () => setLiveNow(new Date());
+    update();
+    const id = window.setInterval(update, LIVE_REFRESH_MS);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const liveDay = liveNow ? getBuenosAiresRadioDay(liveNow) : initialDay;
+  const liveProgram = liveNow ? getCurrentRadioProgram(schedule, liveNow) : currentProgram;
 
   return (
     <>
@@ -44,7 +61,7 @@ export default function RadioScheduleTabs({
       <div className="overflow-hidden border-y border-ink/10" data-stagger>
         {items.length > 0 ? (
           items.map((item) => {
-            const isCurrent = selectedDay === initialDay && currentProgram?.time === item.time && currentProgram.program === item.program;
+            const isCurrent = selectedDay === liveDay && liveProgram?.time === item.time && liveProgram.program === item.program;
             const isAutomated = item.host.trim().toLowerCase() === "automatizado";
 
             return (
