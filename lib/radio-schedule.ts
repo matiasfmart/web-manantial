@@ -61,6 +61,15 @@ export function getBuenosAiresRadioDay(now = new Date()) {
   return weekdayByIndex[weekdayIndex] ?? "Domingos";
 }
 
+export type RadioMood = "day" | "night";
+
+/** Franja nocturna: 20:00 a 06:00, hora de Buenos Aires. */
+export function getRadioMood(now = new Date()): RadioMood {
+  const minutes = getBuenosAiresMinutes(now);
+  if (minutes === null) return "day";
+  return minutes >= 20 * 60 || minutes < 6 * 60 ? "night" : "day";
+}
+
 export function getScheduleForRadioDay(schedule: RadioScheduleItem[], day: RadioScheduleDay) {
   const byTime = new Map<string, RadioScheduleItem>();
   schedule

@@ -64,12 +64,10 @@ export default async function RadioPage() {
           <p className="mt-7 max-w-2xl border-l border-ink/15 pl-4 text-sm italic text-ink/50">
             &quot;Así que la fe es por el oír, y el oír, por la palabra de Dios.&quot; — Romanos 10:17
           </p>
-
-          <div className="mt-10">
-            <BigPlayer churchInfo={churchInfo} />
-          </div>
         </div>
       </section>
+
+      <BigPlayer churchInfo={churchInfo} />
 
       {/* PORQUE ESCUCHAR */}
       <section className="section py-16 sm:py-20">

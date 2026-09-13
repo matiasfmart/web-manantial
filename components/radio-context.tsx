@@ -17,6 +17,7 @@ type RadioContextValue = {
   toggle: () => void;
   volume: number;
   setVolume: (v: number) => void;
+  getAnalyser: () => AnalyserNode | null;
 };
 
 const RadioContext = createContext<RadioContextValue | null>(null);
@@ -36,6 +37,9 @@ export function RadioProvider({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const retryCountRef = useRef(0);
   const retryTimeoutRef = useRef<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -48,9 +52,43 @@ export function RadioProvider({
     }
   }, []);
 
+  // Conecta el <audio> a un AnalyserNode una sola vez, para poder visualizar la
+  // señal real. Requiere gesto del usuario (se llama desde play()).
+  const ensureAudioGraph = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio || sourceNodeRef.current) return;
+
+    try {
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) return;
+
+      const audioContext = new AudioContextClass();
+      const analyser = audioContext.createAnalyser();
+      analyser.fftSize = 128;
+      analyser.smoothingTimeConstant = 0.8;
+
+      const source = audioContext.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+
+      audioContextRef.current = audioContext;
+      analyserRef.current = analyser;
+      sourceNodeRef.current = source;
+    } catch (error) {
+      console.error("[radio] No se pudo inicializar el analizador de audio:", error);
+    }
+  }, []);
+
+  const getAnalyser = useCallback(() => analyserRef.current, []);
+
   const play = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    ensureAudioGraph();
+    audioContextRef.current?.resume().catch(() => {});
 
     setIsLoading(true);
     setHasError(false);
@@ -90,8 +128,8 @@ export function RadioProvider({
   }, []);
 
   const value = useMemo(
-    () => ({ isPlaying, isLoading, hasError, toggle, volume, setVolume }),
-    [isPlaying, isLoading, hasError, toggle, volume, setVolume]
+    () => ({ isPlaying, isLoading, hasError, toggle, volume, setVolume, getAnalyser }),
+    [isPlaying, isLoading, hasError, toggle, volume, setVolume, getAnalyser]
   );
 
   useEffect(() => {
@@ -149,6 +187,7 @@ export function RadioProvider({
       <audio
         ref={audioRef}
         preload="none"
+        crossOrigin="anonymous"
         src={streamUrl}
         onWaiting={() => setIsLoading(true)}
         onPlaying={() => {

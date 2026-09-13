@@ -3,18 +3,20 @@
 import { useRadio } from "./radio-context";
 
 type RadioTone = "light" | "dark";
-type RadioPlaySize = "sm" | "md" | "lg";
+type RadioPlaySize = "sm" | "md" | "lg" | "xl";
 
 const playButtonSize: Record<RadioPlaySize, string> = {
   sm: "h-9 w-9",
   md: "h-12 w-12",
   lg: "h-20 w-20 sm:h-24 sm:w-24",
+  xl: "h-28 w-28 sm:h-40 sm:w-40",
 };
 
 const playIconSize: Record<RadioPlaySize, string> = {
   sm: "h-4 w-4",
   md: "h-5 w-5",
   lg: "h-9 w-9",
+  xl: "h-12 w-12 sm:h-16 sm:w-16",
 };
 
 export function RadioPlayButton({
