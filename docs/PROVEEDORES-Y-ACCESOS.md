@@ -102,25 +102,15 @@ en el dashboard. Ahí está la sección "Environment" con las 4 variables de arr
 
 ## 5. Radio en vivo (streaming de audio)
 
-- **Proveedor:** Zeno.fm
-- **Login de la cuenta de Zeno.fm:** cuenta personal del administrador (ver
-  detalle en tus notas privadas, no se documenta el email acá).
-- **Mount point:** `wxal9ufxpolvv`
-- **URL de reproducción pública:** `https://stream.zeno.fm/wxal9ufxpolvv`
-  (configurada en `churchTechnical.radioStreamUrl`, [lib/data.ts](../lib/data.ts))
-- **Metadata pública de "sonando ahora"** (sin autenticación):
-  `https://api.zeno.fm/mounts/metadata/subscribe/wxal9ufxpolvv`
-  (hoy no está siendo usada por la web; solo confirmada como disponible).
-- **Encoder/fuente (credenciales para transmitir, NO para consultar datos):**
-  ver panel de Zeno.fm → "Stream Encoder Settings". No se documentan acá el
-  servidor/puerto/usuario juntos por seguridad (reduce el esfuerzo para intentar
-  interferir con la transmisión real). La contraseña del mount es sensible — no
-  debe compartirse ni pegarse en chats o archivos del repo. Si se expuso alguna
-  vez, regenerarla desde el panel de Zeno.fm (botón "Reset").
-- **Estadísticas de oyentes/país:** confirmado que **no son accesibles** con el
-  plan actual — el dashboard de Zeno.fm los muestra solo visualmente, sin
-  opción de generar una API key para consultarlos programáticamente.
-- **Dónde administrar:** [zeno.fm](https://zeno.fm) → dashboard de tu emisora.
+- **Servidor de radio:** AzuraCast desplegado en Elestio (`dash.elestio.io`).
+- **URL directa del stream de audio:** `https://azuracast-dquna-u78781.vm.elestio.app/listen/maranata/radio.mp3`
+  (configurada en `churchTechnical.radioStreamUrl`, [lib/data.ts](../lib/data.ts)).
+- **URL pública del reproductor:** `https://azuracast-dquna-u78781.vm.elestio.app/public/maranata`
+- **API pública de Now Playing / Oyentes / Estado (CORS habilitado, pública sin API key):**
+  `https://azuracast-dquna-u78781.vm.elestio.app/api/nowplaying/maranata`
+  Devuelve el estado en tiempo real, nombre del tema/programa, oyentes en vivo (`listeners.current`)
+  y si hay transmisión en vivo por locutor (`live.is_live`).
+- **Dónde administrar:** Elestio (`dash.elestio.io`) / Panel de AzuraCast.
 
 ## 6. YouTube (transmisión de cultos)
 
