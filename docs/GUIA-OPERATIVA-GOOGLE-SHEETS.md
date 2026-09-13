@@ -351,11 +351,40 @@ Cada fila tiene `key` y `value`. Actualizá datos de transferencia, alias, CBU, 
 
 | Columna | Uso |
 |---|---|
+| `day` | Día de emisión o `Todos` para un bloque que se repite durante toda la semana |
 | `time` | Rango horario, por ejemplo `09:00 – 12:00` |
 | `program` | Nombre del programa |
 | `host` | Conductor, equipo o `Automatizado` |
 
-Los rangos de horario deben cubrir el día completo y no superponerse. La web usa esta grilla para indicar qué programa está sonando ahora.
+Usá estos valores exactamente en `day`:
+
+```text
+Lunes
+Martes
+Miércoles
+Jueves
+Viernes
+Sábados
+Domingos
+Todos
+```
+
+`Todos` sirve para música, automatización u otros bloques que se repiten todos
+los días. Si un programa de un día específico ocupa el mismo horario que uno de
+`Todos`, la web muestra el programa específico de ese día.
+
+Ejemplo:
+
+```text
+day       | time          | program                    | host
+Todos     | 23:00 – 06:00 | Adoración Nocturna         | Automatizado
+Miércoles | 18:00 – 20:00 | Palabra en comunidad       | Equipo de radio
+Domingos  | 19:30 – 21:30 | Reunión general en vivo    | Manantial de Avivamiento
+```
+
+Los rangos de horario no deben superponerse dentro del mismo día. La web usa
+esta grilla para indicar qué programa está sonando ahora y para mostrar la
+programación del día elegido.
 
 ## Qué no se administra desde Sheets
 

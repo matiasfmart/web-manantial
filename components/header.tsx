@@ -23,14 +23,13 @@ const firstVisit = { href: "/primera-vez", label: "¿Es tu primera vez?", prompt
 
 export default function Header({
   churchInfo,
-  transmissionStatus,
 }: {
   churchInfo: ChurchInfo;
-  transmissionStatus: TransmissionStatus;
 }) {
   const [open, setOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [transmissionStatus, setTransmissionStatus] = useState<TransmissionStatus>({ kind: "unavailable" });
   const menuRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const firstMenuLinkRef = useRef<HTMLAnchorElement>(null);
@@ -59,6 +58,28 @@ export default function Header({
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const refreshTransmissionStatus = async () => {
+      try {
+        const response = await fetch("/api/transmision", { cache: "no-store" });
+        if (!response.ok) return;
+        const status = (await response.json()) as TransmissionStatus;
+        if (isMounted) setTransmissionStatus(status);
+      } catch {
+        // The neutral YouTube action remains available if the status refresh fails.
+      }
+    };
+
+    refreshTransmissionStatus();
+    const interval = window.setInterval(refreshTransmissionStatus, 60_000);
+    return () => {
+      isMounted = false;
+      window.clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {

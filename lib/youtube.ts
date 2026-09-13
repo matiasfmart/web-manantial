@@ -1,97 +1,209 @@
 export type TransmissionStatus =
   | { kind: "live"; videoId: string; title: string | null }
   | { kind: "latest"; videoId: string; title: string | null; publishedAt: string | null }
-  | { kind: "unavailable" };
+  | {
+      kind: "unavailable";
+      fallbackVideo?: { videoId: string; title: string | null; thumbnailUrl: string };
+    };
 
-/**
- * Determina si el canal está transmitiendo ahora mismo y, si no,
- * devuelve el último video publicado.
- *
- * No requiere API key: intenta detectar el vivo desde la página pública del
- * canal y usa el RSS público para el último video. Si no confirma un video,
- * devuelve unavailable para no renderizar iframes rotos.
- */
+type TransmissionDiagnostic =
+  | "api-key-missing"
+  | "live-found"
+  | "latest-found"
+  | "uploads-playlist-missing"
+  | "no-videos"
+  | `http-${number}`
+  | "request-failed";
+
+type YouTubeApiVideo = {
+  id: string;
+  title: string | null;
+  publishedAt: string | null;
+  thumbnailUrl: string;
+  embeddable: boolean;
+  actualStartTime?: string;
+  actualEndTime?: string;
+};
+
+type TransmissionResult = {
+  status: TransmissionStatus;
+  diagnostic: TransmissionDiagnostic;
+  liveVideoId: string | null;
+};
+
 export async function getTransmissionStatus(channelId: string): Promise<TransmissionStatus> {
-  try {
-    const liveRes = await fetch(`https://www.youtube.com/channel/${channelId}/live`, {
-      headers: { "user-agent": "Mozilla/5.0" },
-      next: { revalidate: 60 },
-    });
+  return (await getTransmissionFromYouTubeApi(channelId)).status;
+}
 
-    if (liveRes.ok) {
-      const html = await liveRes.text();
-      const liveVideoId = extractLiveVideoId(html);
-      if (liveVideoId && (await isEmbeddableVideo(liveVideoId))) {
-        return {
-          kind: "live",
-          videoId: liveVideoId,
-          title: extractTitle(html),
-        };
-      }
+export async function getTransmissionDiagnostic(channelId: string) {
+  const result = await getTransmissionFromYouTubeApi(channelId);
+
+  return {
+    apiKeyConfigured: Boolean(process.env.YOUTUBE_API_KEY),
+    officialLiveCheck: result.diagnostic,
+    officialLiveVideoId: result.liveVideoId,
+  };
+}
+
+async function getTransmissionFromYouTubeApi(channelId: string): Promise<TransmissionResult> {
+  if (!process.env.YOUTUBE_API_KEY) {
+    return {
+      status: { kind: "unavailable" },
+      diagnostic: "api-key-missing",
+      liveVideoId: null,
+    };
+  }
+
+  try {
+    const uploadsPlaylistId = await getUploadsPlaylistId(channelId);
+    if (!uploadsPlaylistId) {
+      return {
+        status: { kind: "unavailable" },
+        diagnostic: "uploads-playlist-missing",
+        liveVideoId: null,
+      };
     }
-  } catch (err) {
-    console.error("[YouTube] live check error:", err);
-  }
 
-  try {
-    const feedRes = await fetch(
-      `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`,
-      { next: { revalidate: 300 } }
-    );
-
-    if (feedRes.ok) {
-      const xml = await feedRes.text();
-      const entry = xml.match(/<entry>([\s\S]*?)<\/entry>/)?.[1] ?? null;
-      const videoId = entry?.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1] ?? null;
-      const title = decodeXml(entry?.match(/<media:title>(.*?)<\/media:title>/)?.[1] ?? null);
-      const publishedAt = entry?.match(/<published>(.*?)<\/published>/)?.[1] ?? null;
-
-      if (videoId && (await isEmbeddableVideo(videoId))) {
-        return { kind: "latest", videoId, title, publishedAt };
-      }
+    const videos = await getLatestUploads(uploadsPlaylistId);
+    if (videos.length === 0) {
+      return {
+        status: { kind: "unavailable" },
+        diagnostic: "no-videos",
+        liveVideoId: null,
+      };
     }
-  } catch (err) {
-    console.error("[YouTube] RSS feed error:", err);
+
+    const liveVideo = videos.find((video) => video.actualStartTime && !video.actualEndTime);
+    if (liveVideo) {
+      return {
+        status: { kind: "live", videoId: liveVideo.id, title: liveVideo.title },
+        diagnostic: "live-found",
+        liveVideoId: liveVideo.id,
+      };
+    }
+
+    const latestVideo = videos[0];
+    if (latestVideo.embeddable) {
+      return {
+        status: {
+          kind: "latest",
+          videoId: latestVideo.id,
+          title: latestVideo.title,
+          publishedAt: latestVideo.publishedAt,
+        },
+        diagnostic: "latest-found",
+        liveVideoId: null,
+      };
+    }
+
+    return {
+      status: {
+        kind: "unavailable",
+        fallbackVideo: {
+          videoId: latestVideo.id,
+          title: latestVideo.title,
+          thumbnailUrl: latestVideo.thumbnailUrl,
+        },
+      },
+      diagnostic: "latest-found",
+      liveVideoId: null,
+    };
+  } catch (error) {
+    if (error instanceof YouTubeApiError) {
+      console.error("[YouTube] Data API responded", error.status);
+      return {
+        status: { kind: "unavailable" },
+        diagnostic: `http-${error.status}`,
+        liveVideoId: null,
+      };
+    }
+
+    console.error("[YouTube] Data API error:", error);
+    return {
+      status: { kind: "unavailable" },
+      diagnostic: "request-failed",
+      liveVideoId: null,
+    };
   }
-
-  return { kind: "unavailable" };
 }
 
-function extractLiveVideoId(html: string) {
-  const liveIndex = html.indexOf('"isLiveNow":true');
-  if (liveIndex === -1) return null;
+async function getUploadsPlaylistId(channelId: string) {
+  const data = await fetchYouTubeData<{
+    items?: Array<{ contentDetails?: { relatedPlaylists?: { uploads?: string } } }>;
+  }>("channels", {
+    part: "contentDetails",
+    id: channelId,
+  });
 
-  const nearby = html.slice(Math.max(0, liveIndex - 6000), liveIndex + 6000);
-  return nearby.match(/"videoId":"([^"]+)"/)?.[1] ?? null;
+  return data.items?.[0]?.contentDetails?.relatedPlaylists?.uploads ?? null;
 }
 
-function extractTitle(html: string) {
-  const title = html.match(/<title>(.*?)<\/title>/)?.[1]?.replace(/ - YouTube$/, "") ?? null;
-  return decodeXml(title);
+async function getLatestUploads(uploadsPlaylistId: string) {
+  const playlistData = await fetchYouTubeData<{
+    items?: Array<{ snippet?: { resourceId?: { videoId?: string } } }>;
+  }>("playlistItems", {
+    part: "snippet",
+    playlistId: uploadsPlaylistId,
+    maxResults: "5",
+  });
+
+  const videoIds = playlistData.items
+    ?.map((item) => item.snippet?.resourceId?.videoId)
+    .filter((videoId): videoId is string => Boolean(videoId)) ?? [];
+  if (videoIds.length === 0) return [];
+
+  const videoData = await fetchYouTubeData<{
+    items?: Array<{
+      id?: string;
+      snippet?: {
+        title?: string;
+        publishedAt?: string;
+        thumbnails?: { high?: { url?: string }; medium?: { url?: string }; default?: { url?: string } };
+      };
+      status?: { embeddable?: boolean };
+      liveStreamingDetails?: { actualStartTime?: string; actualEndTime?: string };
+    }>;
+  }>("videos", {
+    part: "snippet,status,liveStreamingDetails",
+    id: videoIds.join(","),
+  });
+
+  const order = new Map(videoIds.map((videoId, index) => [videoId, index]));
+
+  return (videoData.items ?? [])
+    .filter((video): video is NonNullable<typeof videoData.items>[number] & { id: string } => Boolean(video.id))
+    .map((video): YouTubeApiVideo => ({
+      id: video.id,
+      title: video.snippet?.title ?? null,
+      publishedAt: video.snippet?.publishedAt ?? null,
+      thumbnailUrl:
+        video.snippet?.thumbnails?.high?.url ??
+        video.snippet?.thumbnails?.medium?.url ??
+        video.snippet?.thumbnails?.default?.url ??
+        `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
+      embeddable: video.status?.embeddable ?? false,
+      actualStartTime: video.liveStreamingDetails?.actualStartTime,
+      actualEndTime: video.liveStreamingDetails?.actualEndTime,
+    }))
+    .sort((left, right) => (order.get(left.id) ?? 0) - (order.get(right.id) ?? 0));
 }
 
-async function isEmbeddableVideo(videoId: string) {
-  try {
-    const res = await fetch(
-      `https://www.youtube.com/oembed?url=${encodeURIComponent(
-        `https://www.youtube.com/watch?v=${videoId}`
-      )}&format=json`,
-      { next: { revalidate: 300 } }
-    );
+async function fetchYouTubeData<T>(resource: "channels" | "playlistItems" | "videos", params: Record<string, string>) {
+  const apiKey = process.env.YOUTUBE_API_KEY;
+  if (!apiKey) throw new Error("Missing YouTube API key");
 
-    return res.ok;
-  } catch {
-    return false;
+  const searchParams = new URLSearchParams({ ...params, key: apiKey });
+  const response = await fetch(
+    `https://www.googleapis.com/youtube/v3/${resource}?${searchParams.toString()}`,
+    { next: { revalidate: 60 } }
+  );
+
+  if (!response.ok) throw new YouTubeApiError(response.status);
+  return await response.json() as T;
+}
+
+class YouTubeApiError extends Error {
+  constructor(readonly status: number) {
+    super(`YouTube Data API responded ${status}`);
   }
-}
-
-function decodeXml(value: string | null) {
-  if (!value) return null;
-
-  return value
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">");
 }

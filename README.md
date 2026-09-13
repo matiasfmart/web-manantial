@@ -51,7 +51,7 @@ Creá una planilla nueva en la cuenta de Google de la iglesia, con **una hoja
 | `EquipoPastoral` | `displayName`, `role`, `order` | Pastora principal, matrimonios, evangelista y orden de aparición |
 | `Ofrendas` | `key`, `value` | Texto de la página de ofrendas, alias de Mercado Pago, CBU, etc. |
 | `OfrendasCategorias` | `name`, `description` | "Ofrenda general", "Diezmo", etc. |
-| `ProgramacionRadio` | `time`, `program`, `host` | Grilla horaria de Radio Maranata |
+| `ProgramacionRadio` | `day`, `time`, `program`, `host` | Grilla semanal de Radio Maranata |
 
 **Importante sobre `Ministerios`**: el valor de `slug` tiene que ser exactamente
 uno de estos (son los que ya usan las fotos y colores del sitio):

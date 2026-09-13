@@ -19,4 +19,7 @@ services:
       # onboarding@resend.dev, que solo entrega al email con el que te registraste.
       - key: RESEND_FROM_EMAIL
         sync: false
+      # API key de YouTube Data API v3 para detectar transmisiones activas de forma confiable.
+      - key: YOUTUBE_API_KEY
+        sync: false
     autoDeploy: true

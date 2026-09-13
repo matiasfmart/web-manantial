@@ -7,6 +7,8 @@ import FirstVisitAccordion from "@/components/first-visit-accordion";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import { InteractiveLink } from "@/components/ui/interactive-link";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Primera vez",
   description:

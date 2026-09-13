@@ -11,6 +11,8 @@ import AnimatedCounter from "@/components/animated-counter";
 import { ButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import { ExternalInteractiveLink, InteractiveLink } from "@/components/ui/interactive-link";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [churchInfo, generalServices, ministries, radioSchedule, specialServices] = await Promise.all([
     getChurchInfo(),
@@ -42,7 +44,7 @@ export default async function HomePage() {
             <span className="text-xs font-semibold uppercase tracking-widest text-white/60">
               YouTube
             </span>
-            <CultoBadge status={transmissionStatus} />
+            <CultoBadge status={transmissionStatus} tone="dark" />
           </div>
           <p className="mt-5 font-display text-2xl font-bold uppercase tracking-normal sm:text-3xl">
             {transmissionStatus.kind === "live"
@@ -296,7 +298,7 @@ export default async function HomePage() {
           <div className="min-h-[280px] w-full" data-reveal style={{ "--motion-delay": "180ms" } as React.CSSProperties}>
             <iframe
               title="Ubicación del auditorio"
-              className="h-full w-full min-h-[280px] grayscale"
+              className="h-full w-full min-h-[280px]"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               src={`https://www.google.com/maps?q=${encodeURIComponent(

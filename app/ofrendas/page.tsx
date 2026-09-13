@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getChurchInfo, getGivingInfo } from "@/lib/data";
 import BankTransferDetails from "@/components/bank-transfer-details";
-import { ExternalButtonLink } from "@/components/ui/button";
+import CopyableValue from "@/components/copyable-value";
+import { AnchorButtonLink, ExternalButtonLink } from "@/components/ui/button";
 import { ExternalInteractiveLink } from "@/components/ui/interactive-link";
 
 export const metadata: Metadata = {
@@ -12,6 +13,8 @@ export const metadata: Metadata = {
 
 export default async function OfrendasPage() {
   const [churchInfo, givingInfo] = await Promise.all([getChurchInfo(), getGivingInfo()]);
+  const hasMercadoPagoLink = /^https?:\/\//.test(givingInfo.mercadoPago.link);
+  const hasMercadoPagoAlias = Boolean(givingInfo.mercadoPago.alias && givingInfo.mercadoPago.alias !== "-");
 
   return (
     <>
@@ -21,7 +24,17 @@ export default async function OfrendasPage() {
           Ofrendá online
         </h1>
         <p className="mt-6 max-w-2xl text-ink/65">{givingInfo.intro}</p>
-        <p className="mt-4 max-w-2xl text-sm italic text-ink/50">
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          {hasMercadoPagoLink && (
+            <ExternalButtonLink href={givingInfo.mercadoPago.link}>
+              Ofrendar con Mercado Pago
+            </ExternalButtonLink>
+          )}
+          <AnchorButtonLink href="#transferencia" variant={hasMercadoPagoLink ? "secondary" : "primary"}>
+            Ver datos de transferencia
+          </AnchorButtonLink>
+        </div>
+        <p className="mt-7 max-w-2xl border-l border-ink/15 pl-4 text-sm italic text-ink/50">
           {givingInfo.verse}
         </p>
       </section>
@@ -54,17 +67,36 @@ export default async function OfrendasPage() {
                   <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink/60">
                     Ofrendá desde tu celular con saldo, tarjeta o cuenta vinculada.
                   </p>
-                  <ExternalButtonLink
-                    href={givingInfo.mercadoPago.link}
-                    className="mt-6"
-                  >
-                    Ofrendar con Mercado Pago
-                  </ExternalButtonLink>
+                  {hasMercadoPagoLink ? (
+                    <ExternalButtonLink
+                      href={givingInfo.mercadoPago.link}
+                      className="mt-6"
+                    >
+                      Ofrendar con Mercado Pago
+                    </ExternalButtonLink>
+                  ) : !hasMercadoPagoAlias ? (
+                    <p className="mt-5 max-w-md border-l border-ink/15 pl-4 text-sm text-ink/55">
+                      Mercado Pago no está disponible en este momento. Podés ofrendar por transferencia bancaria.
+                    </p>
+                  ) : null}
+                  {hasMercadoPagoAlias && (
+                    <div className="mt-5 max-w-xl">
+                      <CopyableValue
+                        label="Alias Mercado Pago"
+                        value={givingInfo.mercadoPago.alias}
+                        actionLabel="Copiar alias"
+                        variant={hasMercadoPagoLink ? "secondary" : "primary"}
+                      />
+                      <p className="mt-3 text-sm leading-relaxed text-ink/55">
+                        También podés buscar este alias desde Mercado Pago para enviar tu ofrenda.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </section>
 
-            <section className="border-t border-ink/10 pt-6">
+            <section id="transferencia" className="scroll-mt-28 border-t border-ink/10 pt-6">
               <div className="grid grid-cols-[44px_1fr] gap-4">
                 <div className="flex h-11 w-11 items-center justify-center bg-carbon text-white">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
@@ -81,6 +113,13 @@ export default async function OfrendasPage() {
                   <div className="mt-6">
                     <BankTransferDetails details={givingInfo.bankTransfer} />
                   </div>
+                  <p className="mt-5 text-sm leading-relaxed text-ink/55">
+                    Si necesitás enviar el comprobante o hacer una consulta, escribinos a{" "}
+                    <ExternalInteractiveLink href={`mailto:${churchInfo.email}`} className="text-brand">
+                      {churchInfo.email}
+                    </ExternalInteractiveLink>
+                    .
+                  </p>
                 </div>
               </div>
             </section>
@@ -89,9 +128,11 @@ export default async function OfrendasPage() {
       </section>
 
       <section className="section py-16 sm:py-20">
-        {/* Categorías */}
         <div>
-          <p className="eyebrow">¿A dónde va tu ofrenda?</p>
+          <p className="eyebrow">Transparencia y propósito</p>
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold tracking-normal sm:text-4xl">
+            Tu ofrenda acompaña estas áreas
+          </h2>
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
             {givingInfo.categories.map((c) => (
               <div key={c.name} className="border-t border-ink/10 pt-5">

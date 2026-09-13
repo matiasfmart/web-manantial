@@ -1,7 +1,30 @@
 export type RadioScheduleItem = {
+  day: RadioScheduleDay;
   time: string;
   program: string;
   host: string;
+};
+
+export const radioScheduleDays = [
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábados",
+  "Domingos",
+] as const;
+
+export type RadioScheduleDay = (typeof radioScheduleDays)[number] | "Todos";
+
+const weekdayByIndex: Record<number, (typeof radioScheduleDays)[number]> = {
+  0: "Domingos",
+  1: "Lunes",
+  2: "Martes",
+  3: "Miércoles",
+  4: "Jueves",
+  5: "Viernes",
+  6: "Sábados",
 };
 
 function timeToMinutes(value: string) {
@@ -28,11 +51,35 @@ function getBuenosAiresMinutes(now: Date) {
   return Number.isFinite(hour) && Number.isFinite(minute) ? hour * 60 + minute : null;
 }
 
+export function getBuenosAiresRadioDay(now = new Date()) {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    weekday: "short",
+  }).format(now);
+  const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
+
+  return weekdayByIndex[weekdayIndex] ?? "Domingos";
+}
+
+export function getScheduleForRadioDay(schedule: RadioScheduleItem[], day: RadioScheduleDay) {
+  const byTime = new Map<string, RadioScheduleItem>();
+  schedule
+    .filter((item) => item.day === "Todos")
+    .forEach((item) => byTime.set(item.time, item));
+  schedule
+    .filter((item) => item.day === day)
+    .forEach((item) => byTime.set(item.time, item));
+
+  return [...byTime.values()]
+    .sort((left, right) => getStartMinutes(left.time) - getStartMinutes(right.time));
+}
+
 export function getCurrentRadioProgram(schedule: RadioScheduleItem[], now = new Date()) {
   const currentMinutes = getBuenosAiresMinutes(now);
   if (currentMinutes === null) return null;
+  const day = getBuenosAiresRadioDay(now);
 
-  for (const item of schedule) {
+  for (const item of [...schedule.filter((item) => item.day === day), ...schedule.filter((item) => item.day === "Todos")]) {
     const [startValue, endValue] = item.time.split(/[–-]/);
     if (!startValue || !endValue || !item.program?.trim()) continue;
 
@@ -47,4 +94,9 @@ export function getCurrentRadioProgram(schedule: RadioScheduleItem[], now = new 
   }
 
   return null;
+}
+
+function getStartMinutes(time: string) {
+  const start = time.split(/[–-]/)[0];
+  return start ? timeToMinutes(start) ?? Number.MAX_SAFE_INTEGER : Number.MAX_SAFE_INTEGER;
 }
