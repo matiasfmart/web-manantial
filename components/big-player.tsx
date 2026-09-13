@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import type { ChurchInfo } from "@/lib/data";
 import { getRadioMood, type RadioMood } from "@/lib/radio-schedule";
 import { RadioPlayButton, RadioStatus, VolumeControl } from "./radio-controls";
@@ -27,6 +28,19 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
         isNight ? "bg-ink text-white" : "bg-canvas text-ink"
       }`}
     >
+      {isNight && (
+        <>
+          <Image
+            src="/images/radio/night.jpg"
+            alt="Radio sonando de noche"
+            fill
+            sizes="100vw"
+            className="hero-image-slow object-cover opacity-30 transition-opacity duration-700"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/65 to-ink/30" />
+        </>
+      )}
+
       <RadioAudioVisualizer mood={mood} />
 
       <div className="section relative z-10 flex flex-col items-center text-center">
