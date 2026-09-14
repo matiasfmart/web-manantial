@@ -60,7 +60,7 @@ export function cleanSongText(rawText: string | undefined | null): string {
 export async function getAzuraCastNowPlaying(): Promise<AzuraCastNowPlaying> {
   try {
     const res = await fetch(`${AZURACAST_BASE_URL}/api/nowplaying/${STATION_SHORTCODE}`, {
-      next: { revalidate: 15 },
+      cache: "no-store",
     });
 
     if (!res.ok) {

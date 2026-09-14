@@ -1,30 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { AzuraCastHistoryItem } from "@/lib/azuracast";
+import { useRadio } from "./radio-context";
 
 export default function RadioHistory() {
-  const [history, setHistory] = useState<AzuraCastHistoryItem[]>([]);
-
-  useEffect(() => {
-    const fetchNowPlaying = async () => {
-      try {
-        const res = await fetch("/api/radio/now-playing");
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data?.history)) {
-            setHistory(data.history);
-          }
-        }
-      } catch {
-        // Silencioso en caso de error
-      }
-    };
-
-    fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, 20_000);
-    return () => clearInterval(interval);
-  }, []);
+  const { history } = useRadio();
 
   if (history.length === 0) return null;
 

@@ -257,6 +257,25 @@ body {
   animation: playGlow 2.4s ease-in-out infinite;
 }
 
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-scroll {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marqueeScroll 16s linear infinite;
+}
+
+.animate-marquee-scroll:hover {
+  animation-play-state: paused;
+}
+
 .hero-image-slow {
   animation: heroDrift 18s ease-out forwards;
 }

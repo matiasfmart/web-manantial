@@ -8,51 +8,8 @@ import { useRadio } from "./radio-context";
 import { AudioBars, RadioPlayButton, VolumeControl } from "./radio-controls";
 
 export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
-  const { isPlaying, isLoading, hasError } = useRadio();
-  const [currentSong, setCurrentSong] = useState<AzuraCastSong | null>(null);
-  const [listenersData, setListenersData] = useState<AzuraCastListenersResponse | null>(null);
+  const { isPlaying, isLoading, hasError, currentSong, listenersData } = useRadio();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchNowPlaying = async () => {
-      try {
-        const res = await fetch("/api/radio/now-playing");
-        if (res.ok) {
-          const data = await res.json();
-          if (data?.currentSong?.title || data?.currentSong?.text) {
-            setCurrentSong(data.currentSong);
-          }
-        }
-      } catch {
-        // Silencioso
-      }
-    };
-
-    const fetchListeners = async () => {
-      try {
-        const res = await fetch("/api/radio/listeners");
-        if (res.ok) {
-          const data = await res.json();
-          if (data && typeof data.totalListeners === "number") {
-            setListenersData(data);
-          }
-        }
-      } catch {
-        // Silencioso
-      }
-    };
-
-    fetchNowPlaying();
-    fetchListeners();
-
-    const intervalNowPlaying = setInterval(fetchNowPlaying, 15_000);
-    const intervalListeners = setInterval(fetchListeners, 30_000);
-
-    return () => {
-      clearInterval(intervalNowPlaying);
-      clearInterval(intervalListeners);
-    };
-  }, []);
 
   const status = hasError
     ? "No se pudo conectar"
@@ -104,13 +61,22 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-white/60">
+              <div className="block overflow-hidden text-[11px] sm:text-xs text-white/60">
                 {hasError ? (
                   <span className="truncate text-red-300">Tocá play para reintentar.</span>
                 ) : songDisplay ? (
-                  <span className="inline-flex items-center gap-1.5 truncate">
+                  <span className="inline-flex items-center gap-1.5 min-w-0 max-w-full overflow-hidden">
                     <MusicNoteIcon className="h-3 w-3 shrink-0 text-brand-light" />
-                    <span className="truncate font-medium text-white/80">{songDisplay}</span>
+                    {songDisplay.length > 28 ? (
+                      <span className="marquee-mask overflow-hidden whitespace-nowrap">
+                        <span className="animate-marquee-scroll inline-flex gap-8 font-medium text-white/90">
+                          <span>{songDisplay}</span>
+                          <span>{songDisplay}</span>
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="font-medium text-white/90">{songDisplay}</span>
+                    )}
                   </span>
                 ) : (
                   <span className="truncate font-medium">{churchInfo.radioDialFm} · Transmisión 24 h</span>

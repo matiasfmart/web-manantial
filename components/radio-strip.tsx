@@ -19,29 +19,8 @@ export default function RadioStrip({
   className?: string;
   variant?: "light" | "dark";
 }) {
-  const { isPlaying, isLoading, hasError } = useRadio();
-  const [currentSong, setCurrentSong] = useState<AzuraCastSong | null>(null);
+  const { isPlaying, isLoading, hasError, currentSong } = useRadio();
   const isDark = variant === "dark";
-
-  useEffect(() => {
-    const fetchNowPlaying = async () => {
-      try {
-        const res = await fetch("/api/radio/now-playing");
-        if (res.ok) {
-          const data = await res.json();
-          if (data?.currentSong?.title || data?.currentSong?.text) {
-            setCurrentSong(data.currentSong);
-          }
-        }
-      } catch {
-        // Silencioso
-      }
-    };
-
-    fetchNowPlaying();
-    const interval = setInterval(fetchNowPlaying, 20_000);
-    return () => clearInterval(interval);
-  }, []);
 
   const songDisplay = currentSong
     ? currentSong.artist

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { ChurchInfo } from "@/lib/data";
-import type { AzuraCastSong, AzuraCastListenersResponse } from "@/lib/azuracast";
+import type { ListenerLocation } from "@/lib/azuracast";
+import { useRadio } from "./radio-context";
 import { getRadioMood, type RadioMood } from "@/lib/radio-schedule";
 import { RadioPlayButton, RadioStatus, VolumeControl } from "./radio-controls";
 import RadioAudioVisualizer from "./radio-audio-visualizer";
@@ -11,57 +12,14 @@ import RadioAudioVisualizer from "./radio-audio-visualizer";
 const MOOD_REFRESH_MS = 5 * 60_000;
 
 export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
-  // Arranca en "day" (mismo primer render que el server) y se corrige apenas monta.
+  const { currentSong, listenersData } = useRadio();
   const [mood, setMood] = useState<RadioMood>("day");
-  const [currentSong, setCurrentSong] = useState<AzuraCastSong | null>(null);
-  const [listenersData, setListenersData] = useState<AzuraCastListenersResponse | null>(null);
 
   useEffect(() => {
     const update = () => setMood(getRadioMood());
     update();
     const id = window.setInterval(update, MOOD_REFRESH_MS);
     return () => window.clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    const fetchNowPlaying = async () => {
-      try {
-        const res = await fetch("/api/radio/now-playing");
-        if (res.ok) {
-          const data = await res.json();
-          if (data?.currentSong?.title || data?.currentSong?.text) {
-            setCurrentSong(data.currentSong);
-          }
-        }
-      } catch {
-        // Silencioso
-      }
-    };
-
-    const fetchListeners = async () => {
-      try {
-        const res = await fetch("/api/radio/listeners");
-        if (res.ok) {
-          const data = await res.json();
-          if (data && typeof data.totalListeners === "number") {
-            setListenersData(data);
-          }
-        }
-      } catch {
-        // Silencioso
-      }
-    };
-
-    fetchNowPlaying();
-    fetchListeners();
-
-    const intervalNowPlaying = setInterval(fetchNowPlaying, 20_000);
-    const intervalListeners = setInterval(fetchListeners, 30_000);
-
-    return () => {
-      clearInterval(intervalNowPlaying);
-      clearInterval(intervalListeners);
-    };
   }, []);
 
   const isNight = mood === "night";
@@ -139,10 +97,19 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
 
           <div className="mt-3 flex items-start justify-center gap-3">
             <MusicNoteIcon className={`mt-0.5 h-5 w-5 shrink-0 ${isNight ? "text-brand-light" : "text-brand"}`} />
-            <div className="min-w-0 flex-1 text-left">
-              <p className="truncate font-display text-lg font-bold sm:text-xl">
-                {songTitle || "Transmisión en vivo las 24 horas"}
-              </p>
+            <div className="min-w-0 flex-1 text-left overflow-hidden">
+              {songTitle && songTitle.length > 32 ? (
+                <div className="marquee-mask overflow-hidden whitespace-nowrap">
+                  <div className="animate-marquee-scroll font-display text-lg font-bold sm:text-xl">
+                    <span className="pr-12">{songTitle}</span>
+                    <span className="pr-12">{songTitle}</span>
+                  </div>
+                </div>
+              ) : (
+                <p className="truncate font-display text-lg font-bold sm:text-xl">
+                  {songTitle || "Transmisión en vivo las 24 horas"}
+                </p>
+              )}
               {songArtist && (
                 <p className={`mt-0.5 truncate text-xs font-medium ${isNight ? "text-white/60" : "text-ink/60"}`}>
                   {songArtist}
@@ -155,7 +122,7 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
         {/* Ciudades de Oyentes Conectados */}
         {listenersData && listenersData.locations.length > 0 && (
           <p className={`mt-4 text-xs font-medium ${isNight ? "text-white/50" : "text-ink/50"}`}>
-            Oyentes conectados desde: {listenersData.locations.map((l) => (l.city ? `${l.city}, ${l.country}` : l.country)).slice(0, 5).join(" · ")}
+            Oyentes conectados desde: {listenersData.locations.map((l: ListenerLocation) => (l.city ? `${l.city}, ${l.country}` : l.country)).slice(0, 5).join(" · ")}
           </p>
         )}
 
