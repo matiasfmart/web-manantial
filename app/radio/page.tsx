@@ -3,6 +3,7 @@ import { getChurchInfo, getRadioSchedule } from "@/lib/data";
 import { getBuenosAiresRadioDay, getCurrentRadioProgram } from "@/lib/radio-schedule";
 import BigPlayer from "@/components/big-player";
 import RadioScheduleTabs from "@/components/radio-schedule-tabs";
+import RadioHistory from "@/components/radio-history";
 
 export const metadata: Metadata = {
   title: "Radio en vivo",
@@ -68,6 +69,8 @@ export default async function RadioPage() {
       </section>
 
       <BigPlayer churchInfo={churchInfo} />
+
+      <RadioHistory />
 
       {/* PORQUE ESCUCHAR */}
       <section className="section py-16 sm:py-20">

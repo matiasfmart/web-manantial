@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { ChurchInfo } from "@/lib/data";
 import type { RadioScheduleItem } from "@/lib/radio-schedule";
+import type { AzuraCastSong } from "@/lib/azuracast";
 import { RadioPlayButton, RadioStatus } from "./radio-controls";
 import { useRadio } from "./radio-context";
 
@@ -18,13 +20,43 @@ export default function RadioStrip({
   variant?: "light" | "dark";
 }) {
   const { isPlaying, isLoading, hasError } = useRadio();
+  const [currentSong, setCurrentSong] = useState<AzuraCastSong | null>(null);
   const isDark = variant === "dark";
+
+  useEffect(() => {
+    const fetchNowPlaying = async () => {
+      try {
+        const res = await fetch("/api/radio/now-playing");
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.currentSong?.title || data?.currentSong?.text) {
+            setCurrentSong(data.currentSong);
+          }
+        }
+      } catch {
+        // Silencioso
+      }
+    };
+
+    fetchNowPlaying();
+    const interval = setInterval(fetchNowPlaying, 20_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const songDisplay = currentSong
+    ? currentSong.artist
+      ? `${currentSong.artist} — ${currentSong.title}`
+      : currentSong.title || currentSong.text
+    : null;
+
   const helperText = hasError
     ? "No pudimos conectar la señal. Probá nuevamente."
     : isLoading
       ? `Conectando con ${churchInfo.radioName}...`
       : isPlaying
-        ? "La señal continúa mientras recorrés el sitio."
+        ? songDisplay
+          ? `Sonando: ${songDisplay}`
+          : "La señal continúa mientras recorrés el sitio."
         : "Música, palabra y compañía para acompañarte donde estés.";
 
   return (
@@ -40,7 +72,7 @@ export default function RadioStrip({
 
           <div className="min-w-0">
             <p className={`text-[11px] font-semibold uppercase tracking-widest ${isDark ? "text-white/45" : "text-ink/45"}`}>
-              Audio en vivo · 24 h
+              {churchInfo.radioDialFm} · Audio en vivo 24 h
             </p>
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-display text-xl font-semibold tracking-normal">
@@ -48,7 +80,7 @@ export default function RadioStrip({
               </p>
               <RadioStatus tone={isDark ? "dark" : "light"} />
             </div>
-            <p className={`mt-1 text-sm ${isDark ? "text-white/60" : "text-ink/60"}`}>
+            <p className={`mt-1 truncate text-sm ${isDark ? "text-white/70" : "text-ink/70"}`}>
               {helperText}
             </p>
             <p className={`mt-3 text-xs font-semibold ${isDark ? "text-white/80" : "text-ink/75"}`}>

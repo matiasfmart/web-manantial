@@ -1,5 +1,6 @@
 import { getChurchInfo } from "@/lib/data";
 import { getTransmissionStatus, type TransmissionStatus } from "@/lib/youtube";
+import CultoLivePlayer from "./culto-live-player";
 
 /**
  * Muestra una transmisión confirmada; si YouTube no devuelve un video válido,
@@ -20,19 +21,13 @@ export default async function CultoPlayer({
       : { kind: "unavailable" as const });
 
   if (transmissionStatus.kind === "live") {
-    const playerParams = compact ? "autoplay=1&mute=1&playsinline=1" : "autoplay=1";
-
     return (
-      <div className="motion-scale-in aspect-video w-full overflow-hidden bg-ink">
-        <iframe
-          className="h-full w-full"
-          src={`https://www.youtube.com/embed/${transmissionStatus.videoId}?${playerParams}`}
-          title={transmissionStatus.title ?? "Transmisión en vivo — Ministerio Manantial de Avivamiento"}
-          loading="lazy"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
+      <CultoLivePlayer
+        videoId={transmissionStatus.videoId}
+        title={transmissionStatus.title}
+        compact={compact}
+        churchInfo={churchInfo}
+      />
     );
   }
 
