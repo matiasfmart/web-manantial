@@ -154,10 +154,19 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
 
               <div className="mt-3 flex items-start gap-3">
                 <MusicNoteIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-light" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-display text-lg font-bold text-white">
-                    {songTitle || "Transmisión en vivo las 24 horas"}
-                  </p>
+                <div className="min-w-0 flex-1 overflow-hidden">
+                  {songTitle && songTitle.length > 28 ? (
+                    <div className="marquee-mask overflow-hidden whitespace-nowrap">
+                      <div className="animate-marquee-scroll font-display text-lg font-bold text-white">
+                        <span className="pr-12">{songTitle}</span>
+                        <span className="pr-12">{songTitle}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="truncate font-display text-lg font-bold text-white">
+                      {songTitle || "Transmisión en vivo las 24 horas"}
+                    </p>
+                  )}
                   {songArtist && <p className="truncate text-xs font-medium text-white/60">{songArtist}</p>}
                 </div>
               </div>
