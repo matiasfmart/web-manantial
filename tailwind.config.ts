@@ -18,19 +18,14 @@ const config: Config = {
         surface2: "#d5d8d2",
         mist: "#e7eff0",
         brand: {
-          DEFAULT: "#4f6f78",
-          light: "#8da6ad",
-          dark: "#304c54",
+          DEFAULT: "#0f4c81",
+          light: "#8fd3ff",
+          dark: "#082d4a",
         },
         onair: {
           DEFAULT: "#a33a32",
           light: "#f3e8e6",
           dark: "#6f2722",
-        },
-        gold: {
-          DEFAULT: "#b88748",
-          light: "#c9a36e",
-          dark: "#876130",
         },
       },
       fontFamily: {
@@ -39,7 +34,7 @@ const config: Config = {
       },
       backgroundImage: {
         "radial-fade":
-          "radial-gradient(120% 120% at 50% 0%, rgba(79,111,120,0.18) 0%, rgba(244,244,240,0) 60%)",
+          "radial-gradient(120% 120% at 50% 0%, rgba(15,76,129,0.18) 0%, rgba(244,244,240,0) 60%)",
         "hero-grid":
           "linear-gradient(rgba(32,37,38,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(32,37,38,0.07) 1px, transparent 1px)",
       },

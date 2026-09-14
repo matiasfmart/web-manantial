@@ -16,7 +16,7 @@ export default function RadioAudioVisualizer({ mood }: { mood: RadioMood }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const barColor = mood === "night" ? "rgba(243, 232, 230, 0.16)" : "rgba(79, 111, 120, 0.14)";
+    const barColor = mood === "night" ? "rgba(143, 211, 255, 0.16)" : "rgba(15, 76, 129, 0.14)";
 
     const resize = () => {
       canvas.width = canvas.clientWidth * window.devicePixelRatio;

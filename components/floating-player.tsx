@@ -29,30 +29,28 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
 
   return (
     <>
-      {/* BARRA FIJA COMPACTA E ELEGANTE (Resting State) */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/15 bg-[#171a1b] shadow-2xl backdrop-blur-md">
-        <div className={`absolute inset-y-0 left-0 w-1 transition-colors ${isPlaying ? "bg-brand-light" : "bg-brand"}`} />
-        <div className="section flex items-center justify-between gap-3 py-2">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#121617] shadow-[0_-16px_40px_rgba(0,0,0,0.25)] backdrop-blur-md">
+        <div className="section flex items-center justify-between gap-3 py-2.5">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <RadioPlayButton tone="dark" size="sm" />
 
             <button
               type="button"
               onClick={() => setIsSheetOpen(true)}
-              className="flex min-w-0 flex-1 flex-col text-left transition hover:opacity-90"
+              className="flex min-w-0 flex-1 flex-col text-left transition hover:opacity-95"
               aria-label="Abrir detalles del reproductor"
             >
               <div className="flex items-center gap-2">
-                <span className="truncate font-display text-sm sm:text-base font-semibold leading-tight text-white">
+                <span className="truncate font-display text-sm font-semibold leading-tight text-white sm:text-base">
                   {churchInfo.radioName}
                 </span>
-                <span className="inline-flex shrink-0 items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-white/70">
+                <span className="inline-flex shrink-0 items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">
                   <span
                     className={`h-1.5 w-1.5 rounded-full ${
                       hasError
                         ? "bg-red-400"
                         : isPlaying || isLoading
-                          ? "animate-pulseSlow bg-brand-light"
+                          ? "animate-pulseSlow bg-brand"
                           : "bg-white/35"
                     }`}
                   />
@@ -61,12 +59,12 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
                 </span>
               </div>
 
-              <div className="block overflow-hidden text-[11px] sm:text-xs text-white/60">
+              <div className="block overflow-hidden text-[11px] text-white/60 sm:text-xs">
                 {hasError ? (
                   <span className="truncate text-red-300">Tocá play para reintentar.</span>
                 ) : songDisplay ? (
-                  <span className="inline-flex items-center gap-1.5 min-w-0 max-w-full overflow-hidden">
-                    <MusicNoteIcon className="h-3 w-3 shrink-0 text-brand-light" />
+                  <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 overflow-hidden">
+                    <MusicNoteIcon className="h-3 w-3 shrink-0 text-white/50" />
                     {songDisplay.length > 28 ? (
                       <span className="marquee-mask overflow-hidden whitespace-nowrap">
                         <span className="animate-marquee-scroll inline-flex gap-8 font-medium text-white/90">
@@ -75,29 +73,29 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
                         </span>
                       </span>
                     ) : (
-                      <span className="font-medium text-white/90">{songDisplay}</span>
+                      <span className="truncate font-medium text-white/90">{songDisplay}</span>
                     )}
                   </span>
                 ) : (
-                  <span className="truncate font-medium">{churchInfo.radioDialFm} · Transmisión 24 h</span>
+                  <span className="truncate font-medium text-white/80">{churchInfo.radioDialFm} · Transmisión 24 h</span>
                 )}
               </div>
             </button>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0 border-l border-white/10 pl-3">
+          <div className="flex shrink-0 items-center gap-2 border-l border-white/10 pl-3">
             <button
               type="button"
               onClick={() => setIsSheetOpen(true)}
-              className="flex items-center gap-1 rounded border border-white/15 bg-white/5 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white/80 transition hover:border-white/30 hover:bg-white/10"
+              className="flex items-center gap-1 rounded border border-white/15 bg-white/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80 transition hover:border-white/30 hover:bg-white/10"
             >
-              <MaximizeIcon className="h-3.5 w-3.5 text-brand-light" />
+              <MaximizeIcon className="h-3.5 w-3.5 text-white/60" />
               <span className="hidden sm:inline">Detalles</span>
             </button>
 
             <Link
               href="/radio"
-              className="hidden md:inline-block text-xs font-semibold uppercase tracking-wide text-white/60 hover:text-white"
+              className="hidden text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60 transition hover:text-white md:inline-block"
             >
               Página de Radio →
             </Link>
@@ -105,19 +103,17 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
         </div>
       </div>
 
-      {/* REPRODUCTOR DESPLEGABLE / BOTTOM SHEET (Drawer Estilo App Nativa) */}
       {isSheetOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm animate-[fadeIn_200ms_ease-out]">
           <div
-            className="relative w-full max-w-lg rounded-t-3xl border-t border-white/20 bg-[#141718] p-6 text-white shadow-2xl animate-[slideUp_280ms_cubic-bezier(0.16,1,0.3,1)]"
+            className="relative w-full max-w-md rounded-t-[28px] border-t border-white/20 bg-[#141718] p-5 text-white shadow-2xl animate-[slideUp_280ms_cubic-bezier(0.16,1,0.3,1)]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Manija de arrastre / Cierre */}
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-brand-light animate-pulseSlow" />
-                <span className="text-xs font-bold uppercase tracking-widest text-white/70">
-                  Reproductor de Radio
+                <span className="h-2 w-2 rounded-full bg-brand-light" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/70">
+                  Reproductor
                 </span>
               </div>
               <button
@@ -130,9 +126,8 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
               </button>
             </div>
 
-            {/* Cabecera Emisora */}
             <div className="mt-5 text-center">
-              <span className="rounded-full border border-brand-light/30 bg-brand-light/10 px-3 py-1 text-xs font-semibold text-brand-light">
+              <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80">
                 {churchInfo.radioDialFm}
               </span>
               <h3 className="mt-3 font-display text-3xl font-black uppercase tracking-normal">
@@ -140,20 +135,19 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
               </h3>
             </div>
 
-            {/* Ficha de Transmisión Al Aire */}
-            <div className="mt-5 rounded-2xl border border-white/15 bg-white/[0.06] p-4 backdrop-blur-md">
-              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-white/50">
-                <span className="inline-flex items-center gap-1.5 text-brand-light">
-                  <SignalIcon className="h-3.5 w-3.5" />
+            <div className="mt-5 rounded-[22px] border border-white/15 bg-white/[0.06] p-4 backdrop-blur-md">
+              <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50">
+                <span className="inline-flex items-center gap-1.5 text-white/80">
+                  <SignalIcon className="h-3.5 w-3.5 text-brand" />
                   Al aire ahora
                 </span>
-                <span className="font-mono rounded bg-white/10 px-2 py-0.5 text-[10px] text-white/70">
+                <span className="rounded bg-white/10 px-2 py-0.5 font-mono text-[10px] text-white/70">
                   192 kbps HD
                 </span>
               </div>
 
               <div className="mt-3 flex items-start gap-3">
-                <MusicNoteIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-light" />
+                <MusicNoteIcon className="mt-0.5 h-5 w-5 shrink-0 text-white/60" />
                 <div className="min-w-0 flex-1 overflow-hidden">
                   {songTitle && songTitle.length > 28 ? (
                     <div className="marquee-mask overflow-hidden whitespace-nowrap">
@@ -173,7 +167,7 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
 
               {listenersData && listenersData.totalListeners > 0 && (
                 <div className="mt-3 border-t border-white/10 pt-2.5 text-xs text-white/60">
-                  <span className="font-semibold text-brand-light">
+                  <span className="font-semibold text-white/90">
                     {listenersData.totalListeners} oyente{listenersData.totalListeners > 1 ? "s" : ""} online
                   </span>
                   {listenersData.locations.length > 0 && (
@@ -185,28 +179,26 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
               )}
             </div>
 
-            {/* Controles de Reproducción y Volumen */}
             <div className="mt-6 flex flex-col items-center gap-4">
               <RadioPlayButton tone="dark" size="lg" />
               <VolumeControl />
             </div>
 
-            {/* Acciones Rápidas */}
             <div className="mt-6 grid grid-cols-2 gap-3 border-t border-white/10 pt-5">
               <a
                 href={`https://wa.me/?text=${shareText}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 py-2.5 text-xs font-semibold text-white transition hover:bg-white/15"
+                className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 py-2.5 text-[11px] font-semibold text-white transition hover:bg-white/15"
               >
-                <ShareIcon className="h-4 w-4 text-brand-light" />
+                <ShareIcon className="h-4 w-4 text-white/70" />
                 Compartir por WA
               </a>
 
               <Link
                 href="/radio"
                 onClick={() => setIsSheetOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl border border-brand/40 bg-brand/20 py-2.5 text-xs font-semibold text-white transition hover:bg-brand/40"
+                className="flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 py-2.5 text-[11px] font-semibold text-white transition hover:bg-white/20"
               >
                 Página de Radio →
               </Link>

@@ -37,11 +37,9 @@ export function RadioPlayButton({
       aria-label={isPlaying ? "Pausar radio" : label}
       disabled={isLoading}
       className={`play-control ${isPlaying ? "is-playing play-control-glow" : ""} relative flex shrink-0 items-center justify-center rounded-full transition hover:scale-105 active:scale-95 disabled:cursor-wait disabled:opacity-80 ${playButtonSize[size]} ${
-        isPlaying
-          ? "bg-brand text-white hover:bg-brand-dark"
-          : isDark
-            ? "bg-white text-ink hover:bg-white/85"
-            : "bg-ink text-white hover:bg-carbon"
+        isDark
+          ? "bg-white text-ink hover:bg-white/90"
+          : "bg-ink text-white hover:bg-carbon"
       }`}
     >
       <span className="relative z-10">
@@ -106,7 +104,7 @@ export function AudioBars({
   tone?: RadioTone;
   size?: "sm" | "md";
 }) {
-  const barClass = tone === "dark" ? "bg-brand-light" : "bg-brand";
+  const barClass = tone === "dark" ? "bg-white/80" : "bg-ink/70";
   const height = size === "sm" ? "h-3" : "h-4";
   const width = size === "sm" ? "w-0.5" : "w-1";
 
@@ -135,7 +133,7 @@ export function VolumeControl() {
         onChange={(event) => setVolume(Number(event.target.value))}
         className="h-2 w-48 cursor-pointer appearance-none rounded-full accent-brand sm:w-44"
         style={{
-          background: `linear-gradient(90deg, #4f6f78 ${percent}%, rgb(16 19 20 / 0.15) ${percent}%)`,
+          background: `linear-gradient(90deg, #0f4c81 ${percent}%, rgb(16 19 20 / 0.15) ${percent}%)`,
         }}
         aria-label="Volumen"
       />

@@ -70,7 +70,7 @@ const ministryMeta: Record<
     image2: "/images/ministries/avivamiento-jovenes-2.jpg",
   },
   "anos-dorados": {
-    color: "from-gold to-gold-dark",
+    color: "from-brand to-brand-dark",
     icon: "sun",
     image: "/images/ministries/anos-dorados-1.jpg",
     image2: "/images/ministries/anos-dorados-2.jpg",
