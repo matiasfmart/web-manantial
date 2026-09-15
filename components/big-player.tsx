@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { ChurchInfo } from "@/lib/data";
 import type { ListenerLocation } from "@/lib/azuracast";
@@ -26,6 +26,23 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
 
   const songTitle = currentSong?.title || currentSong?.text || null;
   const songArtist = currentSong?.artist || null;
+
+  const titleTrackRef = useRef<HTMLDivElement>(null);
+  const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
+
+  useEffect(() => {
+    const track = titleTrackRef.current;
+    const container = track?.parentElement;
+    const firstCopy = track?.firstElementChild as HTMLElement | null;
+    if (!firstCopy || !container) return;
+
+    const checkOverflow = () => setIsTitleOverflowing(firstCopy.scrollWidth > container.clientWidth);
+    checkOverflow();
+
+    const observer = new ResizeObserver(checkOverflow);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [songTitle]);
 
   const shareText = encodeURIComponent(
     `Estoy escuchando ${churchInfo.radioName} (${churchInfo.radioDialFm}) en vivo 📻: https://manantialdeavivamiento.com/radio`
@@ -100,23 +117,17 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
               <div className="mt-3 flex items-start gap-3">
                 <MusicNoteIcon className={`mt-0.5 h-5 w-5 shrink-0 ${isNight ? "text-white/60" : "text-ink/50"}`} />
                 <div className="min-w-0 flex-1 overflow-hidden text-left">
-                  {songTitle && songTitle.length > 32 ? (
-                    <>
-                      <p className="truncate font-display text-lg font-bold sm:hidden">
-                        {songTitle}
-                      </p>
-                      <div className="marquee-mask hidden overflow-hidden whitespace-nowrap sm:block">
-                        <div className="animate-marquee-scroll font-display text-xl font-bold">
-                          <span className="pr-12">{songTitle}</span>
-                          <span className="pr-12">{songTitle}</span>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="truncate font-display text-lg font-bold sm:text-xl">
-                      {songTitle || "Transmisión en vivo las 24 horas"}
-                    </p>
-                  )}
+                  <div className="marquee-mask overflow-hidden whitespace-nowrap">
+                    <div
+                      ref={titleTrackRef}
+                      className={`inline-flex font-display text-lg font-bold sm:text-xl ${isTitleOverflowing ? "animate-marquee-scroll" : ""}`}
+                    >
+                      <span className={isTitleOverflowing ? "pr-12" : ""}>
+                        {songTitle || "Transmisión en vivo las 24 horas"}
+                      </span>
+                      {isTitleOverflowing && <span className="pr-12">{songTitle}</span>}
+                    </div>
+                  </div>
                   {songArtist && (
                     <p className={`mt-0.5 truncate text-xs font-medium ${isNight ? "text-white/60" : "text-ink/60"}`}>
                       {songArtist}
