@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { ChurchInfo } from "@/lib/data";
 import type { AzuraCastSong, AzuraCastListenersResponse } from "@/lib/azuracast";
@@ -10,6 +10,8 @@ import { AudioBars, RadioPlayButton, VolumeControl } from "./radio-controls";
 export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
   const { isPlaying, isLoading, hasError, currentSong, listenersData } = useRadio();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const titleTrackRef = useRef<HTMLSpanElement>(null);
+  const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
 
   const status = hasError
     ? "No se pudo conectar"
@@ -22,6 +24,22 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
   const songTitle = currentSong?.title || currentSong?.text || null;
   const songArtist = currentSong?.artist || null;
   const songDisplay = songArtist ? `${songArtist} — ${songTitle}` : songTitle;
+
+  useEffect(() => {
+    const track = titleTrackRef.current;
+    const container = track?.parentElement;
+    if (!track || !container) return;
+
+    const checkOverflow = () => {
+      setIsTitleOverflowing(track.scrollWidth > container.clientWidth);
+    };
+
+    checkOverflow();
+    const observer = new ResizeObserver(checkOverflow);
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, [songDisplay]);
 
   const shareText = encodeURIComponent(
     `Estoy escuchando ${churchInfo.radioName} (${churchInfo.radioDialFm}) en vivo 📻: https://manantialdeavivamiento.com/radio`
@@ -65,16 +83,18 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
                 ) : songDisplay ? (
                   <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 overflow-hidden">
                     <MusicNoteIcon className="h-3 w-3 shrink-0 text-white/50" />
-                    {songDisplay.length > 28 ? (
-                      <span className="marquee-mask overflow-hidden whitespace-nowrap">
-                        <span className="animate-marquee-scroll inline-flex gap-8 font-medium text-white/90">
-                          <span>{songDisplay}</span>
-                          <span>{songDisplay}</span>
+                    <span ref={titleTrackRef} className="min-w-0 max-w-full overflow-hidden">
+                      {isTitleOverflowing ? (
+                        <span className="marquee-mask block overflow-hidden whitespace-nowrap">
+                          <span className="animate-marquee-scroll inline-flex gap-8 font-medium text-white/90">
+                            <span>{songDisplay}</span>
+                            <span aria-hidden="true">{songDisplay}</span>
+                          </span>
                         </span>
-                      </span>
-                    ) : (
-                      <span className="truncate font-medium text-white/90">{songDisplay}</span>
-                    )}
+                      ) : (
+                        <span className="block truncate font-medium text-white/90">{songDisplay}</span>
+                      )}
+                    </span>
                   </span>
                 ) : (
                   <span className="truncate font-medium text-white/80">{churchInfo.radioDialFm} · Transmisión 24 h</span>
@@ -149,18 +169,22 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
               <div className="mt-3 flex items-start gap-3">
                 <MusicNoteIcon className="mt-0.5 h-5 w-5 shrink-0 text-white/60" />
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  {songTitle && songTitle.length > 28 ? (
-                    <div className="marquee-mask overflow-hidden whitespace-nowrap">
-                      <div className="animate-marquee-scroll font-display text-lg font-bold text-white">
-                        <span className="pr-12">{songTitle}</span>
-                        <span className="pr-12">{songTitle}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="truncate font-display text-lg font-bold text-white">
-                      {songTitle || "Transmisión en vivo las 24 horas"}
-                    </p>
-                  )}
+                  <div className="overflow-hidden">
+                    {songTitle ? (
+                      isTitleOverflowing ? (
+                        <div className="marquee-mask overflow-hidden whitespace-nowrap">
+                          <div className="animate-marquee-scroll font-display text-lg font-bold text-white">
+                            <span className="pr-12">{songTitle}</span>
+                            <span className="pr-12" aria-hidden="true">{songTitle}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="truncate font-display text-lg font-bold text-white">{songTitle}</p>
+                      )
+                    ) : (
+                      <p className="truncate font-display text-lg font-bold text-white">Transmisión en vivo las 24 horas</p>
+                    )}
+                  </div>
                   {songArtist && <p className="truncate text-xs font-medium text-white/60">{songArtist}</p>}
                 </div>
               </div>
