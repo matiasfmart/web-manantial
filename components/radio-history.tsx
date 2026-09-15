@@ -9,14 +9,16 @@ export default function RadioHistory() {
 
   return (
     <section className="section py-12 sm:py-16">
-      <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-        <div>
+      <div className="flex flex-col gap-2 border-b border-ink/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
           <p className="eyebrow">Recientemente sonaron</p>
           <h2 className="mt-1 font-display text-2xl font-bold uppercase tracking-normal sm:text-3xl">
             Historial de emisión
           </h2>
         </div>
-        <span className="text-xs font-semibold text-muted">Últimos 5 temas</span>
+        <span className="self-start text-[11px] font-semibold uppercase tracking-[0.14em] text-muted sm:self-auto sm:text-xs sm:normal-case sm:tracking-normal">
+          Últimos 5 temas
+        </span>
       </div>
 
       <div className="mt-6 divide-y divide-ink/10 border-b border-ink/10">
