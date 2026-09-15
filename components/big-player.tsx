@@ -117,7 +117,7 @@ export default function BigPlayer({ churchInfo }: { churchInfo: ChurchInfo }) {
               <div className="mt-3 flex items-start gap-3">
                 <MusicNoteIcon className={`mt-0.5 h-5 w-5 shrink-0 ${isNight ? "text-white/60" : "text-ink/50"}`} />
                 <div className="min-w-0 flex-1 overflow-hidden text-left">
-                  <div className="marquee-mask overflow-hidden whitespace-nowrap">
+                  <div className="overflow-hidden whitespace-nowrap">
                     <div
                       ref={titleTrackRef}
                       className={`inline-flex font-display text-lg font-bold sm:text-xl ${isTitleOverflowing ? "animate-marquee-scroll" : ""}`}

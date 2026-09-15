@@ -85,7 +85,7 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
                     <MusicNoteIcon className="h-3 w-3 shrink-0 text-white/50" />
                     <span ref={titleTrackRef} className="min-w-0 max-w-full overflow-hidden">
                       {isTitleOverflowing ? (
-                        <span className="marquee-mask block overflow-hidden whitespace-nowrap">
+                        <span className="block overflow-hidden whitespace-nowrap">
                           <span className="animate-marquee-scroll inline-flex gap-8 font-medium text-white/90">
                             <span>{songDisplay}</span>
                             <span aria-hidden="true">{songDisplay}</span>
@@ -172,7 +172,7 @@ export default function FloatingPlayer({ churchInfo }: { churchInfo: ChurchInfo 
                   <div className="overflow-hidden">
                     {songTitle ? (
                       isTitleOverflowing ? (
-                        <div className="marquee-mask overflow-hidden whitespace-nowrap">
+                        <div className="overflow-hidden whitespace-nowrap">
                           <div className="animate-marquee-scroll font-display text-lg font-bold text-white">
                             <span className="pr-12">{songTitle}</span>
                             <span className="pr-12" aria-hidden="true">{songTitle}</span>
